@@ -21,7 +21,6 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.PropertyAccessor;
 import org.springframework.expression.TypedValue;
 
-import com.datastax.driver.core.Codec;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
 
@@ -61,7 +60,7 @@ enum RowReaderPropertyAccessor implements PropertyAccessor {
 		}
 		DataType columnType = row.getColumnDefinitions().getType(name);
 		ByteBuffer bytes = row.getBytes(name);
-		Object object = Codec.getCodec(columnType).compose(bytes);
+		Object object = columnType.deserialize(bytes);
 		return new TypedValue(object);
 	}
 

@@ -25,7 +25,7 @@ import org.springframework.data.cassandra.config.PoolingOptionsConfig;
 import org.springframework.data.cassandra.config.SocketOptionsConfig;
 import org.springframework.util.StringUtils;
 
-import com.datastax.driver.core.AuthInfoProvider;
+import com.datastax.driver.core.AuthProvider;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.HostDistance;
 import com.datastax.driver.core.PoolingOptions;
@@ -56,7 +56,7 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>,
 	private PoolingOptionsConfig remotePoolingOptions;
 	private SocketOptionsConfig socketOptions;
 	
-	private AuthInfoProvider authInfoProvider;
+	private AuthProvider authProvider;
 	private LoadBalancingPolicy loadBalancingPolicy;
 	private ReconnectionPolicy reconnectionPolicy;
 	private RetryPolicy retryPolicy;
@@ -113,19 +113,19 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>,
 		}
 
 		if (localPoolingOptions != null) {
-			configPoolingOptions(builder.poolingOptions(), HostDistance.LOCAL, localPoolingOptions);
+			builder.withPoolingOptions(configPoolingOptions(HostDistance.LOCAL, localPoolingOptions));
 		}
 
 		if (remotePoolingOptions != null) {
-			configPoolingOptions(builder.poolingOptions(), HostDistance.REMOTE, remotePoolingOptions);
+			builder.withPoolingOptions(configPoolingOptions(HostDistance.REMOTE, remotePoolingOptions));
 		}
 
 		if (socketOptions != null) {
-			configSocketOptions(builder.socketOptions(), socketOptions);
+			builder.withSocketOptions(configSocketOptions(socketOptions));
 		}
 		
-		if (authInfoProvider != null) {
-			builder.withAuthInfoProvider(authInfoProvider);
+		if (authProvider != null) {
+			builder.withAuthProvider(authProvider);
 		}
 		
 		if (loadBalancingPolicy != null) {
@@ -182,8 +182,8 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>,
 		this.socketOptions = socketOptions;
 	}
 
-	public void setAuthInfoProvider(AuthInfoProvider authInfoProvider) {
-		this.authInfoProvider = authInfoProvider;
+	public void setAuthProvider(AuthProvider authProvider) {
+		this.authProvider = authProvider;
 	}
 	
 	public void setLoadBalancingPolicy(LoadBalancingPolicy loadBalancingPolicy) {
@@ -212,12 +212,14 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>,
 		throw new IllegalArgumentException("unknown compression type " + type);
 	}
 	
-	private static void configPoolingOptions(PoolingOptions poolingOptions, HostDistance hostDistance, PoolingOptionsConfig config) {
+	private static PoolingOptions configPoolingOptions(HostDistance hostDistance, PoolingOptionsConfig config) {
+		PoolingOptions poolingOptions = new PoolingOptions();
+
 		if (config.getMinSimultaneousRequests() != null) {
-			poolingOptions.setMinSimultaneousRequestsPerConnectionTreshold(hostDistance, config.getMinSimultaneousRequests());
+			poolingOptions.setMinSimultaneousRequestsPerConnectionThreshold(hostDistance, config.getMinSimultaneousRequests());
 		}
 		if (config.getMaxSimultaneousRequests() != null) {
-			poolingOptions.setMaxSimultaneousRequestsPerConnectionTreshold(hostDistance, config.getMaxSimultaneousRequests());
+			poolingOptions.setMaxSimultaneousRequestsPerConnectionThreshold(hostDistance, config.getMaxSimultaneousRequests());
 		}
 		if (config.getCoreConnections() != null) {
 			poolingOptions.setCoreConnectionsPerHost(hostDistance, config.getCoreConnections());
@@ -225,9 +227,13 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>,
 		if (config.getMaxConnections() != null) {
 			poolingOptions.setMaxConnectionsPerHost(hostDistance, config.getMaxConnections());
 		}
+		
+		return poolingOptions;
 	}
 	
-	private static void configSocketOptions(SocketOptions socketOptions, SocketOptionsConfig config) {
+	private static SocketOptions configSocketOptions(SocketOptionsConfig config) {
+		SocketOptions socketOptions = new SocketOptions();
+		
 		if (config.getConnectTimeoutMls() != null) {
 			socketOptions.setConnectTimeoutMillis(config.getConnectTimeoutMls());
 		}
@@ -249,5 +255,7 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>,
 		if (config.getSendBufferSize() != null) {
 			socketOptions.setSendBufferSize(config.getSendBufferSize());
 		}
+		
+		return socketOptions;
 	}
 }

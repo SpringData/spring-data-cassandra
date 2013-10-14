@@ -23,7 +23,6 @@ import org.springframework.data.mapping.model.PropertyValueProvider;
 import org.springframework.data.mapping.model.SpELExpressionEvaluator;
 import org.springframework.util.Assert;
 
-import com.datastax.driver.core.Codec;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
 
@@ -69,7 +68,7 @@ public class CassandraPropertyValueProvider implements PropertyValueProvider<Cas
 		}
 		DataType columnType = source.getColumnDefinitions().getType(columnName);
 		ByteBuffer bytes = source.getBytes(columnName);
-		return (T) Codec.getCodec(columnType).compose(bytes);
+		return (T) columnType.deserialize(bytes);
 	}
 	
 }

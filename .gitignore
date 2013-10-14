@@ -12,3 +12,4 @@ pom.xml
 .classpath
 .project
 .settings
+.cassandra
