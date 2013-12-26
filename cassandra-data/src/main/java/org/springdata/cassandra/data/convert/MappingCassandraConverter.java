@@ -132,6 +132,51 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 		this.spELContext = new SpELContext(this.spELContext, applicationContext);
 	}
 
+    private class ReadPropertyHandler<S> implements PropertyHandler<CassandraPersistentProperty> {
+
+        private CassandraPersistentEntity<S> entity;
+        private Row row;
+        private PropertyValueProvider<CassandraPersistentProperty> propertyProvider;
+        private BeanWrapper<CassandraPersistentEntity<S>, S> wrapper;
+
+        private ReadPropertyHandler(CassandraPersistentEntity<S> entity, Row row,
+                                    PropertyValueProvider<CassandraPersistentProperty> propertyProvider,
+                                    BeanWrapper<CassandraPersistentEntity<S>, S> wrapper) {
+            this.entity = entity;
+            this.row = row;
+            this.propertyProvider = propertyProvider;
+            this.wrapper = wrapper;
+        }
+
+        public void doWithPersistentProperty(CassandraPersistentProperty prop) {
+
+            boolean isConstructorProperty = entity.isConstructorArgument(prop);
+            boolean hasValueForProperty = row.getColumnDefinitions().contains(prop.getColumnName());
+
+            if (prop.hasEmbeddableType()) {
+
+                Class<?> propType = prop.getRawType();
+                final CassandraPersistentEntity<?> propEntity = mappingContext.getPersistentEntity(propType);
+                EntityInstantiator instantiator = instantiators.getInstantiatorFor(propEntity);
+                PersistentEntityParameterValueProvider<CassandraPersistentProperty> parameterProvider = new PersistentEntityParameterValueProvider<CassandraPersistentProperty>(
+                        propEntity, propertyProvider, null);
+                Object instance = instantiator.createInstance(propEntity, parameterProvider);
+                final BeanWrapper<CassandraPersistentEntity<Object>, Object> propWrapper = BeanWrapper.create(instance, conversionService);
+                final Object result = propWrapper.getBean();
+
+                propEntity.doWithProperties(new ReadPropertyHandler(propEntity, row, propertyProvider, propWrapper));
+                wrapper.setProperty(prop, result, useFieldAccessOnly);
+            }
+
+            if (!hasValueForProperty || isConstructorProperty) {
+                return;
+            }
+
+            Object obj = propertyProvider.getPropertyValue(prop);
+            wrapper.setProperty(prop, obj, useFieldAccessOnly);
+        }
+    }
+
 	private <S extends Object> S readRowInternal(final CassandraPersistentEntity<S> entity, final Row row) {
 
 		final DefaultSpELExpressionEvaluator evaluator = new DefaultSpELExpressionEvaluator(row, spELContext);
@@ -148,20 +193,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 		final S result = wrapper.getBean();
 
 		// Set properties not already set in the constructor
-		entity.doWithProperties(new PropertyHandler<CassandraPersistentProperty>() {
-			public void doWithPersistentProperty(CassandraPersistentProperty prop) {
-
-				boolean isConstructorProperty = entity.isConstructorArgument(prop);
-				boolean hasValueForProperty = row.getColumnDefinitions().contains(prop.getColumnName());
-
-				if (!hasValueForProperty || isConstructorProperty) {
-					return;
-				}
-
-				Object obj = propertyProvider.getPropertyValue(prop);
-				wrapper.setProperty(prop, obj, useFieldAccessOnly);
-			}
-		});
+		entity.doWithProperties(new ReadPropertyHandler<S>(entity, row, propertyProvider, wrapper));
 
 		return result;
 	}
@@ -474,6 +506,10 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 
 				if (prop.isIdProperty()) {
 
+                    result.add(QueryBuilder.eq(prop.getColumnName(), id));
+
+                } else if (prop.isEmbeddedIdProperty()) {
+
 					if (prop.hasEmbeddableType()) {
 
 						if (!prop.getRawType().isAssignableFrom(id.getClass())) {
@@ -481,11 +517,8 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 									+ prop.getColumnName() + " in the entity " + entity.getName());
 						}
 
-						embeddedPrimaryKey(prop.getRawType(), id, result);
+						embeddedPrimaryKey(prop.getRawType(), id, result, false);
 
-					} else {
-						result.add(QueryBuilder.eq(prop.getColumnName(), id));
-						return;
 					}
 
 				}
@@ -493,10 +526,43 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 			}
 		});
 
+        if (result.isEmpty()) {
+            throw new MappingException("Could not form a where clause for the primary key for an entity " + entity.getName());
+        }
+
 		return result;
 	}
 
-	private void embeddedPrimaryKey(Class<?> idClass, Object id, final List<Clause> result) {
+    @Override
+    public List<Clause> getPartitionKey(final CassandraPersistentEntity<?> entity, final Object id) {
+
+        final List<Clause> result = new LinkedList<Clause>();
+
+        entity.doWithProperties(new PropertyHandler<CassandraPersistentProperty>() {
+            public void doWithPersistentProperty(CassandraPersistentProperty prop) {
+
+                if (prop.isIdProperty()) {
+
+                    throw new MappingException(String.format("Entity %s must have an embeddable primary key", entity.getName()));
+
+                } else if (prop.isEmbeddedIdProperty() && prop.hasEmbeddableType()) {
+
+                        if (!prop.getRawType().isAssignableFrom(id.getClass())) {
+                            throw new MappingException("id class " + id.getClass() + " can not be converted to embeddedid property "
+                                    + prop.getColumnName() + " in the entity " + entity.getName());
+                        }
+
+                        embeddedPrimaryKey(prop.getRawType(), id, result, true);
+
+                }
+
+            }
+        });
+
+        return result;
+    }
+
+    private void embeddedPrimaryKey(Class<?> idClass, Object id, final List<Clause> result, final boolean partitionPartsOnly) {
 
 		final BeanWrapper<CassandraPersistentEntity<Object>, Object> wrapper = BeanWrapper.create(id, conversionService);
 
@@ -510,16 +576,18 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 		doWithAllProperties(idEntity, new PropertyHandler<CassandraPersistentProperty>() {
 			public void doWithPersistentProperty(CassandraPersistentProperty prop) {
 
-				if (prop.getKeyPart() != null) {
+                KeyPart keyPart = prop.getKeyPart();
+                if (keyPart != null) {
+                    if (!partitionPartsOnly || keyPart == KeyPart.PARTITION) {
+                        Object propertyObj = wrapper.getProperty(prop, prop.getType(), useFieldAccessOnly);
 
-					Object propertyObj = wrapper.getProperty(prop, prop.getType(), useFieldAccessOnly);
+                        if (propertyObj == null) {
+                            throw new MappingException("null primary key column " + prop.getColumnName() + " in entity "
+                                    + idEntity.getName());
+                        }
 
-					if (propertyObj == null) {
-						throw new MappingException("null primary key column " + prop.getColumnName() + " in entity "
-								+ idEntity.getName());
-					}
-
-					result.add(QueryBuilder.eq(prop.getColumnName(), propertyObj));
+                        result.add(QueryBuilder.eq(prop.getColumnName(), propertyObj));
+                    }
 				}
 
 			}
@@ -567,7 +635,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 
 				if (pkProp.getKeyPart() == null) {
 					throw new MappingException(
-							"all properties in composite private key must be annotated by PartitionKey or ClusteringKey annotations "
+							"all properties in composite private key must be annotated by a KeyColumn annotation "
 									+ pkEntity.getType());
 				}
 

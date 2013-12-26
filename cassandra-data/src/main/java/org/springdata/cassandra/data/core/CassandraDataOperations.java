@@ -63,6 +63,29 @@ public interface CassandraDataOperations {
 	<T> T findById(Object id, Class<T> entityClass, String tableName, QueryOptions optionsOrNull);
 
 	/**
+	 * Finds a list of instances with the specified partition part of the primary key
+	 * 
+	 * @param id
+	 * @param entityClass
+	 * @param optionsOrNull
+	 * @param <T>
+	 * @return
+	 */
+	<T> List<T> findByPartitionKey(Object id, Class<T> entityClass, QueryOptions optionsOrNull);
+
+	/**
+	 * Finds a list of instances with the specified partition part of the primary key
+	 * 
+	 * @param id
+	 * @param entityClass
+	 * @param tableName
+	 * @param options
+	 * @param <T>
+	 * @return
+	 */
+	<T> List<T> findByPartitionKey(Object id, Class<T> entityClass, String tableName, QueryOptions options);
+
+	/**
 	 * Execute query and convert ResultSet to the list of entities
 	 * 
 	 * @param query must not be {@literal null}.

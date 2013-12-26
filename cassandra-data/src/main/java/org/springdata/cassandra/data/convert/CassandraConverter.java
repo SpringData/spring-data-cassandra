@@ -83,4 +83,12 @@ public interface CassandraConverter extends
 	 */
 	List<Clause> getPrimaryKey(CassandraPersistentEntity<?> entity, Object id);
 
+    /**
+     * Get the where clause for the partitioned part of the primary key for a persistent entity
+     * @param entity persistent entity class
+     * @param id persistent entity id. Must contain values for all partitioned columns. Clustering column values are
+     *           ignored.
+     * @return where clause
+     */
+    List<Clause> getPartitionKey(CassandraPersistentEntity<?> entity, Object id);
 }

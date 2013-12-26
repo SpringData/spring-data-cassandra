@@ -16,7 +16,9 @@
 package org.springdata.cassandra.data.convert;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 
+import com.datastax.driver.core.ColumnDefinitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdata.cassandra.data.mapping.CassandraPersistentProperty;
@@ -67,27 +69,31 @@ public class CassandraPropertyValueProvider implements PropertyValueProvider<Cas
 			return evaluator.evaluate(expression);
 		}
 
-		String columnName = property.getColumnName();
-		if (source.isNull(property.getColumnName())) {
+		ColumnDefinitions columnDefinitions = source.getColumnDefinitions();
+		int columnIndex = columnDefinitions.getIndexOf(property.getColumnName());
+		if (source.isNull(columnIndex)) {
 			return null;
 		}
-		DataType columnType = source.getColumnDefinitions().getType(columnName);
+		DataType columnType = columnDefinitions.getType(columnIndex);
 
 		log.info(columnType.getName().name());
 
-		/*
-		 * Dave Webb - Added handler for text since getBytes was throwing 
-		 * InvalidTypeException when using getBytes on a text column. 
-		 */
-		// TODO Might need to qualify all DataTypes as we encounter them.
-		if (columnType.equals(DataType.text())) {
-			return (T) source.getString(columnName);
-		}
-		if (columnType.equals(DataType.cint())) {
-			return (T) new Integer(source.getInt(columnName));
+		if (columnType.isCollection()) {
+
+			List<DataType> typeArguments = columnType.getTypeArguments();
+
+			switch (columnType.getName()) {
+			case SET:
+				return (T) source.getSet(columnIndex, typeArguments.get(0).asJavaClass());
+			case MAP:
+				return (T) source.getMap(columnIndex, typeArguments.get(0).asJavaClass(), typeArguments.get(1).asJavaClass());
+			case LIST:
+				return (T) source.getList(columnIndex, typeArguments.get(0).asJavaClass());
+			}
+
 		}
 
-		ByteBuffer bytes = source.getBytes(columnName);
+		ByteBuffer bytes = source.getBytesUnsafe(columnIndex);
 		return (T) columnType.deserialize(bytes);
 	}
 

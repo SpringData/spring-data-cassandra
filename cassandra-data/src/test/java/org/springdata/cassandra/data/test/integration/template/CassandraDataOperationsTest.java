@@ -801,6 +801,29 @@ public class CassandraDataOperationsTest {
 	}
 
 	@Test
+	public void findByIdTest() {
+
+		/*
+		 * Test Single Insert with entity
+		 */
+		Book b1 = new Book();
+		b1.setIsbn("123456-1");
+		b1.setTitle("Spring Data Cassandra Guide");
+		b1.setAuthor("Cassandra Guru");
+		b1.setPages(521);
+
+		cassandraDataTemplate.saveNew(false, b1, null);
+
+		Book b = cassandraDataTemplate.findById("123456-1", Book.class, null);
+
+		log.info("SingleSelect Book Title -> " + b.getTitle());
+		log.info("SingleSelect Book Author -> " + b.getAuthor());
+
+		assertEquals(b.getTitle(), "Spring Data Cassandra Guide");
+		assertEquals(b.getAuthor(), "Cassandra Guru");
+	}
+
+	@Test
 	public void selectTest() {
 
 		List<Book> books = getBookList(20);

@@ -1,0 +1,3 @@
+create table basic_types_table (id text primary key, propascii ascii, propbigint bigint, propblob blob, propboolean boolean, propdecimal decimal, propdouble double, propfloat float, propinet inet, propint int, proptext text, proptimestamp timestamp, propuuid uuid, proptimeuuid timeuuid, propvarchar varchar, propvarint varint);
+create table embedded_id_table (partitionkey int, clusteringkey text, proptext text, primary key (partitionkey, clusteringkey));
+create table collection_types_table (id text primary key, textlist list<text>, textmap map<text,text>, textset set<text>, uuidlist list<uuid>, textuuidmap map<text, uuid>, uuidset set<uuid>);

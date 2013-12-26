@@ -954,4 +954,33 @@ public class CassandraDataTemplate extends CassandraTemplate implements Cassandr
 
 		return entity;
 	}
+
+	@Override
+	public <T> List<T> findByPartitionKey(Object id, Class<T> entityClass, QueryOptions options) {
+		return doFindByPartitionKey(id, entityClass, getTableName(entityClass), options);
+	}
+
+	@Override
+	public <T> List<T> findByPartitionKey(Object id, Class<T> entityClass, String tableName, QueryOptions optionsOrNull) {
+		return doFindByPartitionKey(id, entityClass, tableName, optionsOrNull);
+	}
+
+	protected <T> List<T> doFindByPartitionKey(Object id, Class<T> entityClass, String tableName,
+			QueryOptions optionsOrNull) {
+
+		Select select = QueryBuilder.select().all().from(tableName);
+		Select.Where w = select.where();
+
+		CassandraPersistentEntity<?> entity = getEntity(entityClass);
+
+		List<Clause> list = cassandraConverter.getPartitionKey(entity, id);
+
+		for (Clause c : list) {
+			w.and(c);
+		}
+
+		addQueryOptions(select, optionsOrNull);
+
+		return doSelect(select.getQueryString(), new ReadRowCallback<T>(cassandraConverter, entityClass));
+	}
 }
