@@ -60,12 +60,12 @@ import com.google.common.collect.Lists;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { JavaConfig.class }, loader = AnnotationConfigContextLoader.class)
-public class CassandraOperationsTest {
+public class CassandraTemplateTest {
 
 	@Autowired
 	private CassandraOperations cassandraTemplate;
 
-	private static Logger log = LoggerFactory.getLogger(CassandraOperationsTest.class);
+	private static Logger log = LoggerFactory.getLogger(CassandraTemplateTest.class);
 
 	private final static String CASSANDRA_CONFIG = "cassandra.yaml";
 	private final static String KEYSPACE_NAME = "test";
