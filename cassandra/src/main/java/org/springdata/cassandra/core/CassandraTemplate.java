@@ -264,7 +264,13 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> GetOperation<Long> count(Class<T> entityClass) {
+	public <T> DeleteOperation deleteAll(Class<T> entityClass) {
+		Assert.notNull(entityClass);
+		return new DefaultDeleteOperation<T>(this, entityClass);
+	}
+
+	@Override
+	public <T> GetOperation<Long> countAll(Class<T> entityClass) {
 		Assert.notNull(entityClass);
 		return new DefaultCountOperation<T>(this, entityClass);
 	}

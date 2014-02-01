@@ -94,7 +94,7 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 
 	@Override
 	public long count() {
-		Long result = cassandraTemplate.cqlOps().countAll(entityInformation.getTableName()).execute();
+		Long result = cassandraTemplate.countAll(entityInformation.getJavaType()).execute();
 		return result != null ? result : 0;
 	}
 
@@ -118,7 +118,7 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 
 	@Override
 	public void deleteAll() {
-		cassandraTemplate.cqlOps().truncate(entityInformation.getTableName()).execute();
+		cassandraTemplate.deleteAll(entityInformation.getJavaType()).execute();
 	}
 
 	@Override

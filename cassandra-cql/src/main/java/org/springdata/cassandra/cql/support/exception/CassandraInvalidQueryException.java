@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,19 @@ package org.springdata.cassandra.cql.support.exception;
 
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
+import com.datastax.driver.core.Query;
+
 /**
  * Spring data access exception for a Cassandra query that's syntactically correct but invalid.
  * 
  * @author Matthew T. Adams
+ * @author Alex Shvid
  */
-public class CassandraInvalidQueryException extends InvalidDataAccessApiUsageException {
+public class CassandraInvalidQueryException extends InvalidDataAccessApiUsageException implements CassandraQueryAware {
 
 	private static final long serialVersionUID = 4594321191806182918L;
+
+	private Query query;
 
 	public CassandraInvalidQueryException(String msg) {
 		super(msg);
@@ -34,4 +39,15 @@ public class CassandraInvalidQueryException extends InvalidDataAccessApiUsageExc
 	public CassandraInvalidQueryException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
+
+	@Override
+	public void setQuery(Query query) {
+		this.query = query;
+	}
+
+	@Override
+	public String getMessage() {
+		return super.getMessage() + " for query " + query;
+	}
+
 }

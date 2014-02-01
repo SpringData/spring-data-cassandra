@@ -759,6 +759,20 @@ public class CassandraTemplateTest {
 	}
 
 	@Test
+	public void deleteAllTest() {
+
+		List<Book> books = getBookList(20);
+
+		cassandraTemplate.saveNewInBatch(books).execute();
+
+		cassandraTemplate.deleteAll(Book.class).execute();
+
+		Long count = cassandraTemplate.countAll(Book.class).execute();
+
+		assertEquals(new Long(0), count);
+	}
+
+	@Test
 	public void findOneTest() {
 
 		/*
@@ -884,7 +898,7 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.saveNewInBatch(books).execute();
 
-		Long count = cassandraTemplate.count(Book.class).execute();
+		Long count = cassandraTemplate.countAll(Book.class).execute();
 
 		log.info("Book Count -> " + count);
 

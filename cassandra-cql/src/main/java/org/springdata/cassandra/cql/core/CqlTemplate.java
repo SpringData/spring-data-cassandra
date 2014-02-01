@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdata.cassandra.cql.support.CassandraExceptionTranslator;
 import org.springdata.cassandra.cql.support.exception.CassandraNotSingleResultException;
+import org.springdata.cassandra.cql.support.exception.CassandraQueryAware;
 import org.springframework.util.Assert;
 
 import com.datastax.driver.core.BoundStatement;
@@ -298,7 +299,7 @@ public class CqlTemplate implements CqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	public <T> T doExecute(SessionCallback<T> callback) {
+	protected <T> T doExecute(SessionCallback<T> callback) {
 
 		try {
 
@@ -315,20 +316,24 @@ public class CqlTemplate implements CqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	public ResultSet doExecute(final Query query) {
+	protected ResultSet doExecute(final Query query) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(query.toString());
 		}
 
-		return doExecute(new SessionCallback<ResultSet>() {
+		try {
 
-			@Override
-			public ResultSet doInSession(Session s) {
+			return getSession().execute(query);
 
-				return s.execute(query);
+		} catch (RuntimeException e) {
+			e = translateIfPossible(e);
+			if (e instanceof CassandraQueryAware) {
+				((CassandraQueryAware) e).setQuery(query);
 			}
-		});
+			throw e;
+		}
+
 	}
 
 	/**
@@ -337,20 +342,24 @@ public class CqlTemplate implements CqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	public ResultSetFuture doExecuteAsync(final Query query) {
+	protected ResultSetFuture doExecuteAsync(final Query query) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(query.toString());
 		}
 
-		return doExecute(new SessionCallback<ResultSetFuture>() {
+		try {
 
-			@Override
-			public ResultSetFuture doInSession(Session s) {
+			return getSession().executeAsync(query);
 
-				return s.executeAsync(query);
+		} catch (RuntimeException e) {
+			e = translateIfPossible(e);
+			if (e instanceof CassandraQueryAware) {
+				((CassandraQueryAware) e).setQuery(query);
 			}
-		});
+			throw e;
+		}
+
 	}
 
 	/**

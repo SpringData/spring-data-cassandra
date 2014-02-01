@@ -41,7 +41,7 @@ public class DefaultDeleteOperation<T> extends AbstractUpdateOperation<DeleteOpe
 		BatchedStatementCreator {
 
 	enum DeleteBy {
-		ID, ENTITY;
+		ID, ENTITY, ALL;
 	}
 
 	private final CassandraTemplate cassandraTemplate;
@@ -75,6 +75,16 @@ public class DefaultDeleteOperation<T> extends AbstractUpdateOperation<DeleteOpe
 		this.id = id;
 	}
 
+	protected DefaultDeleteOperation(CassandraTemplate cassandraTemplate, Class<T> entityClass) {
+		super(cassandraTemplate.cqlTemplate());
+		Assert.notNull(entityClass);
+		this.cassandraTemplate = cassandraTemplate;
+		this.deleteBy = DeleteBy.ALL;
+		this.entity = null;
+		this.entityClass = entityClass;
+		this.id = null;
+	}
+
 	@Override
 	public DeleteOperation fromTable(String tableName) {
 		this.tableName = tableName;
@@ -99,6 +109,7 @@ public class DefaultDeleteOperation<T> extends AbstractUpdateOperation<DeleteOpe
 
 		switch (deleteBy) {
 		case ID:
+		case ALL:
 			return cassandraTemplate.getTableName(entityClass);
 		case ENTITY:
 			return cassandraTemplate.getTableName(entity.getClass());
@@ -112,8 +123,13 @@ public class DefaultDeleteOperation<T> extends AbstractUpdateOperation<DeleteOpe
 		return createStatement();
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	public Statement createStatement() {
+
+		if (deleteBy == DeleteBy.ALL) {
+			return QueryBuilder.truncate(cassandraTemplate.getKeyspace(), getTableName());
+		}
 
 		Delete.Selection ds = QueryBuilder.delete();
 
@@ -136,8 +152,10 @@ public class DefaultDeleteOperation<T> extends AbstractUpdateOperation<DeleteOpe
 
 		}
 
-		for (Clause c : clauseList) {
-			w.and(c);
+		if (clauseList != null) {
+			for (Clause c : clauseList) {
+				w.and(c);
+			}
 		}
 
 		if (timestamp != null) {

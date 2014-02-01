@@ -102,7 +102,7 @@ public interface CassandraOperations {
 	 * @param entityClass
 	 * @return
 	 */
-	<T> GetOperation<Long> count(Class<T> entityClass);
+	<T> GetOperation<Long> countAll(Class<T> entityClass);
 
 	/**
 	 * Checks if entity exists in Cassandra
@@ -178,9 +178,19 @@ public interface CassandraOperations {
 	<T> DeleteOperation delete(T entity);
 
 	/**
+	 * Delete entities in batch operation
+	 * 
 	 * @param entities
 	 */
 	<T> BatchOperation deleteInBatch(Iterable<T> entities);
+
+	/**
+	 * Delete all entities in table
+	 * 
+	 * @param entityClass
+	 * @return
+	 */
+	<T> DeleteOperation deleteAll(Class<T> entityClass);
 
 	/**
 	 * Returns RowMapper based on Cassandra Converter.
