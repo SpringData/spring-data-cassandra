@@ -38,7 +38,9 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdata.cassandra.core.CassandraOperations;
+import org.springdata.cassandra.core.EntryCallbackHandler;
 import org.springdata.cassandra.cql.core.ConsistencyLevel;
+import org.springdata.cassandra.cql.core.QueryCreator;
 import org.springdata.cassandra.cql.core.RetryPolicy;
 import org.springdata.cassandra.test.integration.config.JavaConfig;
 import org.springdata.cassandra.test.integration.table.Book;
@@ -47,6 +49,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import com.datastax.driver.core.Query;
+import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import com.google.common.collect.Lists;
@@ -913,6 +917,175 @@ public class CassandraTemplateTest {
 		log.info("Book Not Exists -> " + notExists);
 
 		assertEquals(Boolean.FALSE, notExists);
+
+	}
+
+	@Test
+	public void rowMapperTest() {
+
+		/*
+		 * Test Single Insert with entity
+		 */
+		Book b1 = new Book();
+		b1.setIsbn("123456-1");
+		b1.setTitle("Spring Data Cassandra Guide");
+		b1.setAuthor("Cassandra Guru");
+		b1.setPages(521);
+
+		cassandraTemplate.saveNew(b1).execute();
+
+		List<Book> books = cassandraTemplate.cqlOps().select(new QueryCreator() {
+
+			@Override
+			public Query createQuery() {
+				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
+			}
+
+		}).map(cassandraTemplate.getRowMapper(Book.class)).execute();
+
+		assertEquals(1, books.size());
+
+		assertEquals(b1.getIsbn(), books.get(0).getIsbn());
+		assertEquals(b1.getTitle(), books.get(0).getTitle());
+		assertEquals(b1.getAuthor(), books.get(0).getAuthor());
+
+	}
+
+	@Test
+	public void resultSetExtractorTest() {
+
+		/*
+		 * Test Single Insert with entity
+		 */
+		Book b1 = new Book();
+		b1.setIsbn("123456-1");
+		b1.setTitle("Spring Data Cassandra Guide");
+		b1.setAuthor("Cassandra Guru");
+		b1.setPages(521);
+
+		cassandraTemplate.saveNew(b1).execute();
+
+		List<Book> books = cassandraTemplate.cqlOps().select(new QueryCreator() {
+
+			@Override
+			public Query createQuery() {
+				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
+			}
+
+		}).transform(cassandraTemplate.getResultSetExtractor(Book.class)).execute();
+
+		assertEquals(1, books.size());
+
+		assertEquals(b1.getIsbn(), books.get(0).getIsbn());
+		assertEquals(b1.getTitle(), books.get(0).getTitle());
+		assertEquals(b1.getAuthor(), books.get(0).getAuthor());
+
+	}
+
+	@Test
+	public void processTest() {
+
+		/*
+		 * Test Single Insert with entity
+		 */
+		Book b1 = new Book();
+		b1.setIsbn("123456-1");
+		b1.setTitle("Spring Data Cassandra Guide");
+		b1.setAuthor("Cassandra Guru");
+		b1.setPages(521);
+
+		cassandraTemplate.saveNew(b1).execute();
+
+		ResultSet resultSet = cassandraTemplate.cqlOps().select(new QueryCreator() {
+
+			@Override
+			public Query createQuery() {
+				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
+			}
+
+		}).execute();
+
+		List<Book> books = cassandraTemplate.process(resultSet, Book.class);
+
+		assertEquals(1, books.size());
+
+		assertEquals(b1.getIsbn(), books.get(0).getIsbn());
+		assertEquals(b1.getTitle(), books.get(0).getTitle());
+		assertEquals(b1.getAuthor(), books.get(0).getAuthor());
+
+	}
+
+	@Test
+	public void processHandlerTest() {
+
+		/*
+		 * Test Single Insert with entity
+		 */
+		final Book b1 = new Book();
+		b1.setIsbn("123456-1");
+		b1.setTitle("Spring Data Cassandra Guide");
+		b1.setAuthor("Cassandra Guru");
+		b1.setPages(521);
+
+		cassandraTemplate.saveNew(b1).execute();
+
+		ResultSet resultSet = cassandraTemplate.cqlOps().select(new QueryCreator() {
+
+			@Override
+			public Query createQuery() {
+				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
+			}
+
+		}).execute();
+
+		cassandraTemplate.process(resultSet, Book.class, new EntryCallbackHandler<Book>() {
+
+			boolean singleValueExpected = false;
+
+			@Override
+			public void processEntry(Book entry) {
+				if (singleValueExpected) {
+					throw new IllegalStateException("single value expected");
+				}
+				singleValueExpected = true;
+
+				assertEquals(b1.getIsbn(), entry.getIsbn());
+				assertEquals(b1.getTitle(), entry.getTitle());
+				assertEquals(b1.getAuthor(), entry.getAuthor());
+			}
+
+		});
+
+	}
+
+	@Test
+	public void processOneTest() {
+
+		/*
+		 * Test Single Insert with entity
+		 */
+		Book b1 = new Book();
+		b1.setIsbn("123456-1");
+		b1.setTitle("Spring Data Cassandra Guide");
+		b1.setAuthor("Cassandra Guru");
+		b1.setPages(521);
+
+		cassandraTemplate.saveNew(b1).execute();
+
+		ResultSet resultSet = cassandraTemplate.cqlOps().select(new QueryCreator() {
+
+			@Override
+			public Query createQuery() {
+				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
+			}
+
+		}).execute();
+
+		Book entry = cassandraTemplate.processOne(resultSet, Book.class, true);
+
+		assertEquals(b1.getIsbn(), entry.getIsbn());
+		assertEquals(b1.getTitle(), entry.getTitle());
+		assertEquals(b1.getAuthor(), entry.getAuthor());
 
 	}
 

@@ -376,14 +376,14 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> RowMapper<T> rowMapper(Class<T> entityClass) {
+	public <T> RowMapper<T> getRowMapper(Class<T> entityClass) {
 		Assert.notNull(entityClass);
 		return new ReaderRowMapper<T>(cassandraConverter, entityClass);
 	}
 
 	@Override
-	public <T> ResultSetExtractor<List<T>> resultSetExtractor(Class<T> entityClass) {
-		return new RowMapperResultSetExtractor<T>(rowMapper(entityClass));
+	public <T> ResultSetExtractor<List<T>> getResultSetExtractor(Class<T> entityClass) {
+		return new RowMapperResultSetExtractor<T>(getRowMapper(entityClass));
 	}
 
 	@Override
