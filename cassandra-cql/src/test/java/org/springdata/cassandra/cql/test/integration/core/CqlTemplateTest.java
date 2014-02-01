@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -45,8 +44,6 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 /**
  * @author David Webb
@@ -225,7 +222,7 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		// Insert our 3 test books.
 		insertBooks();
 
-		Iterator<Book> ibooks = cqlTemplate.select("select * from book where isbn in ('1234','2345','3456')")
+		List<Book> books = cqlTemplate.select("select * from book where isbn in ('1234','2345','3456')")
 				.map(new RowMapper<Book>() {
 
 					@Override
@@ -234,8 +231,6 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 						return b;
 					}
 				}).execute();
-
-		List<Book> books = Lists.newArrayList(ibooks);
 
 		log.debug("Size of Book List -> " + books.size());
 		assertEquals(books.size(), 3);
@@ -256,7 +251,7 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 
 		assertNotNull(rs);
 
-		Iterator<Book> ibooks = cqlTemplate.process(rs, new RowMapper<Book>() {
+		List<Book> books = cqlTemplate.process(rs, new RowMapper<Book>() {
 
 			@Override
 			public Book mapRow(Row row, int rowNum) {
@@ -264,8 +259,6 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 				return b;
 			}
 		});
-
-		List<Book> books = Lists.newArrayList(ibooks);
 
 		log.debug("Size of Book List -> " + books.size());
 		assertEquals(books.size(), 3);
@@ -411,14 +404,14 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		// Insert our 3 test books.
 		insertBooks();
 
-		Iterator<String> titles = cqlTemplate.select("select title from book where isbn in ('1234','2345','3456')")
+		List<String> titles = cqlTemplate.select("select title from book where isbn in ('1234','2345','3456')")
 				.firstColumn(String.class).execute();
 
 		log.debug(titles.toString());
 
 		assertNotNull(titles);
 
-		assertEquals(Iterators.size(titles), 3);
+		assertEquals(titles.size(), 3);
 
 	}
 
@@ -447,12 +440,12 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		// Insert our 3 test books.
 		insertBooks();
 
-		Iterator<Map<String, Object>> results = cqlTemplate
-				.select("select * from book where isbn in ('1234','2345','3456')").map().execute();
+		List<Map<String, Object>> results = cqlTemplate.select("select * from book where isbn in ('1234','2345','3456')")
+				.map().execute();
 
 		log.debug(results.toString());
 
-		assertEquals(Iterators.size(results), 3);
+		assertEquals(results.size(), 3);
 
 	}
 

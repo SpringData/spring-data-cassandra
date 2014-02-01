@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,7 +37,6 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
-import com.google.common.collect.Lists;
 
 /**
  * @author David Webb
@@ -164,7 +162,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 
 		PreparedStatement ps = cqlTemplate.prepareStatement(cql);
 
-		Iterator<Book> ibooks = cqlTemplate.select(ps, new PreparedStatementBinder() {
+		List<Book> books = cqlTemplate.select(ps, new PreparedStatementBinder() {
 
 			@Override
 			public BoundStatement bindValues(PreparedStatement ps) {
@@ -177,8 +175,6 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 				return rowToBook(row);
 			}
 		}).execute();
-
-		List<Book> books = Lists.newArrayList(ibooks);
 
 		Book b2 = getBook(isbn);
 
@@ -271,15 +267,13 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 
 		BoundStatement bs = cqlTemplate.bind(ps);
 
-		Iterator<Book> ibooks = cqlTemplate.select(bs).map(new RowMapper<Book>() {
+		List<Book> books = cqlTemplate.select(bs).map(new RowMapper<Book>() {
 
 			@Override
 			public Book mapRow(Row row, int rowNum) {
 				return rowToBook(row);
 			}
 		}).execute();
-
-		List<Book> books = Lists.newArrayList(ibooks);
 
 		log.debug("Size of all Books -> " + books.size());
 
@@ -308,20 +302,19 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 			}
 		});
 
-		List<Book> books = cqlTemplate.select(new SimpleQueryCreator(bs))
-				.transform(new ResultSetExtractor<List<Book>>() {
+		List<Book> books = cqlTemplate.select(new SimpleQueryCreator(bs)).transform(new ResultSetExtractor<List<Book>>() {
 
-					@Override
-					public List<Book> extractData(ResultSet rs) {
-						List<Book> books = new LinkedList<Book>();
+			@Override
+			public List<Book> extractData(ResultSet rs) {
+				List<Book> books = new LinkedList<Book>();
 
-						for (Row row : rs.all()) {
-							books.add(rowToBook(row));
-						}
+				for (Row row : rs.all()) {
+					books.add(rowToBook(row));
+				}
 
-						return books;
-					}
-				}).execute();
+				return books;
+			}
+		}).execute();
 
 		Book b2 = getBook(isbn);
 
@@ -387,15 +380,13 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 			}
 		});
 
-		Iterator<Book> ibooks = cqlTemplate.select(new SimpleQueryCreator(bs)).map(new RowMapper<Book>() {
+		List<Book> books = cqlTemplate.select(new SimpleQueryCreator(bs)).map(new RowMapper<Book>() {
 
 			@Override
 			public Book mapRow(Row row, int rowNum) {
 				return rowToBook(row);
 			}
 		}).execute();
-
-		List<Book> books = Lists.newArrayList(ibooks);
 
 		Book b2 = getBook(isbn);
 

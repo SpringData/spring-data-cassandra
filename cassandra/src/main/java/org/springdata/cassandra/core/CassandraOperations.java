@@ -15,7 +15,6 @@
  */
 package org.springdata.cassandra.core;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.springdata.cassandra.convert.CassandraConverter;
@@ -50,7 +49,7 @@ public interface CassandraOperations {
 	 * @param entityClass
 	 * @return GetOperation
 	 */
-	<T> GetOperation<Iterator<T>> findAll(Class<T> entityClass);
+	<T> GetOperation<List<T>> findAll(Class<T> entityClass);
 
 	/**
 	 * Finds all entities with specific ids in table
@@ -77,7 +76,7 @@ public interface CassandraOperations {
 	 * @param <T>
 	 * @return
 	 */
-	<T> GetOperation<Iterator<T>> findByPartitionKey(Class<T> entityClass, Object id);
+	<T> GetOperation<List<T>> findByPartitionKey(Class<T> entityClass, Object id);
 
 	/**
 	 * Execute query and convert ResultSet to the list of entities
@@ -86,7 +85,7 @@ public interface CassandraOperations {
 	 * @param cql must not be {@literal null}.
 	 * @return
 	 */
-	<T> GetOperation<Iterator<T>> find(Class<T> entityClass, String cql);
+	<T> GetOperation<List<T>> find(Class<T> entityClass, String cql);
 
 	/**
 	 * Execute query and convert ResultSet to the list of entities
@@ -199,7 +198,7 @@ public interface CassandraOperations {
 	 * @return ResultSetExtractor that can be used in SelectOperation
 	 */
 
-	<T> ResultSetExtractor<Iterator<T>> resultSetExtractor(Class<T> entityClass);
+	<T> ResultSetExtractor<List<T>> resultSetExtractor(Class<T> entityClass);
 
 	/**
 	 * Processes the ResultSet through the CassandraConverter and returns the List of mapped Rows. This is used internal
@@ -208,9 +207,9 @@ public interface CassandraOperations {
 	 * 
 	 * @param resultSet Results to process
 	 * @param entityClass Entity class used to mapping results
-	 * @return Iterator of <T>
+	 * @return List of <T>
 	 */
-	<T> Iterator<T> process(ResultSet resultSet, Class<T> entityClass);
+	<T> List<T> process(ResultSet resultSet, Class<T> entityClass);
 
 	/**
 	 * Processes the ResultSet through the RowCallbackHandler and return nothing. This is used internal to the Template

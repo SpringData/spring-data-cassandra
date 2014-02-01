@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.cql.core;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.datastax.driver.core.ResultSet;
@@ -49,7 +49,7 @@ public interface SelectOperation extends QueryOperation<ResultSet, SelectOperati
 	 * @param rowMapper
 	 * @return ProcessOperation
 	 */
-	<R> ProcessOperation<Iterator<R>> map(RowMapper<R> rowMapper);
+	<R> ProcessOperation<List<R>> map(RowMapper<R> rowMapper);
 
 	/**
 	 * Returns true if ResultSet is not empty.
@@ -64,14 +64,14 @@ public interface SelectOperation extends QueryOperation<ResultSet, SelectOperati
 	 * @param elementType
 	 * @return ProcessOperation
 	 */
-	<E> ProcessOperation<Iterator<E>> firstColumn(Class<E> elementType);
+	<E> ProcessOperation<List<E>> firstColumn(Class<E> elementType);
 
 	/**
 	 * Maps all rows from ResultSet to Map<String, Object>.
 	 * 
 	 * @return ProcessOperation
 	 */
-	ProcessOperation<Iterator<Map<String, Object>>> map();
+	ProcessOperation<List<Map<String, Object>>> map();
 
 	/**
 	 * Uses ResultSetCallback to transform ResultSet to object with type T.

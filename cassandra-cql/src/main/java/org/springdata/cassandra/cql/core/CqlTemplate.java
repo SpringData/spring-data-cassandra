@@ -48,6 +48,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * <b>This is the Central class in the Cassandra core package.</b> It simplifies the use of Cassandra and helps to avoid
@@ -194,7 +195,7 @@ public class CqlTemplate implements CqlOperations {
 	public UpdateOperation batchUpdate(final String[] cqls) {
 		Assert.notNull(cqls);
 
-		Iterator<Statement> statements = Iterators.transform(new ArrayIterator<String>(cqls),
+		final Iterator<Statement> statements = Iterators.transform(new ArrayIterator<String>(cqls),
 				new Function<String, Statement>() {
 
 					@Override
@@ -204,11 +205,18 @@ public class CqlTemplate implements CqlOperations {
 
 				});
 
-		return batchUpdate(statements);
+		return batchUpdate(new Iterable<Statement>() {
+
+			@Override
+			public Iterator<Statement> iterator() {
+				return statements;
+			}
+
+		});
 	}
 
 	@Override
-	public UpdateOperation batchUpdate(final Iterator<Statement> statements) {
+	public UpdateOperation batchUpdate(final Iterable<Statement> statements) {
 		Assert.notNull(statements);
 
 		return new DefaultUpdateOperation(this, new QueryCreator() {
@@ -222,9 +230,8 @@ public class CqlTemplate implements CqlOperations {
 				final Batch batch = QueryBuilder.batch();
 
 				boolean emptyBatch = true;
-				while (statements.hasNext()) {
+				for (Statement statement : statements) {
 
-					Statement statement = statements.next();
 					Assert.notNull(statement);
 
 					batch.add(statement);
@@ -437,45 +444,6 @@ public class CqlTemplate implements CqlOperations {
 		}
 	}
 
-	/**
-	 * Service iterator
-	 * 
-	 * @author Alex Shvid
-	 * 
-	 * @param <T>
-	 */
-
-	protected class MappedRowIterator<T> implements Iterator<T> {
-
-		final Iterator<Row> backingIterator;
-		final RowMapper<T> mapper;
-		int row = 0;
-
-		MappedRowIterator(Iterator<Row> backingIterator, RowMapper<T> mapper) {
-			this.backingIterator = backingIterator;
-			this.mapper = mapper;
-		}
-
-		@Override
-		public final boolean hasNext() {
-			return backingIterator.hasNext();
-		}
-
-		@Override
-		public final T next() {
-			try {
-				return mapper.mapRow(backingIterator.next(), ++row);
-			} catch (RuntimeException e) {
-				throw translateIfPossible(e);
-			}
-		}
-
-		@Override
-		public final void remove() {
-			throw new UnsupportedOperationException("can not remove row from the ResultSet");
-		}
-	}
-
 	@Override
 	public <T> List<T> describeRing(HostMapper<T> hostMapper) {
 		Assert.notNull(hostMapper);
@@ -512,15 +480,25 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public <T> Iterator<T> process(ResultSet resultSet, final RowMapper<T> rowMapper) {
+	public <T> List<T> process(ResultSet resultSet, final RowMapper<T> rowMapper) {
 		Assert.notNull(resultSet);
 		Assert.notNull(rowMapper);
 
-		return doProcess(resultSet, new ResultSetExtractor<Iterator<T>>() {
+		return doProcess(resultSet, new ResultSetExtractor<List<T>>() {
 
 			@Override
-			public Iterator<T> extractData(ResultSet resultSet) {
-				return new MappedRowIterator<T>(resultSet.iterator(), rowMapper);
+			public List<T> extractData(ResultSet resultSet) {
+
+				List<T> result = Lists.newArrayList();
+
+				int rowNum = 0;
+				for (Row row : resultSet) {
+					T obj = rowMapper.mapRow(row, rowNum++);
+					result.add(obj);
+				}
+
+				return Collections.unmodifiableList(result);
+
 			}
 
 		});
@@ -615,23 +593,22 @@ public class CqlTemplate implements CqlOperations {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Iterator<T> processFirstColumn(ResultSet resultSet, Class<T> elementType) {
+	public <T> List<T> processFirstColumn(ResultSet resultSet, Class<T> elementType) {
 		Assert.notNull(resultSet);
 		Assert.notNull(elementType);
 
-		return doProcess(resultSet, new ResultSetExtractor<Iterator<T>>() {
+		return doProcess(resultSet, new ResultSetExtractor<List<T>>() {
 
 			@Override
-			public Iterator<T> extractData(ResultSet resultSet) {
+			public List<T> extractData(ResultSet resultSet) {
 
-				return Iterators.transform(resultSet.iterator(), new Function<Row, T>() {
+				List<T> result = new ArrayList<T>();
+				for (Row row : resultSet) {
+					T obj = (T) firstColumnToObject(row);
+					result.add(obj);
+				}
 
-					@Override
-					public T apply(Row row) {
-						return (T) firstColumnToObject(row);
-					}
-
-				});
+				return Collections.unmodifiableList(result);
 
 			}
 
@@ -640,22 +617,22 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public Iterator<Map<String, Object>> processAsMap(ResultSet resultSet) {
+	public List<Map<String, Object>> processAsMap(ResultSet resultSet) {
 		Assert.notNull(resultSet);
 
-		return doProcess(resultSet, new ResultSetExtractor<Iterator<Map<String, Object>>>() {
+		return doProcess(resultSet, new ResultSetExtractor<List<Map<String, Object>>>() {
 
 			@Override
-			public Iterator<Map<String, Object>> extractData(ResultSet resultSet) {
+			public List<Map<String, Object>> extractData(ResultSet resultSet) {
 
-				return Iterators.transform(resultSet.iterator(), new Function<Row, Map<String, Object>>() {
+				List<Map<String, Object>> result = Lists.newArrayList();
 
-					@Override
-					public Map<String, Object> apply(Row row) {
-						return toMap(row);
-					}
+				for (Row row : resultSet) {
+					Map<String, Object> map = toMap(row);
+					result.add(map);
+				}
 
-				});
+				return Collections.unmodifiableList(result);
 
 			}
 
@@ -774,12 +751,12 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public IngestOperation ingest(final PreparedStatement ps, Iterator<Object[]> rows) {
+	public IngestOperation ingest(final PreparedStatement ps, Iterable<Object[]> rows) {
 
 		Assert.notNull(ps);
 		Assert.notNull(rows);
 
-		Iterator<Query> queryIterator = Iterators.transform(rows, new Function<Object[], Query>() {
+		Iterator<Query> queryIterator = Iterators.transform(rows.iterator(), new Function<Object[], Query>() {
 
 			@Override
 			public Query apply(final Object[] values) {
@@ -807,7 +784,16 @@ public class CqlTemplate implements CqlOperations {
 		Assert.notNull(rows);
 		Assert.notEmpty(rows);
 
-		return ingest(ps, new ArrayIterator<Object[]>(rows));
+		final Iterator<Object[]> iterator = new ArrayIterator<Object[]>(rows);
+
+		return ingest(ps, new Iterable<Object[]>() {
+
+			@Override
+			public Iterator<Object[]> iterator() {
+				return iterator;
+			}
+
+		});
 	}
 
 	/**

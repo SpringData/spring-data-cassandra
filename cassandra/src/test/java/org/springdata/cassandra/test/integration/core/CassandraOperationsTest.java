@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdata.cassandra.core.CassandraOperations;
 import org.springdata.cassandra.cql.core.ConsistencyLevel;
-import org.springdata.cassandra.cql.core.QueryCreator;
 import org.springdata.cassandra.cql.core.RetryPolicy;
 import org.springdata.cassandra.test.integration.config.JavaConfig;
 import org.springdata.cassandra.test.integration.table.Book;
@@ -49,7 +47,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import com.google.common.collect.Lists;
@@ -821,9 +818,7 @@ public class CassandraOperationsTest {
 
 		cassandraTemplate.saveNew(b1).execute();
 
-		Iterator<Book> bi = cassandraTemplate.findByPartitionKey(Book.class, "123456-1").execute();
-
-		List<Book> found = Lists.newArrayList(bi);
+		List<Book> found = cassandraTemplate.findByPartitionKey(Book.class, "123456-1").execute();
 
 		assertEquals(1, found.size());
 		Book b = found.get(0);
@@ -842,8 +837,7 @@ public class CassandraOperationsTest {
 
 		cassandraTemplate.saveNewInBatch(books).execute();
 
-		Iterator<Book> foundIterator = cassandraTemplate.findAll(Book.class).execute();
-		List<Book> found = Lists.newArrayList(foundIterator);
+		List<Book> found = cassandraTemplate.findAll(Book.class).execute();
 
 		assertEquals(20, found.size());
 

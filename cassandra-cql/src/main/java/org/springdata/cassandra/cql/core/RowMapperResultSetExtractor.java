@@ -15,12 +15,12 @@
  */
 package org.springdata.cassandra.cql.core;
 
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.List;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
-import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * ResutSetExtractor that uses RowMapper to extract data
@@ -28,7 +28,7 @@ import com.google.common.collect.Iterators;
  * @author Alex Shvid
  * 
  */
-public class RowMapperResultSetExtractor<T> implements ResultSetExtractor<Iterator<T>> {
+public class RowMapperResultSetExtractor<T> implements ResultSetExtractor<List<T>> {
 
 	private final RowMapper<T> rowMapper;
 
@@ -37,16 +37,17 @@ public class RowMapperResultSetExtractor<T> implements ResultSetExtractor<Iterat
 	}
 
 	@Override
-	public Iterator<T> extractData(ResultSet resultSet) {
-		return Iterators.transform(resultSet.iterator(), new Function<Row, T>() {
+	public List<T> extractData(ResultSet resultSet) {
 
-			private int rowNum = 0;
+		List<T> result = Lists.newArrayList();
 
-			@Override
-			public T apply(Row row) {
-				return rowMapper.mapRow(row, rowNum++);
-			}
+		int rowNum = 0;
+		for (Row row : resultSet) {
+			T obj = rowMapper.mapRow(row, rowNum++);
+			result.add(obj);
+		}
 
-		});
+		return Collections.unmodifiableList(result);
+
 	}
 }

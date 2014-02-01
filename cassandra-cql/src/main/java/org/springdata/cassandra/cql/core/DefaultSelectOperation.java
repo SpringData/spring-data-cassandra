@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.cql.core;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
@@ -54,12 +54,12 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 	}
 
 	@Override
-	public <R> ProcessOperation<Iterator<R>> map(final RowMapper<R> rowMapper) {
+	public <R> ProcessOperation<List<R>> map(final RowMapper<R> rowMapper) {
 
-		return new ProcessingSelectOperation<Iterator<R>>(this, new Processor<Iterator<R>>() {
+		return new ProcessingSelectOperation<List<R>>(this, new Processor<List<R>>() {
 
 			@Override
-			public Iterator<R> process(ResultSet resultSet) {
+			public List<R> process(ResultSet resultSet) {
 				return cqlTemplate.process(resultSet, rowMapper);
 			}
 
@@ -89,12 +89,12 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 	}
 
 	@Override
-	public <E> ProcessOperation<Iterator<E>> firstColumn(final Class<E> elementType) {
+	public <E> ProcessOperation<List<E>> firstColumn(final Class<E> elementType) {
 
-		return new ProcessingSelectOperation<Iterator<E>>(this, new Processor<Iterator<E>>() {
+		return new ProcessingSelectOperation<List<E>>(this, new Processor<List<E>>() {
 
 			@Override
-			public Iterator<E> process(ResultSet resultSet) {
+			public List<E> process(ResultSet resultSet) {
 				return cqlTemplate.processFirstColumn(resultSet, elementType);
 			}
 
@@ -102,17 +102,16 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 	}
 
 	@Override
-	public ProcessOperation<Iterator<Map<String, Object>>> map() {
+	public ProcessOperation<List<Map<String, Object>>> map() {
 
-		return new ProcessingSelectOperation<Iterator<Map<String, Object>>>(this,
-				new Processor<Iterator<Map<String, Object>>>() {
+		return new ProcessingSelectOperation<List<Map<String, Object>>>(this, new Processor<List<Map<String, Object>>>() {
 
-					@Override
-					public Iterator<Map<String, Object>> process(ResultSet resultSet) {
-						return cqlTemplate.processAsMap(resultSet);
-					}
+			@Override
+			public List<Map<String, Object>> process(ResultSet resultSet) {
+				return cqlTemplate.processAsMap(resultSet);
+			}
 
-				});
+		});
 
 	}
 

@@ -95,7 +95,7 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> GetOperation<Iterator<T>> findAll(Class<T> entityClass) {
+	public <T> GetOperation<List<T>> findAll(Class<T> entityClass) {
 		Assert.notNull(entityClass);
 
 		return new AbstractFindOperation<T>(this, entityClass) {
@@ -145,7 +145,7 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> GetOperation<Iterator<T>> findByPartitionKey(Class<T> entityClass, final Object id) {
+	public <T> GetOperation<List<T>> findByPartitionKey(Class<T> entityClass, final Object id) {
 		Assert.notNull(entityClass);
 		Assert.notNull(id);
 
@@ -172,7 +172,7 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> GetOperation<Iterator<T>> find(Class<T> entityClass, final String cql) {
+	public <T> GetOperation<List<T>> find(Class<T> entityClass, final String cql) {
 		Assert.notNull(entityClass);
 		Assert.notNull(cql);
 
@@ -382,12 +382,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> ResultSetExtractor<Iterator<T>> resultSetExtractor(Class<T> entityClass) {
+	public <T> ResultSetExtractor<List<T>> resultSetExtractor(Class<T> entityClass) {
 		return new RowMapperResultSetExtractor<T>(rowMapper(entityClass));
 	}
 
 	@Override
-	public <T> Iterator<T> process(ResultSet resultSet, Class<T> entityClass) {
+	public <T> List<T> process(ResultSet resultSet, Class<T> entityClass) {
 		Assert.notNull(resultSet);
 		Assert.notNull(entityClass);
 

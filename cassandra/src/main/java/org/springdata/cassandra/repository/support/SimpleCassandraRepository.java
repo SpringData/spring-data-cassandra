@@ -16,7 +16,6 @@
 package org.springdata.cassandra.repository.support;
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springdata.cassandra.core.CassandraOperations;
@@ -84,8 +83,7 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 	@Override
 	public List<T> findByPartitionKey(ID id) {
 		Assert.notNull(id, "The given id must not be null!");
-		Iterator<T> iterator = cassandraTemplate.findByPartitionKey(entityInformation.getJavaType(), id).execute();
-		return ImmutableList.copyOf(iterator);
+		return cassandraTemplate.findByPartitionKey(entityInformation.getJavaType(), id).execute();
 	}
 
 	@Override
@@ -125,8 +123,7 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 
 	@Override
 	public List<T> findAll() {
-		Iterator<T> iterator = cassandraTemplate.findAll(entityInformation.getJavaType()).execute();
-		return ImmutableList.copyOf(iterator);
+		return cassandraTemplate.findAll(entityInformation.getJavaType()).execute();
 	}
 
 	@Override
