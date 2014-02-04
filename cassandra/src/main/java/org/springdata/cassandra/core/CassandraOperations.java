@@ -199,7 +199,7 @@ public interface CassandraOperations {
 	 * @return RowMapper that can be used in SelectOperation
 	 */
 
-	<T> RowMapper<T> getRowMapper(Class<T> entityClass);
+	<T> RowMapper<T> getRowMapperFor(Class<T> entityClass);
 
 	/**
 	 * Returns ResultSetExtractor based on Cassandra Converter.
@@ -208,7 +208,7 @@ public interface CassandraOperations {
 	 * @return ResultSetExtractor that can be used in SelectOperation
 	 */
 
-	<T> ResultSetExtractor<List<T>> getResultSetExtractor(Class<T> entityClass);
+	<T> ResultSetExtractor<List<T>> getResultSetExtractorFor(Class<T> entityClass);
 
 	/**
 	 * Processes the ResultSet through the CassandraConverter and returns the List of mapped Rows. This is used internal

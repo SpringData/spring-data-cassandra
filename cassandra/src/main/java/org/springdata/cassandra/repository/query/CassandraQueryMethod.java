@@ -43,7 +43,7 @@ public class CassandraQueryMethod extends QueryMethod {
 	private CassandraEntityMetadata<?> metadata;
 
 	/**
-	 * Creates a new {@link MongoQueryMethod} from the given {@link Method}.
+	 * Creates a new {@link CassandraQueryMethod} from the given {@link Method}.
 	 * 
 	 * @param method
 	 */

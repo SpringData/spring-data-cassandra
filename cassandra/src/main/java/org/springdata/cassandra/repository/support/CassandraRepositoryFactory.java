@@ -49,9 +49,9 @@ public class CassandraRepositoryFactory extends RepositoryFactorySupport {
 	private final MappingContext<? extends CassandraPersistentEntity<?>, CassandraPersistentProperty> mappingContext;
 
 	/**
-	 * Creates a new {@link MongoRepositoryFactory} with the given {@link MongoOperations}.
+	 * Creates a new {@link CassandraRepositoryFactory} with the given {@link CassandraRepositoryFactory}.
 	 * 
-	 * @param mongoOperations must not be {@literal null}
+	 * @param cassandraTemplate must not be {@literal null}
 	 */
 	public CassandraRepositoryFactory(CassandraTemplate cassandraTemplate) {
 
@@ -72,7 +72,7 @@ public class CassandraRepositoryFactory extends RepositoryFactorySupport {
 
 		CassandraEntityInformation<?, Serializable> entityInformation = getEntityInformation(metadata.getDomainType());
 
-		return new SimpleCassandraRepository(entityInformation, cassandraTemplate);
+		return new SimpleCassandraRepository(entityInformation, metadata.getRepositoryInterface(), cassandraTemplate);
 
 	}
 

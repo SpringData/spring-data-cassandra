@@ -56,7 +56,7 @@ public class UserRepositoryIntegrationTests {
 	protected UserRepository repository;
 
 	@Autowired
-	protected CassandraOperations dataOperations;
+	protected CassandraOperations cassandraOperations;
 
 	User tom, bob, alice, scott;
 
@@ -71,7 +71,7 @@ public class UserRepositoryIntegrationTests {
 	@Before
 	public void setUp() throws InterruptedException {
 
-		repository.deleteAll();
+		cassandraOperations.deleteAll(User.class).execute();
 
 		tom = new User();
 		tom.setUsername("tom");
@@ -103,7 +103,7 @@ public class UserRepositoryIntegrationTests {
 
 		all = Arrays.asList(tom, bob, alice, scott);
 
-		dataOperations.saveNewInBatch(all).execute();
+		cassandraOperations.saveNewInBatch(all).execute();
 	}
 
 	@Test
@@ -165,6 +165,11 @@ public class UserRepositoryIntegrationTests {
 
 		repository.save(alex);
 
+		User found = repository.findOne("alex");
+		Assert.assertNotNull(found);
+
+		assertEquals(alex, found);
+
 	}
 
 	@Test
@@ -177,7 +182,12 @@ public class UserRepositoryIntegrationTests {
 		alex.setPassword("123");
 		alex.setPlace("SF");
 
-		repository.save(alex);
+		repository.save(alex);// , ConsistencyLevel.ALL);
+
+		User found = repository.findOne("alex");
+		Assert.assertNotNull(found);
+
+		assertEquals(alex, found);
 
 	}
 

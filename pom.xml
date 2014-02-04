@@ -9,7 +9,7 @@
 	<version>1.2.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>Spring Data Cassandra Parent</name>
+	<name>Spring Data Cassandra</name>
 	<description>Cassandra support for Spring Data</description>
 	<url>http://www.springdata.org/cassandra</url>
 
@@ -49,7 +49,6 @@
 		<springdata.commons>1.6.2.RELEASE</springdata.commons>
 		<cassandra-unit.version>1.2.0.1</cassandra-unit.version>
 		<cassandra-driver-core.version>1.0.5-dse</cassandra-driver-core.version>
-		<failsafe.version>2.16</failsafe.version>
 		<guava.version>14.0.1</guava.version>
 		
 		<apt>1.1.0</apt>
@@ -71,7 +70,6 @@
 		<developer>
 			<id>ashvid</id>
 			<name>Alex Shvid</name>
-			<email>a at shvid.com</email>
 			<roles>
 			    <role>Project Lead</role>
 				<role>Developer</role>
@@ -79,6 +77,115 @@
 			<timezone>-8</timezone>
 		</developer>		
 	</developers>
+
+	<profiles>
+	
+		<profile>
+			<id>coverage</id>
+	
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack-dependencies-src</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>unpack-dependencies</goal>
+								</goals>
+								<configuration>
+									<classifier>sources</classifier>
+									<includeGroupIds>org.springdata</includeGroupIds>
+									<outputDirectory>${project.build.directory}/generated-sources/it-dependencies</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>add-it-dep-source</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>${project.build.directory}/generated-sources/it-dependencies</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+	
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>cobertura-it-maven-plugin</artifactId>
+						<version>2.5</version>
+						<configuration>
+							<formats>
+								<format>xml</format>
+							</formats>
+							<check>
+								<haltOnFailure>false</haltOnFailure>
+							</check>
+						</configuration>
+						<executions>
+							<execution>
+								<id>cobertura-clean</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>clean</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>cobertura-instrument</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>instrument</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>cobertura-check-only</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>check-only</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+	
+				</plugins>
+			</build>
+	
+			<reporting>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>cobertura-it-maven-plugin</artifactId>
+						<version>2.5</version>
+						<configuration>
+							<formats>
+								<format>html</format>
+								<format>xml</format>
+							</formats>
+						</configuration>
+						<reportSets>
+							<reportSet>
+								<reports>
+									<report>report-only</report>
+								</reports>
+							</reportSet>
+						</reportSets>
+					</plugin>
+				</plugins>
+			</reporting>
+		</profile>
+	
+	</profiles>
 
 	<dependencyManagement>
 		<dependencies>
@@ -282,7 +389,7 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${logback}</version>
 			<scope>test</scope>
-		</dependency>				
+		</dependency>	
 
 	</dependencies>
 
@@ -292,7 +399,7 @@
 			<url>http://repo.springsource.org/libs-release-local</url>
 		</repository>
 	</repositories>
-
+    
 	<build>
 		<plugins>
 			<plugin>
@@ -307,6 +414,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -319,6 +427,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
 				<configuration>
 					<aggregate>true</aggregate>
 	                <author>true</author>
@@ -355,6 +464,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.16</version>
 				<configuration>
 			    	<argLine>-Xmx2048m -XX:MaxPermSize=512m</argLine>
 					<parallel>methods</parallel>
@@ -375,7 +485,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>${failsafe.version}</version>
+				<version>2.16</version>
 				<configuration>
 				    <forkMode>always</forkMode>
 				    <argLine>-Xmx2048m -XX:MaxPermSize=512m</argLine>
@@ -393,6 +503,7 @@
 				</configuration>
 				<executions>
 					<execution>
+					    <phase>integration-test</phase>
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
@@ -400,6 +511,66 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--  
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<formats>
+					    <format>html</format>
+					    <format>xml</format>
+					</formats>
+					<instrumentation>
+						<ignores>
+							<ignore>org.springdata.cassandra.test.performance</ignore>
+						</ignores>
+						<excludes>
+							<exclude>**/test/performance/**/*.class</exclude>
+						</excludes>
+					</instrumentation>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>cobertura</goal>
+						</goals>
+					</execution>
+                    <execution>
+                        <id>cobertura-instrument</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>instrument</goal>
+                        </goals>
+                    </execution>					
+				</executions>
+			</plugin>
+			-->		
 		</plugins>
 	</build>
+  <!--  	
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.6</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  -->
+  
+  <pluginRepositories>
+    <pluginRepository>
+        <id>cobertura-it-maven-plugin-maven2-release</id>
+        <url>http://cobertura-it-maven-plugin.googlecode.com/svn/maven2/releases</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+    </pluginRepository>
+</pluginRepositories>
+
 </project>

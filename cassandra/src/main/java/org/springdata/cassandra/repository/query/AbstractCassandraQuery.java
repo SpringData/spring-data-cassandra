@@ -37,7 +37,7 @@ public abstract class AbstractCassandraQuery implements RepositoryQuery {
 	private final CassandraOperations cassandraOperations;
 
 	/**
-	 * Creates a new {@link AbstractMongoQuery} from the given {@link CassandraQueryMethod} and
+	 * Creates a new {@link AbstractCassandraQuery} from the given {@link CassandraQueryMethod} and
 	 * {@link CassandraOperations}.
 	 * 
 	 * @param method must not be {@literal null}.

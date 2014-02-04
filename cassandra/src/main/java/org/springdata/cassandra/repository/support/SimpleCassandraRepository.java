@@ -35,8 +35,9 @@ import com.google.common.collect.ImmutableList;
 
 public class SimpleCassandraRepository<T, ID extends Serializable> implements CassandraRepository<T, ID> {
 
-	private final CassandraTemplate cassandraTemplate;
 	private final CassandraEntityInformation<T, ID> entityInformation;
+	private final Class<?> repositoryInterface;
+	private final CassandraTemplate cassandraTemplate;
 
 	/**
 	 * Creates a new {@link SimpleCassandraRepository} for the given {@link CassandraEntityInformation} and
@@ -45,13 +46,17 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 	 * @param metadata must not be {@literal null}.
 	 * @param template must not be {@literal null}.
 	 */
-	public SimpleCassandraRepository(CassandraEntityInformation<T, ID> metadata, CassandraTemplate cassandraTemplate) {
+	public SimpleCassandraRepository(CassandraEntityInformation<T, ID> entityInformation, Class<?> repositoryInterface,
+			CassandraTemplate cassandraTemplate) {
 
+		Assert.notNull(entityInformation);
+		Assert.notNull(repositoryInterface);
 		Assert.notNull(cassandraTemplate);
-		Assert.notNull(metadata);
 
-		this.entityInformation = metadata;
+		this.entityInformation = entityInformation;
+		this.repositoryInterface = repositoryInterface;
 		this.cassandraTemplate = cassandraTemplate;
+
 	}
 
 	@Override

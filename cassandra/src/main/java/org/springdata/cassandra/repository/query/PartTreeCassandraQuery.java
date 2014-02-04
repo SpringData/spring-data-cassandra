@@ -33,7 +33,7 @@ public class PartTreeCassandraQuery extends AbstractCassandraQuery {
 	private final MappingContext<?, CassandraPersistentProperty> context;
 
 	/**
-	 * Creates a new {@link PartTreeCassandraQuery} from the given {@link QueryMethod} and {@link MongoTemplate}.
+	 * Creates a new {@link PartTreeCassandraQuery} from the given {@link QueryMethod} and {@link CassandraTemplate}.
 	 * 
 	 * @param method must not be {@literal null}.
 	 * @param template must not be {@literal null}.

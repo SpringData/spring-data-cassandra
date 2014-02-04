@@ -955,7 +955,7 @@ public class CassandraTemplateTest {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 
-		}).map(cassandraTemplate.getRowMapper(Book.class)).execute();
+		}).map(cassandraTemplate.getRowMapperFor(Book.class)).execute();
 
 		assertEquals(1, books.size());
 
@@ -986,7 +986,7 @@ public class CassandraTemplateTest {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 
-		}).transform(cassandraTemplate.getResultSetExtractor(Book.class)).execute();
+		}).transform(cassandraTemplate.getResultSetExtractorFor(Book.class)).execute();
 
 		assertEquals(1, books.size());
 
