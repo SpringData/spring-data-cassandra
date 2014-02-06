@@ -9,7 +9,7 @@
 	<version>1.2.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>Spring Data Cassandra</name>
+	<name>SDC</name>
 	<description>Cassandra support for Spring Data</description>
 	<url>http://www.springdata.org/cassandra</url>
 

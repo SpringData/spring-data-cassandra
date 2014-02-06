@@ -95,7 +95,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> GetOperation<List<T>> findAll(Class<T> entityClass) {
+	public <T> List<T> findAll(Class<T> entityClass) {
+		return getFindAllOperation(entityClass).execute();
+	}
+
+	@Override
+	public <T> GetOperation<List<T>> getFindAllOperation(Class<T> entityClass) {
 		Assert.notNull(entityClass);
 
 		return new AbstractFindOperation<T>(this, entityClass) {
@@ -110,7 +115,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> GetOperation<List<T>> findAll(final Class<T> entityClass, final Iterable<?> ids) {
+	public <T> List<T> findAll(Class<T> entityClass, Iterable<?> ids) {
+		return getFindAllOperation(entityClass, ids).execute();
+	}
+
+	@Override
+	public <T> GetOperation<List<T>> getFindAllOperation(final Class<T> entityClass, final Iterable<?> ids) {
 		Assert.notNull(entityClass);
 		Assert.notNull(ids);
 
@@ -118,7 +128,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> GetOperation<T> findById(Class<T> entityClass, final Object id) {
+	public <T> T findById(Class<T> entityClass, Object id) {
+		return getFindByIdOperation(entityClass, id).execute();
+	}
+
+	@Override
+	public <T> GetOperation<T> getFindByIdOperation(Class<T> entityClass, final Object id) {
 		Assert.notNull(entityClass);
 		Assert.notNull(id);
 
@@ -145,7 +160,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> GetOperation<List<T>> findByPartitionKey(Class<T> entityClass, final Object id) {
+	public <T> List<T> findByPartitionKey(Class<T> entityClass, Object id) {
+		return getFindByPartitionKeyOperation(entityClass, id).execute();
+	}
+
+	@Override
+	public <T> GetOperation<List<T>> getFindByPartitionKeyOperation(Class<T> entityClass, final Object id) {
 		Assert.notNull(entityClass);
 		Assert.notNull(id);
 
@@ -172,7 +192,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> GetOperation<List<T>> find(Class<T> entityClass, final String cql) {
+	public <T> List<T> find(Class<T> entityClass, String cql) {
+		return getFindOperation(entityClass, cql).execute();
+	}
+
+	@Override
+	public <T> GetOperation<List<T>> getFindOperation(Class<T> entityClass, final String cql) {
 		Assert.notNull(entityClass);
 		Assert.notNull(cql);
 
@@ -188,7 +213,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> GetOperation<T> findOne(Class<T> entityClass, final String cql) {
+	public <T> T findOne(Class<T> entityClass, String cql) {
+		return getFindOneOperation(entityClass, cql).execute();
+	}
+
+	@Override
+	public <T> GetOperation<T> getFindOneOperation(Class<T> entityClass, final String cql) {
 		Assert.notNull(entityClass);
 		Assert.notNull(cql);
 
@@ -204,7 +234,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> BatchOperation deleteByIdInBatch(final Class<T> entityClass, Iterable<?> ids) {
+	public <T> ResultSet deleteByIdInBatch(Class<T> entityClass, Iterable<?> ids) {
+		return getDeleteByIdInBatchOperation(entityClass, ids).execute();
+	}
+
+	@Override
+	public <T> BatchOperation getDeleteByIdInBatchOperation(final Class<T> entityClass, Iterable<?> ids) {
 		Assert.notNull(entityClass);
 		Assert.notNull(ids);
 
@@ -227,7 +262,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> DefaultDeleteOperation<T> deleteById(Class<T> entityClass, Object id) {
+	public <T> ResultSet deleteById(Class<T> entityClass, Object id) {
+		return getDeleteByIdOperation(entityClass, id).execute();
+	}
+
+	@Override
+	public <T> DefaultDeleteOperation<T> getDeleteByIdOperation(Class<T> entityClass, Object id) {
 		Assert.notNull(entityClass);
 		Assert.notNull(id);
 		assertNotIterable(id);
@@ -235,7 +275,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> BatchOperation deleteInBatch(Iterable<T> entities) {
+	public <T> ResultSet deleteInBatch(Iterable<T> entities) {
+		return getDeleteInBatchOperation(entities).execute();
+	}
+
+	@Override
+	public <T> BatchOperation getDeleteInBatchOperation(Iterable<T> entities) {
 		Assert.notNull(entities);
 
 		final CassandraTemplate cassandraTemplate = this;
@@ -257,32 +302,57 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> DeleteOperation delete(T entity) {
+	public <T> ResultSet delete(T entity) {
+		return getDeleteOperation(entity).execute();
+	}
+
+	@Override
+	public <T> DeleteOperation getDeleteOperation(T entity) {
 		Assert.notNull(entity);
 		assertNotIterable(entity);
 		return new DefaultDeleteOperation<T>(this, entity);
 	}
 
 	@Override
-	public <T> DeleteOperation deleteAll(Class<T> entityClass) {
+	public <T> ResultSet deleteAll(Class<T> entityClass) {
+		return getDeleteAllOperation(entityClass).execute();
+	}
+
+	@Override
+	public <T> DeleteOperation getDeleteAllOperation(Class<T> entityClass) {
 		Assert.notNull(entityClass);
 		return new DefaultDeleteOperation<T>(this, entityClass);
 	}
 
 	@Override
-	public <T> GetOperation<Long> countAll(Class<T> entityClass) {
+	public <T> Long countAll(Class<T> entityClass) {
+		return getCountAllOperation(entityClass).execute();
+	}
+
+	@Override
+	public <T> GetOperation<Long> getCountAllOperation(Class<T> entityClass) {
 		Assert.notNull(entityClass);
 		return new DefaultCountOperation<T>(this, entityClass);
 	}
 
 	@Override
-	public <T> GetOperation<Boolean> exists(T entity) {
+	public <T> Boolean exists(T entity) {
+		return getExistsOperation(entity).execute();
+	}
+
+	@Override
+	public <T> GetOperation<Boolean> getExistsOperation(T entity) {
 		Assert.notNull(entity);
 		return new DefaultExistsOperation<T>(this, entity);
 	}
 
 	@Override
-	public <T> GetOperation<Boolean> exists(Class<T> entityClass, Object id) {
+	public <T> Boolean exists(Class<T> entityClass, Object id) {
+		return getExistsOperation(entityClass, id).execute();
+	}
+
+	@Override
+	public <T> GetOperation<Boolean> getExistsOperation(Class<T> entityClass, Object id) {
 		Assert.notNull(entityClass);
 		Assert.notNull(id);
 		return new DefaultExistsOperation<T>(this, entityClass, id);
@@ -323,7 +393,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> BatchOperation saveNewInBatch(Iterable<T> entities) {
+	public <T> ResultSet saveNewInBatch(Iterable<T> entities) {
+		return getSaveNewInBatchOperation(entities).execute();
+	}
+
+	@Override
+	public <T> BatchOperation getSaveNewInBatchOperation(Iterable<T> entities) {
 		Assert.notNull(entities);
 
 		final CassandraTemplate cassandraTemplate = this;
@@ -346,14 +421,24 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> SaveNewOperation saveNew(T entity) {
+	public <T> ResultSet saveNew(T entity) {
+		return getSaveNewOperation(entity).execute();
+	}
+
+	@Override
+	public <T> SaveNewOperation getSaveNewOperation(T entity) {
 		Assert.notNull(entity);
 		assertNotIterable(entity);
 		return new DefaultSaveNewOperation<T>(this, entity);
 	}
 
 	@Override
-	public <T> BatchOperation saveInBatch(Iterable<T> entities) {
+	public <T> ResultSet saveInBatch(Iterable<T> entities) {
+		return getSaveInBatchOperation(entities).execute();
+	}
+
+	@Override
+	public <T> BatchOperation getSaveInBatchOperation(Iterable<T> entities) {
 		Assert.notNull(entities);
 
 		final CassandraTemplate cassandraTemplate = this;
@@ -375,7 +460,12 @@ public class CassandraTemplate implements CassandraOperations {
 	}
 
 	@Override
-	public <T> SaveOperation save(T entity) {
+	public <T> ResultSet save(T entity) {
+		return getSaveOperation(entity).execute();
+	}
+
+	@Override
+	public <T> SaveOperation getSaveOperation(T entity) {
 		Assert.notNull(entity);
 		assertNotIterable(entity);
 		return new DefaultSaveOperation<T>(this, entity);

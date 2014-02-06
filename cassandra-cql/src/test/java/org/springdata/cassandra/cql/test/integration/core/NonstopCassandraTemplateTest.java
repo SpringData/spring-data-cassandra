@@ -35,7 +35,7 @@ public class NonstopCassandraTemplateTest extends AbstractCassandraOperations {
 
 		final String isbn = "999999999";
 
-		Book b1 = cqlTemplate.select("select * from book where isbn='" + isbn + "'")
+		Book b1 = cqlTemplate.getSelectOperation("select * from book where isbn='" + isbn + "'")
 				.transform(new ResultSetExtractor<Book>() {
 
 					@Override

@@ -47,9 +47,26 @@ public interface CassandraOperations {
 	 * Finds all entities in table
 	 * 
 	 * @param entityClass
+	 * @return List<T>
+	 */
+	<T> List<T> findAll(Class<T> entityClass);
+
+	/**
+	 * Finds all entities in table
+	 * 
+	 * @param entityClass
 	 * @return GetOperation
 	 */
-	<T> GetOperation<List<T>> findAll(Class<T> entityClass);
+	<T> GetOperation<List<T>> getFindAllOperation(Class<T> entityClass);
+
+	/**
+	 * Finds all entities with specific ids in table
+	 * 
+	 * @param entityClass
+	 * @param ids
+	 * @return List<T>
+	 */
+	<T> List<T> findAll(Class<T> entityClass, Iterable<?> ids);
 
 	/**
 	 * Finds all entities with specific ids in table
@@ -58,15 +75,25 @@ public interface CassandraOperations {
 	 * @param ids
 	 * @return GetOperation
 	 */
-	<T> GetOperation<List<T>> findAll(Class<T> entityClass, Iterable<?> ids);
+	<T> GetOperation<List<T>> getFindAllOperation(Class<T> entityClass, Iterable<?> ids);
 
 	/**
+	 * Finds entity by id
 	 * 
 	 * @param entityClass
 	 * @param id
-	 * @return
+	 * @return T
 	 */
-	<T> GetOperation<T> findById(Class<T> entityClass, Object id);
+	<T> T findById(Class<T> entityClass, Object id);
+
+	/**
+	 * Finds entity by id
+	 * 
+	 * @param entityClass
+	 * @param id
+	 * @return GetOperation
+	 */
+	<T> GetOperation<T> getFindByIdOperation(Class<T> entityClass, Object id);
 
 	/**
 	 * Finds a list of instances with the specified partition part of the primary key
@@ -74,9 +101,46 @@ public interface CassandraOperations {
 	 * @param entityClass
 	 * @param id
 	 * @param <T>
-	 * @return
+	 * @return List<T>
 	 */
-	<T> GetOperation<List<T>> findByPartitionKey(Class<T> entityClass, Object id);
+	<T> List<T> findByPartitionKey(Class<T> entityClass, Object id);
+
+	/**
+	 * Finds a list of instances with the specified partition part of the primary key
+	 * 
+	 * @param entityClass
+	 * @param id
+	 * @param <T>
+	 * @return GetOperation
+	 */
+	<T> GetOperation<List<T>> getFindByPartitionKeyOperation(Class<T> entityClass, Object id);
+
+	/**
+	 * Execute query and convert ResultSet to the list of entities
+	 * 
+	 * @param entityClass must not be {@literal null}, mapped entity type.
+	 * @param cql must not be {@literal null}.
+	 * @return List<T>
+	 */
+	<T> List<T> find(Class<T> entityClass, String cql);
+
+	/**
+	 * Execute query and convert ResultSet to the list of entities
+	 * 
+	 * @param entityClass must not be {@literal null}, mapped entity type.
+	 * @param cql must not be {@literal null}.
+	 * @return GetOperation
+	 */
+	<T> GetOperation<List<T>> getFindOperation(Class<T> entityClass, String cql);
+
+	/**
+	 * Execute query and convert ResultSet to the list of entities
+	 * 
+	 * @param entityClass must not be {@literal null}, mapped entity type.
+	 * @param cql must not be {@literal null}.
+	 * @return T
+	 */
+	<T> T findOne(Class<T> entityClass, String cql);
 
 	/**
 	 * Execute query and convert ResultSet to the list of entities
@@ -85,24 +149,31 @@ public interface CassandraOperations {
 	 * @param cql must not be {@literal null}.
 	 * @return
 	 */
-	<T> GetOperation<List<T>> find(Class<T> entityClass, String cql);
-
-	/**
-	 * Execute query and convert ResultSet to the list of entities
-	 * 
-	 * @param entityClass must not be {@literal null}, mapped entity type.
-	 * @param cql must not be {@literal null}.
-	 * @return
-	 */
-	<T> GetOperation<T> findOne(Class<T> entityClass, String cql);
+	<T> GetOperation<T> getFindOneOperation(Class<T> entityClass, String cql);
 
 	/**
 	 * Counts rows for given entity
 	 * 
 	 * @param entityClass
-	 * @return
+	 * @return Long
 	 */
-	<T> GetOperation<Long> countAll(Class<T> entityClass);
+	<T> Long countAll(Class<T> entityClass);
+
+	/**
+	 * Counts rows for given entity
+	 * 
+	 * @param entityClass
+	 * @return GetOperation
+	 */
+	<T> GetOperation<Long> getCountAllOperation(Class<T> entityClass);
+
+	/**
+	 * Checks if entity exists in Cassandra
+	 * 
+	 * @param entity
+	 * @return Boolean
+	 */
+	<T> Boolean exists(T entity);
 
 	/**
 	 * Checks if entity exists in Cassandra
@@ -110,7 +181,16 @@ public interface CassandraOperations {
 	 * @param entity
 	 * @return GetOperation
 	 */
-	<T> GetOperation<Boolean> exists(T entity);
+	<T> GetOperation<Boolean> getExistsOperation(T entity);
+
+	/**
+	 * Checks if entity exists in Cassandra
+	 * 
+	 * @param entityClass
+	 * @param id
+	 * @return Boolean
+	 */
+	<T> Boolean exists(Class<T> entityClass, Object id);
 
 	/**
 	 * Checks if entity exists in Cassandra
@@ -119,40 +199,69 @@ public interface CassandraOperations {
 	 * @param id
 	 * @return GetOperation
 	 */
-	<T> GetOperation<Boolean> exists(Class<T> entityClass, Object id);
+	<T> GetOperation<Boolean> getExistsOperation(Class<T> entityClass, Object id);
 
 	/**
 	 * Insert the given object to the table.
 	 * 
 	 * @param entity
-	 * @param optionsOrNull
 	 */
-	<T> SaveNewOperation saveNew(T entity);
+	<T> ResultSet saveNew(T entity);
+
+	/**
+	 * Insert the given object to the table.
+	 * 
+	 * @param entity
+	 */
+	<T> SaveNewOperation getSaveNewOperation(T entity);
 
 	/**
 	 * Insert the given list of objects to the table.
 	 * 
 	 * @param entities
-	 * @param optionsOrNull
-	 * @return
+	 * @return ResultSet
 	 */
-	<T> BatchOperation saveNewInBatch(Iterable<T> entities);
+	<T> ResultSet saveNewInBatch(Iterable<T> entities);
+
+	/**
+	 * Insert the given list of objects to the table.
+	 * 
+	 * @param entities
+	 * @return BatchOperation
+	 */
+	<T> BatchOperation getSaveNewInBatchOperation(Iterable<T> entities);
 
 	/**
 	 * Updates the given object in the table.
 	 * 
 	 * @param entity to save
-	 * @return
+	 * @return ResultSet
 	 */
-	<T> SaveOperation save(T entity);
+	<T> ResultSet save(T entity);
+
+	/**
+	 * Updates the given object in the table.
+	 * 
+	 * @param entity to save
+	 * @return SaveOperation
+	 */
+	<T> SaveOperation getSaveOperation(T entity);
 
 	/**
 	 * Updates list of objects in the table.
 	 * 
 	 * @param entities
-	 * @return
+	 * @return ResultSet
 	 */
-	<T> BatchOperation saveInBatch(Iterable<T> entities);
+	<T> ResultSet saveInBatch(Iterable<T> entities);
+
+	/**
+	 * Updates list of objects in the table.
+	 * 
+	 * @param entities
+	 * @return BatchOperation
+	 */
+	<T> BatchOperation getSaveInBatchOperation(Iterable<T> entities);
 
 	/**
 	 * Removes the given object by id from the given table.
@@ -160,7 +269,15 @@ public interface CassandraOperations {
 	 * @param entityClass
 	 * @param id
 	 */
-	<T> DeleteOperation deleteById(Class<T> entityClass, Object id);
+	<T> ResultSet deleteById(Class<T> entityClass, Object id);
+
+	/**
+	 * Removes the given object by id from the given table.
+	 * 
+	 * @param entityClass
+	 * @param id
+	 */
+	<T> DeleteOperation getDeleteByIdOperation(Class<T> entityClass, Object id);
 
 	/**
 	 * Remove list of objects from the table by given ids.
@@ -168,21 +285,43 @@ public interface CassandraOperations {
 	 * @param entityClass
 	 * @param ids
 	 */
-	<T> BatchOperation deleteByIdInBatch(Class<T> entityClass, Iterable<?> ids);
+	<T> ResultSet deleteByIdInBatch(Class<T> entityClass, Iterable<?> ids);
+
+	/**
+	 * Remove list of objects from the table by given ids.
+	 * 
+	 * @param entityClass
+	 * @param ids
+	 */
+	<T> BatchOperation getDeleteByIdInBatchOperation(Class<T> entityClass, Iterable<?> ids);
 
 	/**
 	 * Remove entity from the table
 	 * 
 	 * @param entity
 	 */
-	<T> DeleteOperation delete(T entity);
+	<T> ResultSet delete(T entity);
+
+	/**
+	 * Remove entity from the table
+	 * 
+	 * @param entity
+	 */
+	<T> DeleteOperation getDeleteOperation(T entity);
 
 	/**
 	 * Delete entities in batch operation
 	 * 
 	 * @param entities
 	 */
-	<T> BatchOperation deleteInBatch(Iterable<T> entities);
+	<T> ResultSet deleteInBatch(Iterable<T> entities);
+
+	/**
+	 * Delete entities in batch operation
+	 * 
+	 * @param entities
+	 */
+	<T> BatchOperation getDeleteInBatchOperation(Iterable<T> entities);
 
 	/**
 	 * Delete all entities in table
@@ -190,7 +329,15 @@ public interface CassandraOperations {
 	 * @param entityClass
 	 * @return
 	 */
-	<T> DeleteOperation deleteAll(Class<T> entityClass);
+	<T> ResultSet deleteAll(Class<T> entityClass);
+
+	/**
+	 * Delete all entities in table
+	 * 
+	 * @param entityClass
+	 * @return
+	 */
+	<T> DeleteOperation getDeleteAllOperation(Class<T> entityClass);
 
 	/**
 	 * Returns RowMapper based on Cassandra Converter.
