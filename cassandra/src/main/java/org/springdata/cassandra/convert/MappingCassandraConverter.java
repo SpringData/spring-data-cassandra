@@ -716,7 +716,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 		public int compare(CassandraPersistentProperty o1, CassandraPersistentProperty o2) {
 
 			Integer ordinal1 = o1.getOrdinal();
-			Integer ordinal2 = o1.getOrdinal();
+			Integer ordinal2 = o2.getOrdinal();
 
 			if (ordinal1 == null) {
 				if (ordinal2 == null) {
