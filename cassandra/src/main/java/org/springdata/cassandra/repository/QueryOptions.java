@@ -35,7 +35,7 @@ import org.springdata.cassandra.cql.core.RetryPolicy;
 @Documented
 public @interface QueryOptions {
 
-	ConsistencyLevel consistencyLevel() default ConsistencyLevel.QUOROM;
+	ConsistencyLevel consistencyLevel() default ConsistencyLevel.QUORUM;
 
 	RetryPolicy retryPolicy() default RetryPolicy.DEFAULT;
 
