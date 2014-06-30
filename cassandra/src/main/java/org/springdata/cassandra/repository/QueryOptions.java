@@ -21,8 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springdata.cassandra.cql.core.query.ConsistencyLevel;
-import org.springdata.cassandra.cql.core.query.RetryPolicy;
+import org.springdata.cassandra.cql.core.ConsistencyLevel;
+import org.springdata.cassandra.cql.core.RetryPolicy;
 
 /**
  * Annotation to declare query options for methods.

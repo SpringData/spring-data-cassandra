@@ -42,18 +42,12 @@ public class SimpleCassandraEntityMetadata<T> implements CassandraEntityMetadata
 		this.tableName = tableName;
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see org.springframework.data.repository.core.EntityMetadata#getJavaType()
-	 */
+	@Override
 	public Class<T> getJavaType() {
 		return type;
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see org.springframework.data.mongodb.repository.query.MongoEntityMetadata#getCollectionName()
-	 */
+	@Override
 	public String getTableName() {
 		return tableName;
 	}

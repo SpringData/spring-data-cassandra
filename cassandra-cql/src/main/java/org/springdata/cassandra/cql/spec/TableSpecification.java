@@ -35,8 +35,8 @@ import com.datastax.driver.core.DataType;
  * @author Matthew T. Adams
  * @author Alex Shvid
  */
-public class TableSpecification<T> extends WithOptionsSpecification<TableOption, TableSpecification<T>> implements
-		TableDescriptor {
+public class TableSpecification<T extends WithOptionsSpecification<TableOption, T>> extends
+		WithOptionsSpecification<TableOption, T> implements TableDescriptor {
 
 	/**
 	 * Ordered List of only those columns that comprise the partition key.

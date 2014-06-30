@@ -30,7 +30,7 @@
 
 	<cassandra:session keyspace="${cassandra.keyspace}">
 		<cassandra:keyspace-attributes action="update"
-			replication-stategy="SimpleStrategy" replication-factor="1"
+			replication-strategy="SimpleStrategy" replication-factor="1"
 			durable-writes="true">
 			<cassandra:table entity-class="org.springdata.cassandra.test.integration.table.Comment" />
 			<cassandra:table

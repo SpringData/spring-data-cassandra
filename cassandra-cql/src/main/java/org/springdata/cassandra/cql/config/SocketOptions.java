@@ -20,7 +20,7 @@ package org.springdata.cassandra.cql.config;
  * 
  * @author Alex Shvid
  */
-public class SocketOptionsConfig {
+public class SocketOptions {
 
 	private Integer connectTimeoutMls;
 	private Boolean keepAlive;

@@ -20,7 +20,7 @@ package org.springdata.cassandra.cql.config;
  * 
  * @author Alex Shvid
  */
-public class PoolingOptionsConfig {
+public class PoolingOptions {
 
 	private Integer minSimultaneousRequests;
 	private Integer maxSimultaneousRequests;

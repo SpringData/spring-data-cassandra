@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cassandra.core;
-
-import com.datastax.driver.core.Row;
+package org.springdata.cassandra.cql.config;
 
 /**
- * Simple internal callback to allow operations on a {@link Row}.
+ * SchemaAction
+ * 
+ * Possible values: *validate: validate the keyspace schema, makes no changes. *update: updates the keyspace schema.
+ * *create: creates the keyspace and tables, destroying previous data. *create-drop: drops the keyspace at the end of
+ * the session.
  * 
  * @author Alex Shvid
+ * 
  */
+public enum SchemaAction {
 
-public interface RowCallback<T> {
+	VALIDATE, UPDATE, CREATE, CREATE_DROP;
 
-	T doWith(Row object);
 }

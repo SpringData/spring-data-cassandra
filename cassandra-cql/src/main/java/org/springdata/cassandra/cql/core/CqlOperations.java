@@ -15,8 +15,7 @@
  */
 package org.springdata.cassandra.cql.core;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.datastax.driver.core.BoundStatement;
@@ -33,7 +32,7 @@ import com.datastax.driver.core.Statement;
  * @author David Webb
  * @author Matthew Adams
  */
-public interface CassandraCqlOperations {
+public interface CqlOperations {
 
 	/**
 	 * Creates query by using QueryCreator
@@ -57,7 +56,14 @@ public interface CassandraCqlOperations {
 	 * 
 	 * @param cql The CQL String
 	 */
-	UpdateOperation update(String cql);
+	ResultSet update(String cql);
+
+	/**
+	 * Executes the supplied CQL Query and returns nothing.
+	 * 
+	 * @param cql The CQL String
+	 */
+	UpdateOperation getUpdateOperation(String cql);
 
 	/**
 	 * Executes the supplied PreparedStatement with custom binder.
@@ -65,44 +71,89 @@ public interface CassandraCqlOperations {
 	 * @param ps PreparedStatement
 	 * @param psb PreparedStatementBinder if exists
 	 */
-	UpdateOperation update(PreparedStatement ps, PreparedStatementBinder psb);
+	ResultSet update(PreparedStatement ps, PreparedStatementBinder psb);
+
+	/**
+	 * Executes the supplied PreparedStatement with custom binder.
+	 * 
+	 * @param ps PreparedStatement
+	 * @param psb PreparedStatementBinder if exists
+	 */
+	UpdateOperation getUpdateOperation(PreparedStatement ps, PreparedStatementBinder psb);
 
 	/**
 	 * Executes the supplied PreparedStatement with custom binder.
 	 * 
 	 * @param bs BoundStatement
 	 */
-	UpdateOperation update(BoundStatement bs);
+	ResultSet update(BoundStatement bs);
+
+	/**
+	 * Executes the supplied PreparedStatement with custom binder.
+	 * 
+	 * @param bs BoundStatement
+	 */
+	UpdateOperation getUpdateOperation(BoundStatement bs);
 
 	/**
 	 * Executes the supplied CQL Query and returns nothing.
 	 * 
 	 * @param qc The QueryCreator
 	 */
-	UpdateOperation update(QueryCreator qc);
+	ResultSet update(QueryCreator qc);
+
+	/**
+	 * Executes the supplied CQL Query and returns nothing.
+	 * 
+	 * @param qc The QueryCreator
+	 */
+	UpdateOperation getUpdateOperation(QueryCreator qc);
 
 	/**
 	 * Executes the supplied CQL Query batch and returns nothing.
 	 * 
 	 * @param sqls The CQL queries
 	 */
-	UpdateOperation batchUpdate(String[] cqls);
+	ResultSet batchUpdate(String[] cqls);
 
 	/**
 	 * Executes the supplied CQL Query batch and returns nothing.
 	 * 
-	 * @param is The Statement iterator
+	 * @param sqls The CQL queries
 	 */
-	UpdateOperation batchUpdate(Iterator<Statement> is);
+	UpdateOperation getBatchUpdateOperation(String[] cqls);
+
+	/**
+	 * Executes the supplied CQL Query batch and returns nothing.
+	 * 
+	 * @param statements The Statements
+	 */
+	ResultSet batchUpdate(Iterable<Statement> statements);
+
+	/**
+	 * Executes the supplied CQL Query batch and returns nothing.
+	 * 
+	 * @param statements The Statements
+	 */
+	UpdateOperation getBatchUpdateOperation(Iterable<Statement> statements);
 
 	/**
 	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
 	 * 
 	 * @param cql The CQL Query String
 	 * 
-	 * @return SelectOperation of ResultSet
+	 * @return ResultSet
 	 */
-	SelectOperation<ResultSet> select(String cql);
+	ResultSet select(String cql);
+
+	/**
+	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
+	 * 
+	 * @param cql The CQL Query String
+	 * 
+	 * @return SelectOperation
+	 */
+	SelectOperation getSelectOperation(String cql);
 
 	/**
 	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
@@ -110,27 +161,55 @@ public interface CassandraCqlOperations {
 	 * @param ps PreparedStatement
 	 * @param psb PreparedStatementBinder if exists
 	 * 
-	 * @return SelectOperation of ResultSet
+	 * @return ResultSet
 	 */
-	SelectOperation<ResultSet> select(PreparedStatement ps, PreparedStatementBinder psb);
+	ResultSet select(PreparedStatement ps, PreparedStatementBinder psb);
+
+	/**
+	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
+	 * 
+	 * @param ps PreparedStatement
+	 * @param psb PreparedStatementBinder if exists
+	 * 
+	 * @return SelectOperation
+	 */
+	SelectOperation getSelectOperation(PreparedStatement ps, PreparedStatementBinder psb);
 
 	/**
 	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
 	 * 
 	 * @param bs BoundStatement
 	 * 
-	 * @return SelectOperation of ResultSet
+	 * @return ResultSet
 	 */
-	SelectOperation<ResultSet> select(BoundStatement bs);
+	ResultSet select(BoundStatement bs);
+
+	/**
+	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
+	 * 
+	 * @param bs BoundStatement
+	 * 
+	 * @return SelectOperation
+	 */
+	SelectOperation getSelectOperation(BoundStatement bs);
 
 	/**
 	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
 	 * 
 	 * @param qc The QueryCreator
 	 * 
-	 * @return SelectOperation of ResultSet
+	 * @return ResultSet
 	 */
-	SelectOperation<ResultSet> select(QueryCreator qc);
+	ResultSet select(QueryCreator qc);
+
+	/**
+	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
+	 * 
+	 * @param qc The QueryCreator
+	 * 
+	 * @return SelectOperation
+	 */
+	SelectOperation getSelectOperation(QueryCreator qc);
 
 	/**
 	 * Processes the ResultSet through the RowCallbackHandler and return nothing. This is used internal to the Template
@@ -149,9 +228,9 @@ public interface CassandraCqlOperations {
 	 * 
 	 * @param resultSet Results to process
 	 * @param rowMapper RowMapper with the processing implementation
-	 * @return Iterator of <T> generated by the RowMapper
+	 * @return List of <T> generated by the RowMapper
 	 */
-	<T> Iterator<T> process(ResultSet resultSet, RowMapper<T> rowMapper);
+	<T> List<T> process(ResultSet resultSet, RowMapper<T> rowMapper);
 
 	/**
 	 * Process a ResultSet through a RowMapper. This is used internal to the Template for core operations, but is made
@@ -160,9 +239,10 @@ public interface CassandraCqlOperations {
 	 * 
 	 * @param resultSet
 	 * @param rowMapper
+	 * @param singleResult Expected single result
 	 * @return
 	 */
-	<T> T processOne(ResultSet resultSet, RowMapper<T> rowMapper);
+	<T> T processOne(ResultSet resultSet, RowMapper<T> rowMapper, boolean singleResult);
 
 	/**
 	 * Process a ResultSet, trying to convert the first columns of the first Row to Class<T>. This is used internal to the
@@ -171,9 +251,10 @@ public interface CassandraCqlOperations {
 	 * 
 	 * @param resultSet
 	 * @param elementType
+	 * @param singleResult Expected single result
 	 * @return
 	 */
-	<T> T processOneFirstColumn(ResultSet resultSet, Class<T> elementType);
+	<T> T processOneFirstColumn(ResultSet resultSet, Class<T> elementType, boolean singleResult);
 
 	/**
 	 * Process a ResultSet with <b>ONE</b> Row and convert to a Map. This is used internal to the Template for core
@@ -181,9 +262,10 @@ public interface CassandraCqlOperations {
 	 * could come from a ResultSetFuture after an asynchronous query.
 	 * 
 	 * @param resultSet
+	 * @param singleResult Expected single result
 	 * @return
 	 */
-	Map<String, Object> processOneAsMap(ResultSet resultSet);
+	Map<String, Object> processOneAsMap(ResultSet resultSet, boolean singleResult);
 
 	/**
 	 * Process a ResultSet and convert the first column of the results to a List. This is used internal to the Template
@@ -194,7 +276,7 @@ public interface CassandraCqlOperations {
 	 * @param elementType
 	 * @return
 	 */
-	<T> Iterator<T> processFirstColumn(ResultSet resultSet, Class<T> elementType);
+	<T> List<T> processFirstColumn(ResultSet resultSet, Class<T> elementType);
 
 	/**
 	 * Process a ResultSet and convert it to a List of Maps with column/value. This is used internal to the Template for
@@ -204,7 +286,7 @@ public interface CassandraCqlOperations {
 	 * @param resultSet
 	 * @return
 	 */
-	Iterator<Map<String, Object>> processAsMap(ResultSet resultSet);
+	List<Map<String, Object>> processAsMap(ResultSet resultSet);
 
 	/**
 	 * Converts the CQL provided into a {@link SimplePreparedStatementCreator}. <b>This can only be used for CQL
@@ -257,7 +339,7 @@ public interface CassandraCqlOperations {
 	 * 
 	 * @return The collection of ring tokens that are active in the cluster
 	 */
-	Collection<RingMember> describeRing();
+	List<RingMember> describeRing();
 
 	/**
 	 * Describe the current Ring. Application code must provide its own {@link HostMapper} implementation to process the
@@ -266,7 +348,7 @@ public interface CassandraCqlOperations {
 	 * @param hostMapper The implementation to use for host mapping.
 	 * @return Collection generated by the provided HostMapper.
 	 */
-	<T> Collection<T> describeRing(HostMapper<T> hostMapper);
+	<T> List<T> describeRing(HostMapper<T> hostMapper);
 
 	/**
 	 * Get the current Session used for operations in the implementing class.
@@ -286,9 +368,24 @@ public interface CassandraCqlOperations {
 	 * 
 	 * @param asynchronously Do asynchronously or not
 	 * @param ps The PreparedStatement
-	 * @param rowIterator Implementation to provide the Object[] to be bound to the CQL.
+	 * @param rows Implementation to provide the Object[] to be bound to the CQL.
 	 */
-	IngestOperation ingest(PreparedStatement ps, Iterator<Object[]> rows);
+	List<ResultSet> ingest(PreparedStatement ps, Iterable<Object[]> rows);
+
+	/**
+	 * This is an operation designed for high performance writes. The cql is used to create a PreparedStatement once, then
+	 * all row values are bound to the single PreparedStatement and executed against the Session.
+	 * 
+	 * <p>
+	 * This is used internally by the other ingest() methods, but can be used if you want to write your own RowIterator.
+	 * The Object[] length returned by the next() implementation must match the number of bind variables in the CQL.
+	 * </p>
+	 * 
+	 * @param asynchronously Do asynchronously or not
+	 * @param ps The PreparedStatement
+	 * @param rows Implementation to provide the Object[] to be bound to the CQL.
+	 */
+	IngestOperation getIngestOperation(PreparedStatement ps, Iterable<Object[]> rows);
 
 	/**
 	 * This is an operation designed for high performance writes. The cql is used to create a PreparedStatement once, then
@@ -302,7 +399,21 @@ public interface CassandraCqlOperations {
 	 * @param ps The PreparedStatement
 	 * @param rows Object array of Object array of values to bind to the CQL.
 	 */
-	IngestOperation ingest(PreparedStatement ps, Object[][] rows);
+	List<ResultSet> ingest(PreparedStatement ps, Object[][] rows);
+
+	/**
+	 * This is an operation designed for high performance writes. The cql is used to create a PreparedStatement once, then
+	 * all row values are bound to the single PreparedStatement and executed against the Session.
+	 * 
+	 * <p>
+	 * The Object[] length of the nested array must match the number of bind variables in the CQL.
+	 * </p>
+	 * 
+	 * @param asynchronously Do asynchronously or not
+	 * @param ps The PreparedStatement
+	 * @param rows Object array of Object array of values to bind to the CQL.
+	 */
+	IngestOperation getIngestOperation(PreparedStatement ps, Object[][] rows);
 
 	/**
 	 * Calculates number of rows in table
@@ -310,14 +421,29 @@ public interface CassandraCqlOperations {
 	 * @param tableName
 	 * @return
 	 */
-	ProcessOperation<Long> countAll(String tableName);
+	Long countAll(String tableName);
+
+	/**
+	 * Calculates number of rows in table
+	 * 
+	 * @param tableName
+	 * @return
+	 */
+	ProcessOperation<Long> getCountAllOperation(String tableName);
 
 	/**
 	 * Delete all rows in the table
 	 * 
 	 * @param tableName
 	 */
-	UpdateOperation truncate(String tableName);
+	ResultSet truncate(String tableName);
+
+	/**
+	 * Delete all rows in the table
+	 * 
+	 * @param tableName
+	 */
+	UpdateOperation getTruncateOperation(String tableName);
 
 	/**
 	 * Support admin operations

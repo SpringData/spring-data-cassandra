@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cassandra.cql.core;
+package org.springdata.cassandra.cql.support.exception;
 
-import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Query;
 
 /**
- * ResultSet Callback interface
+ * This interface is used to setup Query in specific query exceptions.
  * 
  * @author Alex Shvid
  * 
- * @param <T>
  */
+public interface CassandraQueryAware {
 
-public interface ResultSetCallback<T> {
-
-	/**
-	 * Perform the operation in the given ResultSet
-	 * 
-	 * @param resultSet ResultSet
-	 * @return
-	 */
-	T doWithResultSet(ResultSet resultSet);
+	void setQuery(Query query);
 
 }

@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 public @interface Nonstop {
 
 	/**
-	 * Define timeout value in milliseconds, can be rewritten by parameter.
+	 * Define timeout value in milliseconds, can be rewritten by a parameter.
 	 * 
 	 * @return timeout in milliseconds
 	 */

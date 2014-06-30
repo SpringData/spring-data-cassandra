@@ -16,9 +16,6 @@
 package org.springdata.cassandra.repository.support;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springdata.cassandra.core.CassandraOperations;
@@ -27,9 +24,6 @@ import org.springdata.cassandra.repository.CassandraRepository;
 import org.springdata.cassandra.repository.query.CassandraEntityInformation;
 import org.springframework.util.Assert;
 
-import com.datastax.driver.core.querybuilder.Clause;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
-import com.datastax.driver.core.querybuilder.Select;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -41,8 +35,9 @@ import com.google.common.collect.ImmutableList;
 
 public class SimpleCassandraRepository<T, ID extends Serializable> implements CassandraRepository<T, ID> {
 
-	private final CassandraTemplate cassandraTemplate;
 	private final CassandraEntityInformation<T, ID> entityInformation;
+	private final Class<?> repositoryInterface;
+	private final CassandraTemplate cassandraTemplate;
 
 	/**
 	 * Creates a new {@link SimpleCassandraRepository} for the given {@link CassandraEntityInformation} and
@@ -51,19 +46,23 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 	 * @param metadata must not be {@literal null}.
 	 * @param template must not be {@literal null}.
 	 */
-	public SimpleCassandraRepository(CassandraEntityInformation<T, ID> metadata, CassandraTemplate cassandraTemplate) {
+	public SimpleCassandraRepository(CassandraEntityInformation<T, ID> entityInformation, Class<?> repositoryInterface,
+			CassandraTemplate cassandraTemplate) {
 
+		Assert.notNull(entityInformation);
+		Assert.notNull(repositoryInterface);
 		Assert.notNull(cassandraTemplate);
-		Assert.notNull(metadata);
 
-		this.entityInformation = metadata;
+		this.entityInformation = entityInformation;
+		this.repositoryInterface = repositoryInterface;
 		this.cassandraTemplate = cassandraTemplate;
+
 	}
 
 	@Override
 	public <S extends T> S save(S entity) {
 		Assert.notNull(entity, "Entity must not be null!");
-		cassandraTemplate.saveNew(entity).execute();
+		cassandraTemplate.getSaveNewOperation(entity).execute();
 		return entity;
 	}
 
@@ -71,7 +70,7 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 	public <S extends T> List<S> save(Iterable<S> entities) {
 
 		Assert.notNull(entities, "The given Iterable of entities must not be null!");
-		cassandraTemplate.saveNewInBatch(entities).execute();
+		cassandraTemplate.getSaveNewInBatchOperation(entities).execute();
 
 		if (entities instanceof List) {
 			return (List<S>) entities;
@@ -83,77 +82,59 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 	@Override
 	public T findOne(ID id) {
 		Assert.notNull(id, "The given id must not be null!");
-		return cassandraTemplate.findById(id, entityInformation.getJavaType(), null);
+		return cassandraTemplate.getFindByIdOperation(entityInformation.getJavaType(), id).execute();
 	}
 
 	@Override
 	public List<T> findByPartitionKey(ID id) {
 		Assert.notNull(id, "The given id must not be null!");
-		return cassandraTemplate.findByPartitionKey(id, entityInformation.getJavaType(), null);
+		return cassandraTemplate.getFindByPartitionKeyOperation(entityInformation.getJavaType(), id).execute();
 	}
 
 	@Override
 	public boolean exists(ID id) {
 		Assert.notNull(id, "The given id must not be null!");
-		return cassandraTemplate.exists(entityInformation.getJavaType(), id).execute();
+		return cassandraTemplate.getExistsOperation(entityInformation.getJavaType(), id).execute();
 	}
 
 	@Override
 	public long count() {
-		Long result = cassandraTemplate.cqlOps().countAll(entityInformation.getTableName()).execute();
+		Long result = cassandraTemplate.getCountAllOperation(entityInformation.getJavaType()).execute();
 		return result != null ? result : 0;
 	}
 
 	@Override
 	public void delete(ID id) {
 		Assert.notNull(id, "The given id must not be null!");
-		cassandraTemplate.deleteById(entityInformation.getJavaType(), id).execute();
+		cassandraTemplate.getDeleteByIdOperation(entityInformation.getJavaType(), id).execute();
 	}
 
 	@Override
 	public void delete(T entity) {
 		Assert.notNull(entity, "The given entity must not be null!");
-		cassandraTemplate.delete(entity).execute();
+		cassandraTemplate.getDeleteOperation(entity).execute();
 	}
 
 	@Override
 	public void delete(Iterable<? extends T> entities) {
 		Assert.notNull(entities, "The given Iterable of entities not be null!");
-		cassandraTemplate.deleteInBatch(entities).execute();
+		cassandraTemplate.getDeleteInBatchOperation(entities).execute();
 	}
 
 	@Override
 	public void deleteAll() {
-		cassandraTemplate.cqlOps().truncate(entityInformation.getTableName()).execute();
+		cassandraTemplate.getDeleteAllOperation(entityInformation.getJavaType()).execute();
 	}
 
 	@Override
 	public List<T> findAll() {
-		Iterator<T> iterator = cassandraTemplate.findAll(entityInformation.getJavaType()).execute();
-		return ImmutableList.copyOf(iterator);
+		return cassandraTemplate.getFindAllOperation(entityInformation.getJavaType()).execute();
 	}
 
 	@Override
 	public Iterable<T> findAll(Iterable<ID> ids) {
-
-		List<ID> parameters = new ArrayList<ID>();
-		for (ID id : ids) {
-			parameters.add(id);
-		}
-		Clause clause = QueryBuilder.in(entityInformation.getIdColumn(), parameters.toArray());
-		Select select = QueryBuilder.select().all().from(entityInformation.getTableName());
-		select.where(clause);
-
-		return findAll(select);
-	}
-
-	private List<T> findAll(Select query) {
-
-		if (query == null) {
-			return Collections.emptyList();
-		}
-
-		return cassandraTemplate.find(query.getQueryString(), entityInformation.getJavaType(), null);
+		Assert.notNull(ids, "The given Iterable of ids not be null!");
+		return cassandraTemplate.getFindAllOperation(entityInformation.getJavaType(), ids).execute();
 	}
 
 	/**

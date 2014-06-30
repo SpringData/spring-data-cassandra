@@ -37,7 +37,7 @@ public abstract class AbstractCassandraQuery implements RepositoryQuery {
 	private final CassandraOperations cassandraOperations;
 
 	/**
-	 * Creates a new {@link AbstractMongoQuery} from the given {@link CassandraQueryMethod} and
+	 * Creates a new {@link AbstractCassandraQuery} from the given {@link CassandraQueryMethod} and
 	 * {@link CassandraOperations}.
 	 * 
 	 * @param method must not be {@literal null}.
@@ -119,7 +119,7 @@ public abstract class AbstractCassandraQuery implements RepositoryQuery {
 
 			CassandraEntityMetadata<?> metadata = method.getEntityInformation();
 
-			return cassandraOperations.find(query, metadata.getJavaType(), null);
+			return cassandraOperations.getFindOperation(metadata.getJavaType(), query).execute();
 		}
 	}
 
@@ -156,8 +156,12 @@ public abstract class AbstractCassandraQuery implements RepositoryQuery {
 		Object execute(String query) {
 
 			CassandraEntityMetadata<?> metadata = method.getEntityInformation();
-			return countProjection ? cassandraOperations.count(query, null) : cassandraOperations.findOne(query,
-					metadata.getJavaType(), null);
+			if (countProjection) {
+				return cassandraOperations.cqlOps().getSelectOperation(query).singleResult().firstColumn(Long.class).execute();
+			} else {
+				return cassandraOperations.getFindOneOperation(metadata.getJavaType(), query).execute();
+			}
+
 		}
 	}
 

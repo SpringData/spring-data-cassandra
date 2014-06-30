@@ -15,13 +15,10 @@
  */
 package org.springdata.cassandra.cql.core;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
-
-import org.springdata.cassandra.cql.core.query.ConsistencyLevel;
-import org.springdata.cassandra.cql.core.query.RetryPolicy;
 
 import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
@@ -30,58 +27,56 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
+ * Default implementation for SelectOperation
  * 
  * @author Alex Shvid
  * 
  */
 
-public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, SelectOperation<ResultSet>> implements
-		SelectOperation<ResultSet> {
+public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, SelectOperation> implements
+		SelectOperation {
 
 	private final Query query;
 
-	protected DefaultSelectOperation(CassandraCqlTemplate cassandraTemplate, Query query) {
-		super(cassandraTemplate);
+	protected DefaultSelectOperation(CqlTemplate cqlTemplate, Query query) {
+		super(cqlTemplate);
 		this.query = query;
 	}
 
 	@Override
-	public <R> ProcessOperation<Iterator<R>> map(final RowMapper<R> rowMapper) {
+	public SelectOneOperation firstRow() {
+		return new DefaultSelectOneOperation(this, false);
+	}
 
-		return new ProcessingSelectOperation<Iterator<R>>(this, new Processor<Iterator<R>>() {
+	@Override
+	public SelectOneOperation singleResult() {
+		return new DefaultSelectOneOperation(this, true);
+	}
+
+	@Override
+	public <R> ProcessOperation<List<R>> map(final RowMapper<R> rowMapper) {
+
+		return new ProcessingSelectOperation<List<R>>(this, new Processor<List<R>>() {
 
 			@Override
-			public Iterator<R> process(ResultSet resultSet) {
-				return cassandraCqlTemplate.process(resultSet, rowMapper);
+			public List<R> process(ResultSet resultSet) {
+				return cqlTemplate.process(resultSet, rowMapper);
 			}
 
 		});
 	}
 
 	@Override
-	public <R> ProcessOperation<R> mapOne(final RowMapper<R> rowMapper) {
-
-		return new ProcessingSelectOperation<R>(this, new Processor<R>() {
-
-			@Override
-			public R process(ResultSet resultSet) {
-				return cassandraCqlTemplate.processOne(resultSet, rowMapper);
-			}
-
-		});
-	}
-
-	@Override
-	public ProcessOperation<Boolean> notEmpty() {
+	public ProcessOperation<Boolean> exists() {
 
 		return new ProcessingSelectOperation<Boolean>(this, new Processor<Boolean>() {
 
 			@Override
 			public Boolean process(ResultSet resultSet) {
-				return cassandraCqlTemplate.doProcess(resultSet, new ResultSetCallback<Boolean>() {
+				return cqlTemplate.doProcess(resultSet, new ResultSetExtractor<Boolean>() {
 
 					@Override
-					public Boolean doWithResultSet(ResultSet resultSet) {
+					public Boolean extractData(ResultSet resultSet) {
 						return resultSet.iterator().hasNext();
 					}
 
@@ -94,80 +89,53 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 	}
 
 	@Override
-	public <E> ProcessOperation<E> firstColumnOne(final Class<E> elementType) {
+	public <E> ProcessOperation<List<E>> firstColumn(final Class<E> elementType) {
 
-		return new ProcessingSelectOperation<E>(this, new Processor<E>() {
+		return new ProcessingSelectOperation<List<E>>(this, new Processor<List<E>>() {
 
 			@Override
-			public E process(ResultSet resultSet) {
-				return cassandraCqlTemplate.processOneFirstColumn(resultSet, elementType);
+			public List<E> process(ResultSet resultSet) {
+				return cqlTemplate.processFirstColumn(resultSet, elementType);
 			}
 
 		});
 	}
 
 	@Override
-	public <E> ProcessOperation<Iterator<E>> firstColumn(final Class<E> elementType) {
+	public ProcessOperation<List<Map<String, Object>>> map() {
 
-		return new ProcessingSelectOperation<Iterator<E>>(this, new Processor<Iterator<E>>() {
+		return new ProcessingSelectOperation<List<Map<String, Object>>>(this, new Processor<List<Map<String, Object>>>() {
 
 			@Override
-			public Iterator<E> process(ResultSet resultSet) {
-				return cassandraCqlTemplate.processFirstColumn(resultSet, elementType);
+			public List<Map<String, Object>> process(ResultSet resultSet) {
+				return cqlTemplate.processAsMap(resultSet);
 			}
 
 		});
-	}
-
-	@Override
-	public ProcessOperation<Iterator<Map<String, Object>>> map() {
-
-		return new ProcessingSelectOperation<Iterator<Map<String, Object>>>(this,
-				new Processor<Iterator<Map<String, Object>>>() {
-
-					@Override
-					public Iterator<Map<String, Object>> process(ResultSet resultSet) {
-						return cassandraCqlTemplate.processAsMap(resultSet);
-					}
-
-				});
 
 	}
 
 	@Override
-	public ProcessOperation<Map<String, Object>> mapOne() {
-
-		return new ProcessingSelectOperation<Map<String, Object>>(this, new Processor<Map<String, Object>>() {
-
-			@Override
-			public Map<String, Object> process(ResultSet resultSet) {
-				return cassandraCqlTemplate.processOneAsMap(resultSet);
-			}
-
-		});
-	}
-
-	@Override
-	public <O> ProcessOperation<O> transform(final ResultSetCallback<O> rsc) {
+	public <O> ProcessOperation<O> transform(final ResultSetExtractor<O> rse) {
 
 		return new ProcessingSelectOperation<O>(this, new Processor<O>() {
 
 			@Override
 			public O process(ResultSet resultSet) {
-				return cassandraCqlTemplate.doProcess(resultSet, rsc);
+				return cqlTemplate.doProcess(resultSet, rse);
 			}
 
 		});
 	}
 
 	@Override
-	public ProcessOperation<Object> each(final RowCallbackHandler rch) {
+	public ProcessOperation<Object> forEach(final RowCallbackHandler rch) {
 
 		return new ProcessingSelectOperation<Object>(this, new Processor<Object>() {
 
 			@Override
 			public Object process(ResultSet resultSet) {
-				cassandraCqlTemplate.process(resultSet, rch);
+				cqlTemplate.process(resultSet, rch);
 				return null;
 			}
 
@@ -196,9 +164,9 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 
 	abstract class ForwardingSelectOperation<T> implements ProcessOperation<T> {
 
-		protected final SelectOperation<ResultSet> delegate;
+		protected final SelectOperation delegate;
 
-		private ForwardingSelectOperation(SelectOperation<ResultSet> delegate) {
+		private ForwardingSelectOperation(SelectOperation delegate) {
 			this.delegate = delegate;
 		}
 
@@ -242,7 +210,7 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 
 		private final Processor<T> processor;
 
-		ProcessingSelectOperation(SelectOperation<ResultSet> delegate, Processor<T> processor) {
+		ProcessingSelectOperation(SelectOperation delegate, Processor<T> processor) {
 			super(delegate);
 			this.processor = processor;
 		}
@@ -267,7 +235,7 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 
 			}, getExecutor());
 
-			return new CassandraFuture<T>(future, cassandraCqlTemplate.getExceptionTranslator());
+			return new CassandraFuture<T>(future, cqlTemplate.getExceptionTranslator());
 		}
 
 		@Override
@@ -301,4 +269,57 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 
 	}
 
+	final class DefaultSelectOneOperation extends AbstractSelectOneOperation {
+
+		private final DefaultSelectOperation defaultSelectOperation;
+		private final boolean singleResult;
+
+		DefaultSelectOneOperation(DefaultSelectOperation defaultSelectOperation, boolean singleResult) {
+			super(defaultSelectOperation.cqlTemplate, defaultSelectOperation.query, singleResult);
+			this.defaultSelectOperation = defaultSelectOperation;
+			this.singleResult = singleResult;
+		}
+
+		@Override
+		public <R> ProcessOperation<R> map(final RowMapper<R> rowMapper) {
+
+			return new ProcessingSelectOperation<R>(defaultSelectOperation, new Processor<R>() {
+
+				@Override
+				public R process(ResultSet resultSet) {
+					return cqlTemplate.processOne(resultSet, rowMapper, singleResult);
+				}
+
+			});
+
+		}
+
+		@Override
+		public <E> ProcessOperation<E> firstColumn(final Class<E> elementType) {
+
+			return new ProcessingSelectOperation<E>(defaultSelectOperation, new Processor<E>() {
+
+				@Override
+				public E process(ResultSet resultSet) {
+					return cqlTemplate.processOneFirstColumn(resultSet, elementType, singleResult);
+				}
+
+			});
+		}
+
+		@Override
+		public ProcessOperation<Map<String, Object>> map() {
+
+			return new ProcessingSelectOperation<Map<String, Object>>(defaultSelectOperation,
+					new Processor<Map<String, Object>>() {
+
+						@Override
+						public Map<String, Object> process(ResultSet resultSet) {
+							return cqlTemplate.processOneAsMap(resultSet, singleResult);
+						}
+
+					});
+		}
+
+	}
 }

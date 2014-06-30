@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 package org.springdata.cassandra.cql.core;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 import org.springframework.util.Assert;
 
@@ -34,17 +30,9 @@ import com.datastax.driver.core.Host;
 public class RingMemberHostMapper implements HostMapper<RingMember> {
 
 	@Override
-	public List<RingMember> mapHosts(Set<Host> hosts) {
-
-		Assert.notNull(hosts);
-
-		List<RingMember> members = new ArrayList<RingMember>(hosts.size());
-
-		for (Host host : hosts) {
-			members.add(new RingMember(host));
-		}
-
-		return members;
+	public RingMember mapHost(Host host) {
+		Assert.notNull(host);
+		return new RingMember(host);
 
 	}
 }

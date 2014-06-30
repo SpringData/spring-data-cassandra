@@ -43,10 +43,10 @@ import com.datastax.driver.core.Session;
  * @author Alex Shvid
  */
 
-public class CassandraCqlSessionFactoryBean implements FactoryBean<Session>, InitializingBean, DisposableBean,
+public class SessionFactoryBean implements FactoryBean<Session>, InitializingBean, DisposableBean,
 		PersistenceExceptionTranslator {
 
-	private static final Logger log = LoggerFactory.getLogger(CassandraCqlSessionFactoryBean.class);
+	private static final Logger log = LoggerFactory.getLogger(SessionFactoryBean.class);
 
 	protected Session session;
 
@@ -95,8 +95,8 @@ public class CassandraCqlSessionFactoryBean implements FactoryBean<Session>, Ini
 
 		if (StringUtils.hasText(keyspace)) {
 
-			CassandraCqlTemplate cassandraTemplate = new CassandraCqlTemplate(session, keyspace);
-			AdminCqlOperations adminOps = cassandraTemplate.adminOps();
+			CqlTemplate cqlTemplate = new CqlTemplate(session, keyspace);
+			AdminCqlOperations adminOps = cqlTemplate.adminOps();
 
 			KeyspaceMetadata keyspaceMetadata = adminOps.getKeyspaceMetadata(keyspace);
 			boolean keyspaceExists = keyspaceMetadata != null;
@@ -173,7 +173,7 @@ public class CassandraCqlSessionFactoryBean implements FactoryBean<Session>, Ini
 
 			log.info("Drop keyspace " + keyspace + " on destroy");
 
-			CassandraCqlTemplate casandraCqlTemplate = new CassandraCqlTemplate(session, keyspace);
+			CqlTemplate casandraCqlTemplate = new CqlTemplate(session, keyspace);
 			AdminCqlOperations adminOps = casandraCqlTemplate.adminOps();
 
 			adminOps.useSystemKeyspace().execute();

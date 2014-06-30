@@ -16,6 +16,7 @@
 package org.springdata.cassandra.core;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
@@ -85,16 +86,22 @@ public class DefaultExistsOperation<T> extends AbstractGetOperation<Boolean> {
 		Select select = QueryBuilder.select().countAll().from(cassandraTemplate.getKeyspace(), tableName);
 		Select.Where w = select.where();
 
-		CassandraPersistentEntity<?> persistentEntity = cassandraTemplate.getPersistentEntity(entity != null ? entity.getClass()
-				: entityClass);
+		CassandraPersistentEntity<?> persistentEntity = cassandraTemplate.getPersistentEntity(entity != null ? entity
+				.getClass() : entityClass);
 
-		List<Clause> list = cassandraTemplate.getConverter().getPrimaryKey(persistentEntity, entity != null ? entity : id);
+		List<Clause> clauseList = null;
 
-		for (Clause c : list) {
+		if (entity != null) {
+			clauseList = new LinkedList<Clause>();
+			cassandraTemplate.getConverter().write(entity, clauseList);
+		} else {
+			clauseList = cassandraTemplate.getConverter().getPrimaryKey(persistentEntity, id);
+		}
+
+		for (Clause c : clauseList) {
 			w.and(c);
 		}
 
 		return select;
 	}
-
 }

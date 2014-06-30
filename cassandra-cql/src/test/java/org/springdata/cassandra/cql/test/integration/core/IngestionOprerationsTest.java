@@ -50,7 +50,7 @@ public class IngestionOprerationsTest extends AbstractCassandraOperations {
 		v[1] = o2;
 		v[2] = o3;
 
-		cassandraTemplate.ingest(cassandraTemplate.prepareStatement(cql), Arrays.asList(v).iterator()).execute();
+		cqlTemplate.getIngestOperation(cqlTemplate.prepareStatement(cql), Arrays.asList(v)).execute();
 
 		// Assert that the rows were inserted into Cassandra
 		Book b1 = getBook("1234");

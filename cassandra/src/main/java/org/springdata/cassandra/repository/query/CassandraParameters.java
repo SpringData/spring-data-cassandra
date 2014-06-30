@@ -19,8 +19,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springdata.cassandra.cql.core.query.ConsistencyLevel;
-import org.springdata.cassandra.cql.core.query.RetryPolicy;
+import org.springdata.cassandra.cql.core.ConsistencyLevel;
+import org.springdata.cassandra.cql.core.RetryPolicy;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.repository.query.Parameters;
 

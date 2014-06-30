@@ -26,21 +26,21 @@ import com.datastax.driver.core.Session;
  * @author Alex Shvid
  */
 
-public class CassandraCqlTemplateFactoryBean implements FactoryBean<CassandraCqlTemplate>, InitializingBean {
+public class CqlTemplateFactoryBean implements FactoryBean<CqlTemplate>, InitializingBean {
 
-	private CassandraCqlTemplate cassandraDriverTemplate;
+	private CqlTemplate cqlTemplate;
 
 	private Session session;
 	private String keyspace;
 
 	@Override
-	public CassandraCqlTemplate getObject() {
-		return cassandraDriverTemplate;
+	public CqlTemplate getObject() {
+		return cqlTemplate;
 	}
 
 	@Override
-	public Class<? extends CassandraCqlOperations> getObjectType() {
-		return CassandraCqlTemplate.class;
+	public Class<? extends CqlOperations> getObjectType() {
+		return CqlTemplate.class;
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class CassandraCqlTemplateFactoryBean implements FactoryBean<CassandraCql
 		}
 
 		// initialize property
-		this.cassandraDriverTemplate = new CassandraCqlTemplate(session, keyspace);
+		this.cqlTemplate = new CqlTemplate(session, keyspace);
 
 	}
 

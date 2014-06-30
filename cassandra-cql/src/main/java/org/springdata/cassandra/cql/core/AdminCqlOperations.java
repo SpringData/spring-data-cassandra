@@ -16,6 +16,10 @@
 package org.springdata.cassandra.cql.core;
 
 import org.springdata.cassandra.cql.option.KeyspaceOptions;
+import org.springdata.cassandra.cql.spec.AlterKeyspaceSpecification;
+import org.springdata.cassandra.cql.spec.CreateKeyspaceSpecification;
+import org.springdata.cassandra.cql.spec.DropKeyspaceSpecification;
+import org.springdata.cassandra.cql.spec.UseKeyspaceSpecification;
 
 import com.datastax.driver.core.KeyspaceMetadata;
 
@@ -37,6 +41,14 @@ public interface AdminCqlOperations {
 	UpdateOperation createKeyspace(String keyspace, KeyspaceOptions keyspaceOptions);
 
 	/**
+	 * Creates keyspace with a given CreateKeyspaceSpecification
+	 * 
+	 * @param createKeyspaceSpecification
+	 * @return
+	 */
+	UpdateOperation createKeyspace(CreateKeyspaceSpecification createKeyspaceSpecification);
+
+	/**
 	 * Alters Keyspace with given name and options
 	 * 
 	 * @param keyspace The keyspace name
@@ -45,12 +57,28 @@ public interface AdminCqlOperations {
 	UpdateOperation alterKeyspace(String keyspace, KeyspaceOptions keyspaceOptions);
 
 	/**
-	 * Drop keyspace
+	 * Alters keyspace with a given AlterKeyspaceSpecification
+	 * 
+	 * @param alterKeyspaceSpecification
+	 * @return
+	 */
+	UpdateOperation alterKeyspace(AlterKeyspaceSpecification alterKeyspaceSpecification);
+
+	/**
+	 * Drops keyspace with given keyspace name
 	 * 
 	 * @param keyspace The keyspace name
 	 * 
 	 */
 	UpdateOperation dropKeyspace(String keyspace);
+
+	/**
+	 * Drops keyspace with a given DropKeyspaceSpecification
+	 * 
+	 * @param dropKeyspaceSpecification
+	 * @return
+	 */
+	UpdateOperation dropKeyspace(DropKeyspaceSpecification dropKeyspaceSpecification);
 
 	/**
 	 * Use keyspace
@@ -59,6 +87,14 @@ public interface AdminCqlOperations {
 	 * 
 	 */
 	UpdateOperation useKeyspace(String keyspace);
+
+	/**
+	 * Use keyspace with a given UseKeyspaceSpecification
+	 * 
+	 * @param useKeyspaceSpecification
+	 * @return
+	 */
+	UpdateOperation useKeyspace(UseKeyspaceSpecification useKeyspaceSpecification);
 
 	/**
 	 * Use system keyspace

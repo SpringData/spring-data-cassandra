@@ -15,11 +15,6 @@
  */
 package org.springdata.cassandra.cql.core;
 
-import org.springdata.cassandra.cql.core.query.ConsistencyLevel;
-import org.springdata.cassandra.cql.core.query.ConsistencyLevelResolver;
-import org.springdata.cassandra.cql.core.query.RetryPolicy;
-import org.springdata.cassandra.cql.core.query.RetryPolicyResolver;
-
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Query;

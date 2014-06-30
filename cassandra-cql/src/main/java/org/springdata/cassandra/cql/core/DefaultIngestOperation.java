@@ -15,20 +15,15 @@
  */
 package org.springdata.cassandra.cql.core;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
-import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Default ingest operation implementation
+ * Default Ingest operation implementation
  * 
  * @author Alex Shvid
  * 
@@ -39,73 +34,29 @@ public class DefaultIngestOperation extends AbstractQueryOperation<List<ResultSe
 
 	private final Iterator<Query> queryIterator;
 
-	public DefaultIngestOperation(CassandraCqlTemplate cassandraCqlTemplate, Iterator<Query> iterator) {
-		super(cassandraCqlTemplate);
+	public DefaultIngestOperation(CqlTemplate cqlTemplate, Iterator<Query> iterator) {
+		super(cqlTemplate);
 		this.queryIterator = iterator;
 	}
 
 	@Override
 	public List<ResultSet> execute() {
-
-		List<ResultSet> list = new ArrayList<ResultSet>();
-
-		while (queryIterator.hasNext()) {
-			Query query = queryIterator.next();
-			ResultSet resultSet = doExecute(query);
-			list.add(resultSet);
-		}
-
-		return list;
-
+		return doExecute(queryIterator);
 	}
 
 	@Override
 	public CassandraFuture<List<ResultSet>> executeAsync() {
-
-		final Iterator<ListenableFuture<ResultSet>> resultSetFutures = Iterators.transform(queryIterator,
-				new Function<Query, ListenableFuture<ResultSet>>() {
-
-					@Override
-					public ListenableFuture<ResultSet> apply(Query query) {
-						return doExecuteAsync(query);
-					}
-
-				});
-
-		ListenableFuture<List<ResultSet>> allResultSetFuture = Futures
-				.successfulAsList(new Iterable<ListenableFuture<ResultSet>>() {
-
-					@Override
-					public Iterator<ListenableFuture<ResultSet>> iterator() {
-						return resultSetFutures;
-					}
-
-				});
-
-		CassandraFuture<List<ResultSet>> wrappedFuture = new CassandraFuture<List<ResultSet>>(allResultSetFuture,
-				cassandraCqlTemplate.getExceptionTranslator());
-
-		return wrappedFuture;
+		return doExecuteAsync(queryIterator);
 	}
 
 	@Override
 	public void executeAsync(CallbackHandler<List<ResultSet>> cb) {
-		CassandraFuture<List<ResultSet>> allResultSetFuture = executeAsync();
-		doFutureCallback(allResultSetFuture, cb);
+		doExecuteAsync(queryIterator, cb);
 	}
 
 	@Override
 	public List<ResultSet> executeNonstop(int timeoutMls) throws TimeoutException {
-
-		List<ResultSet> list = new ArrayList<ResultSet>();
-
-		while (queryIterator.hasNext()) {
-			Query query = queryIterator.next();
-			ResultSet resultSet = doExecuteNonstop(query, timeoutMls);
-			list.add(resultSet);
-		}
-
-		return list;
+		return doExecuteNonstop(queryIterator, timeoutMls);
 	}
 
 }

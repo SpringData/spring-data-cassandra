@@ -20,12 +20,13 @@ import java.util.Set;
 
 import org.springdata.cassandra.convert.CassandraConverter;
 import org.springdata.cassandra.convert.MappingCassandraConverter;
-import org.springdata.cassandra.core.CassandraOperations;
 import org.springdata.cassandra.core.CassandraSessionFactoryBean;
 import org.springdata.cassandra.core.CassandraTemplate;
+import org.springdata.cassandra.core.CassandraTemplateFactoryBean;
 import org.springdata.cassandra.cql.config.KeyspaceAttributes;
-import org.springdata.cassandra.cql.core.CassandraCqlOperations;
-import org.springdata.cassandra.cql.core.CassandraCqlTemplate;
+import org.springdata.cassandra.cql.config.java.AbstractCassandraClusterConfiguration;
+import org.springdata.cassandra.cql.core.CqlTemplate;
+import org.springdata.cassandra.cql.core.CqlTemplateFactoryBean;
 import org.springdata.cassandra.mapping.CassandraMappingContext;
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
 import org.springdata.cassandra.mapping.CassandraPersistentProperty;
@@ -41,7 +42,6 @@ import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
-import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 
 /**
@@ -50,7 +50,8 @@ import com.datastax.driver.core.Session;
  * @author Alex Shvid
  */
 @Configuration
-public abstract class AbstractCassandraConfiguration implements BeanClassLoaderAware {
+public abstract class AbstractCassandraConfiguration extends AbstractCassandraClusterConfiguration implements
+		BeanClassLoaderAware {
 
 	/**
 	 * Used by CassandraConverter
@@ -60,18 +61,9 @@ public abstract class AbstractCassandraConfiguration implements BeanClassLoaderA
 	/**
 	 * Return the name of the keyspace to connect to.
 	 * 
-	 * @return for {@literal null} value will be used SYSTEM keyspace.
+	 * @return for {@literal null} or empty keyspace will be used SYSTEM keyspace by default.
 	 */
 	protected abstract String keyspace();
-
-	/**
-	 * Return the {@link Cluster} instance to connect to.
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	@Bean
-	public abstract Cluster cluster();
 
 	/**
 	 * Return keyspace attributes
@@ -93,15 +85,14 @@ public abstract class AbstractCassandraConfiguration implements BeanClassLoaderA
 	 * @throws Exception
 	 */
 	@Bean
-	public Session session() {
+	public CassandraSessionFactoryBean session() throws Exception {
 		CassandraSessionFactoryBean factory = new CassandraSessionFactoryBean();
 		factory.setKeyspace(keyspace());
-		factory.setCluster(cluster());
+		factory.setCluster(cluster().getObject());
 		factory.setConverter(converter());
 		factory.setKeyspaceAttributes(keyspaceAttributes());
 		factory.setBeanClassLoader(beanClassLoader);
-		factory.afterPropertiesSet();
-		return factory.getObject();
+		return factory;
 	}
 
 	/**
@@ -118,13 +109,16 @@ public abstract class AbstractCassandraConfiguration implements BeanClassLoaderA
 	}
 
 	/**
-	 * Creates a {@link CassandraCqlTemplate}.
+	 * Creates a {@link CqlTemplate}.
 	 * 
-	 * @return CassandraCqlOperations
+	 * @return CqlOperations
 	 */
 	@Bean
-	public CassandraCqlOperations cassandraCqlTemplate() {
-		return new CassandraCqlTemplate(session(), keyspace());
+	public CqlTemplateFactoryBean cqlTemplate() throws Exception {
+		CqlTemplateFactoryBean factory = new CqlTemplateFactoryBean();
+		factory.setKeyspace(keyspace());
+		factory.setSession(session().getObject());
+		return factory;
 	}
 
 	/**
@@ -133,8 +127,12 @@ public abstract class AbstractCassandraConfiguration implements BeanClassLoaderA
 	 * @return CassandraOperations
 	 */
 	@Bean
-	public CassandraOperations cassandraTemplate() {
-		return new CassandraTemplate(session(), converter(), keyspace());
+	public CassandraTemplateFactoryBean cassandraTemplate() throws Exception {
+		CassandraTemplateFactoryBean factory = new CassandraTemplateFactoryBean();
+		factory.setKeyspace(keyspace());
+		factory.setSession(session().getObject());
+		factory.setConverter(converter());
+		return factory;
 	}
 
 	/**
@@ -198,6 +196,13 @@ public abstract class AbstractCassandraConfiguration implements BeanClassLoaderA
 	public void setBeanClassLoader(ClassLoader classLoader) {
 		this.beanClassLoader = classLoader;
 	}
+
+	/**
+	 * Service method to load class and transform ClassNotFoundException to IllegalArgumentException
+	 * 
+	 * @param className
+	 * @return
+	 */
 
 	private Class<?> loadClass(String className) {
 		try {

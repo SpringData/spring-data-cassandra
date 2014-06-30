@@ -15,6 +15,7 @@
  */
 package org.springdata.cassandra.core;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springdata.cassandra.cql.core.AbstractUpdateOperation;
@@ -40,7 +41,7 @@ public class DefaultDeleteOperation<T> extends AbstractUpdateOperation<DeleteOpe
 		BatchedStatementCreator {
 
 	enum DeleteBy {
-		ID, ENTITY;
+		ID, ENTITY, ALL;
 	}
 
 	private final CassandraTemplate cassandraTemplate;
@@ -74,6 +75,16 @@ public class DefaultDeleteOperation<T> extends AbstractUpdateOperation<DeleteOpe
 		this.id = id;
 	}
 
+	protected DefaultDeleteOperation(CassandraTemplate cassandraTemplate, Class<T> entityClass) {
+		super(cassandraTemplate.cqlTemplate());
+		Assert.notNull(entityClass);
+		this.cassandraTemplate = cassandraTemplate;
+		this.deleteBy = DeleteBy.ALL;
+		this.entity = null;
+		this.entityClass = entityClass;
+		this.id = null;
+	}
+
 	@Override
 	public DeleteOperation fromTable(String tableName) {
 		this.tableName = tableName;
@@ -98,6 +109,7 @@ public class DefaultDeleteOperation<T> extends AbstractUpdateOperation<DeleteOpe
 
 		switch (deleteBy) {
 		case ID:
+		case ALL:
 			return cassandraTemplate.getTableName(entityClass);
 		case ENTITY:
 			return cassandraTemplate.getTableName(entity.getClass());
@@ -111,30 +123,39 @@ public class DefaultDeleteOperation<T> extends AbstractUpdateOperation<DeleteOpe
 		return createStatement();
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	@Override
 	public Statement createStatement() {
+
+		if (deleteBy == DeleteBy.ALL) {
+			return QueryBuilder.truncate(cassandraTemplate.getKeyspace(), getTableName());
+		}
 
 		Delete.Selection ds = QueryBuilder.delete();
 
 		Delete query = ds.from(cassandraTemplate.getKeyspace(), getTableName());
 		Where w = query.where();
 
+		List<Clause> clauseList = null;
+
 		switch (deleteBy) {
 
 		case ID:
 			CassandraPersistentEntity<?> persistenceEntity = cassandraTemplate.getPersistentEntity(entityClass);
-			List<Clause> list = cassandraTemplate.getConverter().getPrimaryKey(persistenceEntity, id);
-
-			for (Clause c : list) {
-				w.and(c);
-			}
-
+			clauseList = cassandraTemplate.getConverter().getPrimaryKey(persistenceEntity, id);
 			break;
 
 		case ENTITY:
-			cassandraTemplate.getConverter().write(entity, w);
+			clauseList = new LinkedList<Clause>();
+			cassandraTemplate.getConverter().write(entity, clauseList);
 			break;
 
+		}
+
+		if (clauseList != null) {
+			for (Clause c : clauseList) {
+				w.and(c);
+			}
 		}
 
 		if (timestamp != null) {

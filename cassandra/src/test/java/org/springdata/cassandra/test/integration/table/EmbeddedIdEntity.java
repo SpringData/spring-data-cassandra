@@ -1,12 +1,27 @@
+/*
+ * Copyright 2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springdata.cassandra.test.integration.table;
+
+import java.io.Serializable;
 
 import org.springdata.cassandra.cql.core.KeyPart;
 import org.springdata.cassandra.mapping.Embeddable;
-import org.springdata.cassandra.mapping.EmbeddedId;
+import org.springdata.cassandra.mapping.Id;
 import org.springdata.cassandra.mapping.KeyColumn;
 import org.springdata.cassandra.mapping.Table;
-
-import java.io.Serializable;
 
 @Table(name = "embedded_id_table")
 public class EmbeddedIdEntity {
@@ -45,7 +60,7 @@ public class EmbeddedIdEntity {
 		}
 	}
 
-	@EmbeddedId
+	@Id
 	private PK id;
 	private String proptext;
 

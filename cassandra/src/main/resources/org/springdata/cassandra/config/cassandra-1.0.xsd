@@ -217,12 +217,12 @@ The reference to a CassandraConverter instance. Will default to 'cassandra-conve
 	<xsd:element name="cql-template" type="cqlTemplateType">
 		<xsd:annotation>
 			<xsd:documentation
-				source="org.springdata.cassandra.cql.core.CassandraCqlTemplateFactoryBean"><![CDATA[
-Defines a Cassandra Driver Template instance.
+				source="org.springdata.cassandra.cql.core.CqlTemplateFactoryBean"><![CDATA[
+Defines a CqlTemplate instance.
 			]]></xsd:documentation>
 			<xsd:appinfo>
 				<tool:annotation>
-					<tool:exports type="org.springdata.cassandra.cql.core.CassandraCqlTemplate" />
+					<tool:exports type="org.springdata.cassandra.cql.core.CqlTemplate" />
 				</tool:annotation>
 			</xsd:appinfo>
 		</xsd:annotation>
@@ -232,8 +232,8 @@ Defines a Cassandra Driver Template instance.
 		<xsd:attribute name="id" type="xsd:ID" use="optional">
 			<xsd:annotation>
 				<xsd:documentation>
-					The name of the Driver Template definition (by default
-					"cassandra-driver-template")
+					The name of the CqlTemplate definition (by default
+					"cql-template")
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
@@ -492,7 +492,7 @@ Creates and then drop the keyspace at the end of the session.
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
-		<xsd:attribute name="replication-stategy" type="xsd:string"
+		<xsd:attribute name="replication-strategy" type="xsd:string"
 			use="optional" default="SimpleStrategy">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[

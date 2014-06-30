@@ -16,8 +16,8 @@
 package org.springdata.cassandra.cql.core;
 
 import org.springdata.cassandra.cql.config.CompressionType;
-import org.springdata.cassandra.cql.config.PoolingOptionsConfig;
-import org.springdata.cassandra.cql.config.SocketOptionsConfig;
+import org.springdata.cassandra.cql.config.PoolingOptions;
+import org.springdata.cassandra.cql.config.SocketOptions;
 import org.springdata.cassandra.cql.support.CassandraExceptionTranslator;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -29,9 +29,7 @@ import org.springframework.util.StringUtils;
 import com.datastax.driver.core.AuthProvider;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.HostDistance;
-import com.datastax.driver.core.PoolingOptions;
 import com.datastax.driver.core.ProtocolOptions.Compression;
-import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.ReconnectionPolicy;
 import com.datastax.driver.core.policies.RetryPolicy;
@@ -45,9 +43,9 @@ import com.datastax.driver.core.policies.RetryPolicy;
 public class CassandraClusterFactoryBean implements FactoryBean<Cluster>, InitializingBean, DisposableBean,
 		PersistenceExceptionTranslator {
 
-	private static final String DEFAULT_CONTACT_POINTS = "localhost";
-	private static final int DEFAULT_PORT = 9042;
-	private static final boolean DEFAULT_METRICS_ENABLED = true;
+	public static final String DEFAULT_CONTACT_POINTS = "localhost";
+	public static final int DEFAULT_PORT = 9042;
+	public static final boolean DEFAULT_METRICS_ENABLED = true;
 
 	private Cluster cluster;
 
@@ -55,9 +53,9 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>, Initia
 	private int port = DEFAULT_PORT;
 	private CompressionType compressionType;
 
-	private PoolingOptionsConfig localPoolingOptions;
-	private PoolingOptionsConfig remotePoolingOptions;
-	private SocketOptionsConfig socketOptions;
+	private PoolingOptions localPoolingOptions;
+	private PoolingOptions remotePoolingOptions;
+	private SocketOptions socketOptions;
 
 	private AuthProvider authProvider;
 	private LoadBalancingPolicy loadBalancingPolicy;
@@ -160,15 +158,15 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>, Initia
 		this.compressionType = compressionType;
 	}
 
-	public void setLocalPoolingOptions(PoolingOptionsConfig localPoolingOptions) {
+	public void setLocalPoolingOptions(PoolingOptions localPoolingOptions) {
 		this.localPoolingOptions = localPoolingOptions;
 	}
 
-	public void setRemotePoolingOptions(PoolingOptionsConfig remotePoolingOptions) {
+	public void setRemotePoolingOptions(PoolingOptions remotePoolingOptions) {
 		this.remotePoolingOptions = remotePoolingOptions;
 	}
 
-	public void setSocketOptions(SocketOptionsConfig socketOptions) {
+	public void setSocketOptions(SocketOptions socketOptions) {
 		this.socketOptions = socketOptions;
 	}
 
@@ -202,8 +200,9 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>, Initia
 		throw new IllegalArgumentException("unknown compression type " + type);
 	}
 
-	private static PoolingOptions configPoolingOptions(HostDistance hostDistance, PoolingOptionsConfig config) {
-		PoolingOptions poolingOptions = new PoolingOptions();
+	private static com.datastax.driver.core.PoolingOptions configPoolingOptions(HostDistance hostDistance,
+			PoolingOptions config) {
+		com.datastax.driver.core.PoolingOptions poolingOptions = new com.datastax.driver.core.PoolingOptions();
 
 		if (config.getMinSimultaneousRequests() != null) {
 			poolingOptions
@@ -223,8 +222,8 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>, Initia
 		return poolingOptions;
 	}
 
-	private static SocketOptions configSocketOptions(SocketOptionsConfig config) {
-		SocketOptions socketOptions = new SocketOptions();
+	private static com.datastax.driver.core.SocketOptions configSocketOptions(SocketOptions config) {
+		com.datastax.driver.core.SocketOptions socketOptions = new com.datastax.driver.core.SocketOptions();
 
 		if (config.getConnectTimeoutMls() != null) {
 			socketOptions.setConnectTimeoutMillis(config.getConnectTimeoutMls());

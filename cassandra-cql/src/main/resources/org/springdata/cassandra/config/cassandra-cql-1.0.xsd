@@ -163,7 +163,7 @@ RetryPolicy implementation.
 	<xsd:element name="session" type="sessionType">
 		<xsd:annotation>
 			<xsd:documentation
-				source="org.springdata.cassandra.cql.core.CassandraCqlSessionFactoryBean"><![CDATA[
+				source="org.springdata.cassandra.cql.core.SessionFactoryBean"><![CDATA[
 Defines a Cassandra Session instance.
 			]]></xsd:documentation>
 			<xsd:appinfo>
@@ -208,12 +208,12 @@ The reference to a Cassandra Cluster instance. Will default to 'cassandra-cluste
 	<xsd:element name="cql-template" type="cqlTemplateType">
 		<xsd:annotation>
 			<xsd:documentation
-				source="org.springdata.cassandra.cql.core.CassandraCqlTemplateFactoryBean"><![CDATA[
-Defines a CassandraCqlTemplate instance.
+				source="org.springdata.cassandra.cql.core.CqlTemplateFactoryBean"><![CDATA[
+Defines a CqlTemplate instance.
 			]]></xsd:documentation>
 			<xsd:appinfo>
 				<tool:annotation>
-					<tool:exports type="org.springdata.cassandra.cql.core.CassandraCqlTemplate" />
+					<tool:exports type="org.springdata.cassandra.cql.core.CqlTemplate" />
 				</tool:annotation>
 			</xsd:appinfo>
 		</xsd:annotation>
@@ -223,8 +223,8 @@ Defines a CassandraCqlTemplate instance.
 		<xsd:attribute name="id" type="xsd:ID" use="optional">
 			<xsd:annotation>
 				<xsd:documentation>
-					The name of the CassandraCqlTemplate definition (by default
-					"cassandra-driver-template")
+					The name of the CqlTemplate definition (by default
+					"cql-template")
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
@@ -308,7 +308,7 @@ Creates and then drop the keyspace at the end of the session.
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
-		<xsd:attribute name="replication-stategy" type="xsd:string"
+		<xsd:attribute name="replication-strategy" type="xsd:string"
 			use="optional" default="SimpleStrategy">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[

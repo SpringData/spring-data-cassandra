@@ -25,7 +25,7 @@ import org.springdata.cassandra.cql.spec.TableSpecification;
  * @param T The subtype of this class for which this is a CQL generator.
  */
 public abstract class TableCqlGenerator<T extends TableSpecification<T>> extends
-		WithOptionsCqlGenerator<TableOption, TableSpecification<T>> {
+		WithOptionsCqlGenerator<TableOption, T> {
 
 	public TableCqlGenerator(TableSpecification<T> specification) {
 		super(specification);

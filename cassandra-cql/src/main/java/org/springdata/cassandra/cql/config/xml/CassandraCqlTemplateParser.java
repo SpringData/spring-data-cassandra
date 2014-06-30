@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.cql.config.xml;
 
-import org.springdata.cassandra.cql.core.CassandraCqlTemplateFactoryBean;
+import org.springdata.cassandra.cql.core.CqlTemplateFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -34,7 +34,7 @@ public class CassandraCqlTemplateParser extends AbstractSimpleBeanDefinitionPars
 
 	@Override
 	protected Class<?> getBeanClass(Element element) {
-		return CassandraCqlTemplateFactoryBean.class;
+		return CqlTemplateFactoryBean.class;
 	}
 
 	@Override

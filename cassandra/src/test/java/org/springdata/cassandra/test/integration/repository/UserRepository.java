@@ -16,6 +16,7 @@
 package org.springdata.cassandra.test.integration.repository;
 
 import org.springdata.cassandra.repository.CassandraRepository;
+import org.springdata.cassandra.repository.Nonstop;
 import org.springdata.cassandra.test.integration.table.User;
 
 /**
@@ -25,5 +26,10 @@ import org.springdata.cassandra.test.integration.table.User;
  * 
  */
 public interface UserRepository extends CassandraRepository<User, String> {
+
+	// void save(User user, ConsistencyLevel consistencyLevel);
+
+	@Nonstop(timeoutMilliseconds = 100)
+	public <S extends User> S save(S user);
 
 }

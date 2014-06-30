@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cassandra.cql.core.query;
+package org.springdata.cassandra.cql.core;
 
 /**
  * Determine driver consistency level based on ConsistencyLevel

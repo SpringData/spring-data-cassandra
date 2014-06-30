@@ -95,7 +95,7 @@ public class CassandraSessionParser extends AbstractSimpleBeanDefinitionParser {
 
 	private BeanDefinition parseKeyspaceAttributes(Element element) {
 		BeanDefinitionBuilder defBuilder = BeanDefinitionBuilder.genericBeanDefinition(KeyspaceAttributes.class);
-		ParsingUtils.setPropertyValue(defBuilder, element, "action", "action");
+		ParsingUtils.setPropertyValue(defBuilder, element, "action", "actionStr");
 		ParsingUtils.setPropertyValue(defBuilder, element, "replication-strategy", "replicationStrategy");
 		ParsingUtils.setPropertyValue(defBuilder, element, "replication-factor", "replicationFactor");
 		ParsingUtils.setPropertyValue(defBuilder, element, "durable-writes", "durableWrites");

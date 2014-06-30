@@ -20,8 +20,9 @@ import java.util.List;
 
 import org.springdata.cassandra.config.TableAttributes;
 import org.springdata.cassandra.convert.CassandraConverter;
-import org.springdata.cassandra.cql.core.CassandraCqlSessionFactoryBean;
-import org.springdata.cassandra.cql.core.CassandraCqlTemplate;
+import org.springdata.cassandra.cql.core.CqlTemplate;
+import org.springdata.cassandra.cql.core.SessionFactoryBean;
+import org.springdata.cassandra.cql.core.UpdateOperation;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -34,6 +35,7 @@ import org.springframework.util.StringUtils;
 
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.TableMetadata;
+import com.google.common.base.Optional;
 
 /**
  * Convenient factory for configuring a Cassandra Session.
@@ -41,8 +43,8 @@ import com.datastax.driver.core.TableMetadata;
  * @author Alex Shvid
  */
 
-public class CassandraSessionFactoryBean extends CassandraCqlSessionFactoryBean implements FactoryBean<Session>,
-		InitializingBean, DisposableBean, BeanClassLoaderAware, PersistenceExceptionTranslator {
+public class CassandraSessionFactoryBean extends SessionFactoryBean implements FactoryBean<Session>, InitializingBean,
+		DisposableBean, BeanClassLoaderAware, PersistenceExceptionTranslator {
 
 	private ClassLoader beanClassLoader;
 
@@ -66,8 +68,8 @@ public class CassandraSessionFactoryBean extends CassandraCqlSessionFactoryBean 
 
 		if (StringUtils.hasText(keyspace)) {
 
-			CassandraCqlTemplate cassandraTemplate = new CassandraCqlTemplate(session, keyspace);
-			CassandraTemplate cassandraDataTemplate = new CassandraTemplate(session, converter, keyspace);
+			CqlTemplate cqlTemplate = new CqlTemplate(session, keyspace);
+			CassandraTemplate cassandraTemplate = new CassandraTemplate(session, converter, keyspace);
 
 			if (!CollectionUtils.isEmpty(tables)) {
 
@@ -77,37 +79,41 @@ public class CassandraSessionFactoryBean extends CassandraCqlSessionFactoryBean 
 					Class<?> entityClass = loadClass(entityClassName);
 
 					String useTableName = tableAttributes.getTableName() != null ? tableAttributes.getTableName()
-							: cassandraDataTemplate.getTableName(entityClass);
+							: cassandraTemplate.getTableName(entityClass);
 
 					if (keyspaceCreated) {
-						createNewTable(cassandraDataTemplate, useTableName, entityClass);
+						createNewTable(cassandraTemplate, useTableName, entityClass);
 					} else if (keyspaceAttributes.isUpdate()) {
-						TableMetadata table = cassandraTemplate.schemaOps().getTableMetadata(useTableName);
+						TableMetadata table = cqlTemplate.schemaOps().getTableMetadata(useTableName);
 						if (table == null) {
-							createNewTable(cassandraDataTemplate, useTableName, entityClass);
+							createNewTable(cassandraTemplate, useTableName, entityClass);
 						} else {
 
-							cassandraDataTemplate.schemaOps().alterTable(useTableName, entityClass, true, null);
+							Optional<UpdateOperation> alter = cassandraTemplate.schemaOps().alterTable(useTableName, entityClass,
+									true);
+							if (alter.isPresent()) {
+								alter.get().execute();
+							}
 
-							cassandraDataTemplate.schemaOps().alterIndexes(useTableName, entityClass, null);
+							cassandraTemplate.schemaOps().alterIndexes(useTableName, entityClass).execute();
 
 						}
 					} else if (keyspaceAttributes.isValidate()) {
 
-						TableMetadata table = cassandraTemplate.schemaOps().getTableMetadata(useTableName);
+						TableMetadata table = cqlTemplate.schemaOps().getTableMetadata(useTableName);
 						if (table == null) {
 							throw new InvalidDataAccessApiUsageException("not found table " + useTableName + " for entity "
 									+ entityClassName);
 						}
 
-						String query = cassandraDataTemplate.schemaOps().validateTable(useTableName, entityClass);
+						String query = cassandraTemplate.schemaOps().validateTable(useTableName, entityClass);
 
 						if (query != null) {
 							throw new InvalidDataAccessApiUsageException("invalid table " + useTableName + " for entity "
 									+ entityClassName + ". modify it by " + query);
 						}
 
-						List<String> queryList = cassandraDataTemplate.schemaOps().validateIndexes(useTableName, entityClass);
+						List<String> queryList = cassandraTemplate.schemaOps().validateIndexes(useTableName, entityClass);
 
 						if (!queryList.isEmpty()) {
 							throw new InvalidDataAccessApiUsageException("invalid indexes in table " + useTableName + " for entity "
@@ -130,9 +136,9 @@ public class CassandraSessionFactoryBean extends CassandraCqlSessionFactoryBean 
 		}
 	}
 
-	private void createNewTable(CassandraTemplate cassandraDataTemplate, String useTableName, Class<?> entityClass) {
-		cassandraDataTemplate.schemaOps().createTable(false, useTableName, entityClass, null);
-		cassandraDataTemplate.schemaOps().createIndexes(useTableName, entityClass, null);
+	private void createNewTable(CassandraTemplate cassandraTemplate, String useTableName, Class<?> entityClass) {
+		cassandraTemplate.schemaOps().createTable(useTableName, entityClass).execute();
+		cassandraTemplate.schemaOps().createIndexes(useTableName, entityClass).execute();
 	}
 
 	public void setConverter(CassandraConverter converter) {

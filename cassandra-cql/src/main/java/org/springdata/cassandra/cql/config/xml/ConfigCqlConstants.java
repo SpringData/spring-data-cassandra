@@ -22,7 +22,7 @@ public interface ConfigCqlConstants {
 
 	public static final String CASSANDRA_CLUSTER = "cassandra-cluster";
 	public static final String CASSANDRA_SESSION = "cassandra-session";
-	public static final String CASSANDRA_CQL_TEMPLATE = "cassandra-cql-template";
+	public static final String CASSANDRA_CQL_TEMPLATE = "cql-template";
 
 	public static final String CASSANDRA_CLUSTER_ELEMENT = "cluster";
 	public static final String CASSANDRA_SESSION_ELEMENT = "session";

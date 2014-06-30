@@ -16,9 +16,9 @@
 package org.springdata.cassandra.cql.config.java;
 
 import org.springdata.cassandra.cql.config.KeyspaceAttributes;
-import org.springdata.cassandra.cql.core.CassandraCqlOperations;
-import org.springdata.cassandra.cql.core.CassandraCqlSessionFactoryBean;
-import org.springdata.cassandra.cql.core.CassandraCqlTemplate;
+import org.springdata.cassandra.cql.core.CqlTemplate;
+import org.springdata.cassandra.cql.core.CqlTemplateFactoryBean;
+import org.springdata.cassandra.cql.core.SessionFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,7 +31,7 @@ import com.datastax.driver.core.Session;
  * @author Alex Shvid
  */
 @Configuration
-public abstract class AbstractCassandraCqlConfiguration {
+public abstract class AbstractCassandraCqlConfiguration extends AbstractCassandraClusterConfiguration {
 
 	/**
 	 * Return the name of the keyspace to connect to.
@@ -39,14 +39,6 @@ public abstract class AbstractCassandraCqlConfiguration {
 	 * @return for {@literal null} or empty keyspace will be used SYSTEM keyspace by default.
 	 */
 	protected abstract String keyspace();
-
-	/**
-	 * Return the {@link Cluster} instance to connect to.
-	 * 
-	 * @return Cluster object
-	 */
-	@Bean
-	public abstract Cluster cluster();
 
 	/**
 	 * Return keyspace attributes
@@ -59,31 +51,33 @@ public abstract class AbstractCassandraCqlConfiguration {
 	}
 
 	/**
-	 * Creates a {@link Session} to be used by the {@link CassandraCqlTemplate}. Will use the {@link Cluster} instance
-	 * configured in {@link #cluster()}.
+	 * Creates a {@link Session} to be used by the {@link CqlTemplate}. Will use the {@link Cluster} instance configured
+	 * in {@link #cluster()}.
 	 * 
 	 * @see #cluster()
 	 * @see #Keyspace()
 	 * @return Session
 	 */
 	@Bean
-	public Session session() {
-		CassandraCqlSessionFactoryBean factory = new CassandraCqlSessionFactoryBean();
+	public SessionFactoryBean session() throws Exception {
+		SessionFactoryBean factory = new SessionFactoryBean();
 		factory.setKeyspace(keyspace());
-		factory.setCluster(cluster());
+		factory.setCluster(cluster().getObject());
 		factory.setKeyspaceAttributes(keyspaceAttributes());
-		factory.afterPropertiesSet();
-		return factory.getObject();
+		return factory;
 	}
 
 	/**
-	 * Creates a {@link CassandraCqlTemplate}.
+	 * Creates a {@link CqlTemplate}.
 	 * 
-	 * @return CassandraCqlOperations
+	 * @return CqlOperations
 	 */
 	@Bean
-	public CassandraCqlOperations cassandraCqlTemplate() {
-		return new CassandraCqlTemplate(session(), keyspace());
+	public CqlTemplateFactoryBean cqlTemplate() throws Exception {
+		CqlTemplateFactoryBean factory = new CqlTemplateFactoryBean();
+		factory.setKeyspace(keyspace());
+		factory.setSession(session().getObject());
+		return factory;
 	}
 
 }

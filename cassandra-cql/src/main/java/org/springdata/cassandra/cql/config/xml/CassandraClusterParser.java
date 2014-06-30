@@ -18,8 +18,8 @@ package org.springdata.cassandra.cql.config.xml;
 import java.util.List;
 
 import org.springdata.cassandra.cql.config.CompressionType;
-import org.springdata.cassandra.cql.config.PoolingOptionsConfig;
-import org.springdata.cassandra.cql.config.SocketOptionsConfig;
+import org.springdata.cassandra.cql.config.PoolingOptions;
+import org.springdata.cassandra.cql.config.SocketOptions;
 import org.springdata.cassandra.cql.core.CassandraClusterFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -93,7 +93,7 @@ public class CassandraClusterParser extends AbstractSimpleBeanDefinitionParser {
 	}
 
 	private BeanDefinition parsePoolingOptions(Element element) {
-		BeanDefinitionBuilder defBuilder = BeanDefinitionBuilder.genericBeanDefinition(PoolingOptionsConfig.class);
+		BeanDefinitionBuilder defBuilder = BeanDefinitionBuilder.genericBeanDefinition(PoolingOptions.class);
 		ParsingUtils.setPropertyValue(defBuilder, element, "min-simultaneous-requests", "minSimultaneousRequests");
 		ParsingUtils.setPropertyValue(defBuilder, element, "max-simultaneous-requests", "maxSimultaneousRequests");
 		ParsingUtils.setPropertyValue(defBuilder, element, "core-connections", "coreConnections");
@@ -102,7 +102,7 @@ public class CassandraClusterParser extends AbstractSimpleBeanDefinitionParser {
 	}
 
 	private BeanDefinition parseSocketOptions(Element element) {
-		BeanDefinitionBuilder defBuilder = BeanDefinitionBuilder.genericBeanDefinition(SocketOptionsConfig.class);
+		BeanDefinitionBuilder defBuilder = BeanDefinitionBuilder.genericBeanDefinition(SocketOptions.class);
 		ParsingUtils.setPropertyValue(defBuilder, element, "connect-timeout-mls", "connectTimeoutMls");
 		ParsingUtils.setPropertyValue(defBuilder, element, "keep-alive", "keepAlive");
 		ParsingUtils.setPropertyValue(defBuilder, element, "reuse-address", "reuseAddress");

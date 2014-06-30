@@ -15,14 +15,14 @@
  */
 package org.springdata.cassandra.core;
 
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.List;
 
 import org.springframework.data.convert.EntityReader;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
-import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * Abstract Find Operation
@@ -31,7 +31,7 @@ import com.google.common.collect.Iterators;
  * 
  * @param <T> - return Type
  */
-public abstract class AbstractFindOperation<T> extends AbstractGetOperation<Iterator<T>> {
+public abstract class AbstractFindOperation<T> extends AbstractGetOperation<List<T>> {
 
 	protected final CassandraTemplate cassandraTemplate;
 	protected final EntityReader<? super T, Object> entityReader;
@@ -54,16 +54,16 @@ public abstract class AbstractFindOperation<T> extends AbstractGetOperation<Iter
 	}
 
 	@Override
-	public Iterator<T> transform(ResultSet resultSet) {
+	public List<T> transform(ResultSet resultSet) {
 
-		return Iterators.transform(resultSet.iterator(), new Function<Row, T>() {
+		List<T> result = Lists.newArrayList();
 
-			@Override
-			public T apply(Row row) {
-				return entityReader.read(entityClass, row);
-			}
+		for (Row row : resultSet) {
+			T obj = entityReader.read(entityClass, row);
+			result.add(obj);
+		}
 
-		});
+		return Collections.unmodifiableList(result);
 
 	}
 

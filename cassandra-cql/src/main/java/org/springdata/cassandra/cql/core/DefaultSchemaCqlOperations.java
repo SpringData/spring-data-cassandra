@@ -15,8 +15,21 @@
  */
 package org.springdata.cassandra.cql.core;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdata.cassandra.cql.generator.AlterTableCqlGenerator;
+import org.springdata.cassandra.cql.generator.CreateIndexCqlGenerator;
+import org.springdata.cassandra.cql.generator.CreateTableCqlGenerator;
+import org.springdata.cassandra.cql.generator.DropIndexCqlGenerator;
+import org.springdata.cassandra.cql.generator.DropTableCqlGenerator;
+import org.springdata.cassandra.cql.option.TableOptions;
+import org.springdata.cassandra.cql.spec.AlterTableSpecification;
+import org.springdata.cassandra.cql.spec.CreateIndexSpecification;
+import org.springdata.cassandra.cql.spec.CreateTableSpecification;
+import org.springdata.cassandra.cql.spec.DropIndexSpecification;
+import org.springdata.cassandra.cql.spec.DropTableSpecification;
 import org.springframework.util.Assert;
 
 import com.datastax.driver.core.Session;
@@ -32,22 +45,22 @@ public class DefaultSchemaCqlOperations implements SchemaCqlOperations {
 
 	private static final Logger log = LoggerFactory.getLogger(DefaultSchemaCqlOperations.class);
 
-	private final CassandraCqlTemplate cassandraTemplate;
+	private final CqlTemplate cqlTemplate;
 	private final String keyspace;
 
-	protected DefaultSchemaCqlOperations(CassandraCqlTemplate cassandraTemplate, String keyspace) {
+	protected DefaultSchemaCqlOperations(CqlTemplate cqlTemplate, String keyspace) {
 
-		Assert.notNull(cassandraTemplate);
+		Assert.notNull(cqlTemplate);
 		Assert.notNull(keyspace);
 
-		this.cassandraTemplate = cassandraTemplate;
+		this.cqlTemplate = cqlTemplate;
 		this.keyspace = keyspace;
 	}
 
 	@Override
 	public TableMetadata getTableMetadata(final String tableName) {
 
-		return cassandraTemplate.doExecute(new SessionCallback<TableMetadata>() {
+		return cqlTemplate.doExecute(new SessionCallback<TableMetadata>() {
 
 			public TableMetadata doInSession(Session s) {
 
@@ -56,6 +69,152 @@ public class DefaultSchemaCqlOperations implements SchemaCqlOperations {
 				return s.getCluster().getMetadata().getKeyspace(keyspace.toLowerCase()).getTable(tableName.toLowerCase());
 			}
 		});
+	}
+
+	@Override
+	public UpdateOperation createTable(boolean ifNotExists, String tableName, List<CqlColumn> partitionedColumns,
+			List<ClusteringCqlColumn> clusteringColumns, List<CqlColumn> nonKeyColumns, TableOptions tableOptions) {
+		Assert.notNull(tableName);
+		Assert.notNull(partitionedColumns);
+		Assert.notNull(clusteringColumns);
+		Assert.notNull(nonKeyColumns);
+		Assert.notNull(tableOptions);
+
+		CreateTableSpecification spec = new CreateTableSpecification().ifNotExists(ifNotExists).name(tableName);
+		spec.with(tableOptions.getOptions());
+
+		for (CqlColumn cqlColumn : partitionedColumns) {
+			spec.partitionKeyColumn(cqlColumn.getName(), cqlColumn.getType());
+		}
+
+		for (ClusteringCqlColumn cqlColumn : clusteringColumns) {
+			spec.clusteringKeyColumn(cqlColumn.getName(), cqlColumn.getType(), cqlColumn.getOrdering());
+		}
+
+		for (CqlColumn cqlColumn : nonKeyColumns) {
+			spec.column(cqlColumn.getName(), cqlColumn.getType());
+		}
+		return createTable(spec);
+	}
+
+	@Override
+	public UpdateOperation createTable(CreateTableSpecification createTableSpecification) {
+		Assert.notNull(createTableSpecification);
+
+		CreateTableCqlGenerator generator = new CreateTableCqlGenerator(createTableSpecification);
+
+		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+	}
+
+	@Override
+	public UpdateOperation alterTable(String tableName, List<CqlColumn> addColumns, List<CqlColumn> alterColumns,
+			List<String> dropColumns, TableOptions tableOptions) {
+		Assert.notNull(tableName);
+		Assert.notNull(addColumns);
+		Assert.notNull(alterColumns);
+		Assert.notNull(dropColumns);
+		Assert.notNull(tableOptions);
+
+		AlterTableSpecification spec = new AlterTableSpecification().name(tableName);
+		spec.with(tableOptions.getOptions());
+
+		for (CqlColumn cqlColumn : addColumns) {
+			spec.add(cqlColumn.getName(), cqlColumn.getType());
+		}
+
+		for (CqlColumn cqlColumn : alterColumns) {
+			spec.alter(cqlColumn.getName(), cqlColumn.getType());
+		}
+
+		for (String column : dropColumns) {
+			spec.drop(column);
+		}
+
+		return alterTable(spec);
+
+	}
+
+	@Override
+	public UpdateOperation alterTable(AlterTableSpecification alterTableSpecification) {
+		Assert.notNull(alterTableSpecification);
+
+		AlterTableCqlGenerator generator = new AlterTableCqlGenerator(alterTableSpecification);
+
+		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+	}
+
+	@Override
+	public UpdateOperation dropTable(boolean ifExists, String tableName) {
+		Assert.notNull(tableName);
+
+		DropTableSpecification spec = new DropTableSpecification().ifExists(ifExists).name(tableName);
+
+		return dropTable(spec);
+	}
+
+	@Override
+	public UpdateOperation dropTable(DropTableSpecification dropTableSpecification) {
+		Assert.notNull(dropTableSpecification);
+
+		DropTableCqlGenerator generator = new DropTableCqlGenerator(dropTableSpecification);
+
+		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+	}
+
+	@Override
+	public UpdateOperation createIndex(String indexName) {
+		Assert.notNull(indexName);
+
+		CreateIndexSpecification spec = new CreateIndexSpecification().name(indexName);
+
+		return createIndex(spec);
+	}
+
+	@Override
+	public UpdateOperation createIndex(String tableName, String columnName) {
+		Assert.notNull(tableName);
+		Assert.notNull(columnName);
+
+		CreateIndexSpecification spec = new CreateIndexSpecification().on(tableName).column(columnName);
+
+		return createIndex(spec);
+	}
+
+	@Override
+	public UpdateOperation createIndex(CreateIndexSpecification createIndexSpecification) {
+		Assert.notNull(createIndexSpecification);
+
+		CreateIndexCqlGenerator generator = new CreateIndexCqlGenerator(createIndexSpecification);
+
+		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+	}
+
+	@Override
+	public UpdateOperation dropIndex(String indexName) {
+		Assert.notNull(indexName);
+
+		DropIndexSpecification spec = new DropIndexSpecification().name(indexName);
+
+		return dropIndex(spec);
+	}
+
+	@Override
+	public UpdateOperation dropIndex(String tableName, String columnName) {
+		Assert.notNull(tableName);
+		Assert.notNull(columnName);
+
+		DropIndexSpecification spec = new DropIndexSpecification().defaultName(tableName, columnName);
+
+		return dropIndex(spec);
+	}
+
+	@Override
+	public UpdateOperation dropIndex(DropIndexSpecification dropIndexSpecification) {
+		Assert.notNull(dropIndexSpecification);
+
+		DropIndexCqlGenerator generator = new DropIndexCqlGenerator(dropIndexSpecification);
+
+		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
 	}
 
 }

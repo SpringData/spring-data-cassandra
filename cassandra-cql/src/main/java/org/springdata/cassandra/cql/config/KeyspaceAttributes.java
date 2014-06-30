@@ -26,45 +26,37 @@ public class KeyspaceAttributes {
 	public static final int DEFAULT_REPLICATION_FACTOR = 1;
 	public static final boolean DEFAULT_DURABLE_WRITES = true;
 
-	/*
-	 * auto possible values:
-	 * validate: validate the keyspace, makes no changes.
-	   * update: update the keyspace.
-	   * create: creates the keyspace, destroying previous data.
-	   * create-drop: drop the keyspace at the end of the session.
-	 */
-	public static final String AUTO_VALIDATE = "validate";
-	public static final String AUTO_UPDATE = "update";
-	public static final String AUTO_CREATE = "create";
-	public static final String AUTO_CREATE_DROP = "create-drop";
-
-	private String action = AUTO_UPDATE;
+	private SchemaAction action = SchemaAction.UPDATE;
 	private String replicationStrategy = DEFAULT_REPLICATION_STRATEGY;
 	private int replicationFactor = DEFAULT_REPLICATION_FACTOR;
 	private boolean durableWrites = DEFAULT_DURABLE_WRITES;
 
-	public String getAction() {
+	public SchemaAction getAction() {
 		return action;
 	}
 
-	public void setAction(String action) {
+	public void setAction(SchemaAction action) {
 		this.action = action;
 	}
 
+	public void setActionStr(String action) {
+		this.action = SchemaAction.valueOf(action.toUpperCase());
+	}
+
 	public boolean isValidate() {
-		return AUTO_VALIDATE.equals(action);
+		return action == SchemaAction.VALIDATE;
 	}
 
 	public boolean isUpdate() {
-		return AUTO_UPDATE.equals(action);
+		return action == SchemaAction.UPDATE;
 	}
 
 	public boolean isCreate() {
-		return AUTO_CREATE.equals(action);
+		return action == SchemaAction.CREATE;
 	}
 
 	public boolean isCreateDrop() {
-		return AUTO_CREATE_DROP.equals(action);
+		return action == SchemaAction.CREATE_DROP;
 	}
 
 	public String getReplicationStrategy() {

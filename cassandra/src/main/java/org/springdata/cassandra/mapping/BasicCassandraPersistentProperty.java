@@ -67,15 +67,6 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 	}
 
 	/**
-	 * Also considers fields that has an EmbeddedId annotation.
-	 * 
-	 */
-	@Override
-	public boolean isEmbeddedIdProperty() {
-		return isAnnotationPresent(EmbeddedId.class);
-	}
-
-	/**
 	 * Returns the true if the field composite primary key.
 	 * 
 	 * @return

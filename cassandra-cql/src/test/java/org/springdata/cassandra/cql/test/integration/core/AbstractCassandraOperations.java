@@ -29,10 +29,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springdata.cassandra.cql.core.CassandraCqlOperations;
-import org.springdata.cassandra.cql.core.CassandraCqlTemplate;
+import org.springdata.cassandra.cql.core.CqlOperations;
+import org.springdata.cassandra.cql.core.CqlTemplate;
 import org.springdata.cassandra.cql.core.PreparedStatementBinder;
-import org.springdata.cassandra.cql.core.ResultSetCallback;
+import org.springdata.cassandra.cql.core.ResultSetExtractor;
 import org.springdata.cassandra.cql.test.integration.AbstractEmbeddedCassandraIntegrationTest;
 
 import com.datastax.driver.core.BoundStatement;
@@ -42,7 +42,7 @@ import com.datastax.driver.core.Row;
 
 public abstract class AbstractCassandraOperations extends AbstractEmbeddedCassandraIntegrationTest {
 
-	protected CassandraCqlOperations cassandraTemplate;
+	protected CqlOperations cqlTemplate;
 
 	protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -65,7 +65,7 @@ public abstract class AbstractCassandraOperations extends AbstractEmbeddedCassan
 
 	@Before
 	public void setupTemplate() {
-		cassandraTemplate = new CassandraCqlTemplate(session, keyspace);
+		cqlTemplate = new CqlTemplate(session, keyspace);
 	}
 
 	/**
@@ -146,9 +146,9 @@ public abstract class AbstractCassandraOperations extends AbstractEmbeddedCassan
 	 */
 	protected Book getBook(final String isbn) {
 
-		PreparedStatement ps = cassandraTemplate.prepareStatement("select * from book where isbn = ?");
+		PreparedStatement ps = cqlTemplate.prepareStatement("select * from book where isbn = ?");
 
-		Book b = cassandraTemplate.select(ps, new PreparedStatementBinder() {
+		Book b = cqlTemplate.getSelectOperation(ps, new PreparedStatementBinder() {
 
 			@Override
 			public BoundStatement bindValues(PreparedStatement ps) {
@@ -156,10 +156,10 @@ public abstract class AbstractCassandraOperations extends AbstractEmbeddedCassan
 			}
 		}).transform(
 
-		new ResultSetCallback<Book>() {
+		new ResultSetExtractor<Book>() {
 
 			@Override
-			public Book doWithResultSet(ResultSet rs) {
+			public Book extractData(ResultSet rs) {
 				Book b = new Book();
 				Row r = rs.one();
 				b.setIsbn(r.getString("isbn"));
@@ -183,7 +183,7 @@ public abstract class AbstractCassandraOperations extends AbstractEmbeddedCassan
 		values[1] = o2;
 		values[2] = o3;
 
-		cassandraTemplate.ingest(cassandraTemplate.prepareStatement(cql), values).execute();
+		cqlTemplate.getIngestOperation(cqlTemplate.prepareStatement(cql), values).execute();
 
 	}
 

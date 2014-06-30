@@ -29,8 +29,8 @@ import com.datastax.driver.core.ResultSet;
 public abstract class AbstractUpdateOperation<O extends QueryOperation<ResultSet, O>> extends
 		AbstractQueryOperation<ResultSet, O> implements QueryCreator {
 
-	protected AbstractUpdateOperation(CassandraCqlTemplate cassandraCqlTemplate) {
-		super(cassandraCqlTemplate);
+	protected AbstractUpdateOperation(CqlTemplate cqlTemplate) {
+		super(cqlTemplate);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,19 @@
  */
 package org.springdata.cassandra.cql.core;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdata.cassandra.cql.support.CassandraExceptionTranslator;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springdata.cassandra.cql.support.exception.CassandraNotSingleResultException;
+import org.springdata.cassandra.cql.support.exception.CassandraQueryAware;
 import org.springframework.util.Assert;
 
 import com.datastax.driver.core.BoundStatement;
@@ -47,6 +49,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * <b>This is the Central class in the Cassandra core package.</b> It simplifies the use of Cassandra and helps to avoid
@@ -56,16 +59,16 @@ import com.google.common.collect.Iterators;
  * package.
  * 
  * <p>
- * For working with POJOs, use the CassandraDataTemplate.
+ * For working with POJOs, use the CassandraTemplate.
  * </p>
  * 
  * @author Alex Shvid
  * @author David Webb
  * @author Matthew Adams
  */
-public class CassandraCqlTemplate implements CassandraCqlOperations {
+public class CqlTemplate implements CqlOperations {
 
-	private final static Logger logger = LoggerFactory.getLogger(CassandraCqlTemplate.class);
+	private final static Logger logger = LoggerFactory.getLogger(CqlTemplate.class);
 
 	private Session session;
 	private String keyspace;
@@ -81,7 +84,7 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	 * @param session must not be {@literal null}.
 	 * @param keyspace must not be {@literal null}.
 	 */
-	public CassandraCqlTemplate(Session session, String keyspace) {
+	public CqlTemplate(Session session, String keyspace) {
 		setSession(session);
 		setKeyspace(keyspace);
 		this.adminOperations = new DefaultAdminCqlOperations(this);
@@ -159,19 +162,34 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation update(final String cql) {
+	public ResultSet update(String cql) {
+		return getUpdateOperation(cql).execute();
+	}
+
+	@Override
+	public UpdateOperation getUpdateOperation(String cql) {
 		Assert.notNull(cql);
 		return new DefaultUpdateOperation(this, cql);
 	}
 
 	@Override
-	public UpdateOperation update(PreparedStatement ps, PreparedStatementBinder psb) {
+	public ResultSet update(PreparedStatement ps, PreparedStatementBinder psb) {
+		return getUpdateOperation(ps, psb).execute();
+	}
+
+	@Override
+	public UpdateOperation getUpdateOperation(PreparedStatement ps, PreparedStatementBinder psb) {
 		Assert.notNull(ps);
 		return new DefaultUpdateOperation(this, new SimplePreparedStatementQueryCreator(ps, psb));
 	}
 
 	@Override
-	public UpdateOperation update(final BoundStatement bs) {
+	public ResultSet update(BoundStatement bs) {
+		return getUpdateOperation(bs).execute();
+	}
+
+	@Override
+	public UpdateOperation getUpdateOperation(final BoundStatement bs) {
 		Assert.notNull(bs);
 		return new DefaultUpdateOperation(this, new QueryCreator() {
 
@@ -184,16 +202,26 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation update(final QueryCreator qc) {
+	public ResultSet update(QueryCreator qc) {
+		return getUpdateOperation(qc).execute();
+	}
+
+	@Override
+	public UpdateOperation getUpdateOperation(QueryCreator qc) {
 		Assert.notNull(qc);
 		return new DefaultUpdateOperation(this, qc);
 	}
 
 	@Override
-	public UpdateOperation batchUpdate(final String[] cqls) {
+	public ResultSet batchUpdate(String[] cqls) {
+		return getBatchUpdateOperation(cqls).execute();
+	}
+
+	@Override
+	public UpdateOperation getBatchUpdateOperation(final String[] cqls) {
 		Assert.notNull(cqls);
 
-		Iterator<Statement> statements = Iterators.transform(new ArrayIterator<String>(cqls),
+		final Iterator<Statement> statements = Iterators.transform(new ArrayIterator<String>(cqls),
 				new Function<String, Statement>() {
 
 					@Override
@@ -203,11 +231,23 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 
 				});
 
-		return batchUpdate(statements);
+		return getBatchUpdateOperation(new Iterable<Statement>() {
+
+			@Override
+			public Iterator<Statement> iterator() {
+				return statements;
+			}
+
+		});
 	}
 
 	@Override
-	public UpdateOperation batchUpdate(final Iterator<Statement> statements) {
+	public ResultSet batchUpdate(Iterable<Statement> statements) {
+		return getBatchUpdateOperation(statements).execute();
+	}
+
+	@Override
+	public UpdateOperation getBatchUpdateOperation(final Iterable<Statement> statements) {
 		Assert.notNull(statements);
 
 		return new DefaultUpdateOperation(this, new QueryCreator() {
@@ -221,9 +261,8 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 				final Batch batch = QueryBuilder.batch();
 
 				boolean emptyBatch = true;
-				while (statements.hasNext()) {
+				for (Statement statement : statements) {
 
-					Statement statement = statements.next();
 					Assert.notNull(statement);
 
 					batch.add(statement);
@@ -241,27 +280,47 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public SelectOperation<ResultSet> select(String cql) {
+	public ResultSet select(String cql) {
+		return getSelectOperation(cql).execute();
+	}
+
+	@Override
+	public SelectOperation getSelectOperation(String cql) {
 		Assert.notNull(cql);
 		Query query = new SimpleStatement(cql);
 		return new DefaultSelectOperation(this, query);
 	}
 
 	@Override
-	public SelectOperation<ResultSet> select(PreparedStatement ps, PreparedStatementBinder psb) {
+	public ResultSet select(PreparedStatement ps, PreparedStatementBinder psb) {
+		return getSelectOperation(ps, psb).execute();
+	}
+
+	@Override
+	public SelectOperation getSelectOperation(PreparedStatement ps, PreparedStatementBinder psb) {
 		Assert.notNull(ps);
 		BoundStatement bs = doBind(ps, psb);
 		return new DefaultSelectOperation(this, bs);
 	}
 
 	@Override
-	public SelectOperation<ResultSet> select(BoundStatement bs) {
+	public ResultSet select(BoundStatement bs) {
+		return getSelectOperation(bs).execute();
+	}
+
+	@Override
+	public SelectOperation getSelectOperation(BoundStatement bs) {
 		Assert.notNull(bs);
 		return new DefaultSelectOperation(this, bs);
 	}
 
 	@Override
-	public SelectOperation<ResultSet> select(QueryCreator qc) {
+	public ResultSet select(QueryCreator qc) {
+		return getSelectOperation(qc).execute();
+	}
+
+	@Override
+	public SelectOperation getSelectOperation(QueryCreator qc) {
 		Assert.notNull(qc);
 		Query query = doCreateQuery(qc);
 		return new DefaultSelectOperation(this, query);
@@ -290,7 +349,7 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	public <T> T doExecute(SessionCallback<T> callback) {
+	protected <T> T doExecute(SessionCallback<T> callback) {
 
 		try {
 
@@ -307,20 +366,24 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	public ResultSet doExecute(final Query query) {
+	protected ResultSet doExecute(final Query query) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(query.toString());
 		}
 
-		return doExecute(new SessionCallback<ResultSet>() {
+		try {
 
-			@Override
-			public ResultSet doInSession(Session s) {
+			return getSession().execute(query);
 
-				return s.execute(query);
+		} catch (RuntimeException e) {
+			e = translateIfPossible(e);
+			if (e instanceof CassandraQueryAware) {
+				((CassandraQueryAware) e).setQuery(query);
 			}
-		});
+			throw e;
+		}
+
 	}
 
 	/**
@@ -329,20 +392,24 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	public ResultSetFuture doExecuteAsync(final Query query) {
+	protected ResultSetFuture doExecuteAsync(final Query query) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(query.toString());
 		}
 
-		return doExecute(new SessionCallback<ResultSetFuture>() {
+		try {
 
-			@Override
-			public ResultSetFuture doInSession(Session s) {
+			return getSession().executeAsync(query);
 
-				return s.executeAsync(query);
+		} catch (RuntimeException e) {
+			e = translateIfPossible(e);
+			if (e instanceof CassandraQueryAware) {
+				((CassandraQueryAware) e).setQuery(query);
 			}
-		});
+			throw e;
+		}
+
 	}
 
 	/**
@@ -387,8 +454,8 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public Collection<RingMember> describeRing() {
-		return Collections.unmodifiableCollection(describeRing(new RingMemberHostMapper()));
+	public List<RingMember> describeRing() {
+		return Collections.unmodifiableList(describeRing(new RingMemberHostMapper()));
 	}
 
 	/**
@@ -425,61 +492,30 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	protected <T> T doProcess(final ResultSet resultSet, final ResultSetCallback<T> callback) {
+	protected <T> T doProcess(final ResultSet resultSet, final ResultSetExtractor<T> callback) {
 
 		try {
 
-			return callback.doWithResultSet(resultSet);
+			return callback.extractData(resultSet);
 
 		} catch (RuntimeException e) {
 			throw translateIfPossible(e);
 		}
 	}
 
-	/**
-	 * Service iterator
-	 * 
-	 * @author Alex Shvid
-	 * 
-	 * @param <T>
-	 */
-
-	protected class MappedRowIterator<T> implements Iterator<T> {
-
-		final Iterator<Row> backingIterator;
-		final RowMapper<T> mapper;
-		int row = 0;
-
-		MappedRowIterator(Iterator<Row> backingIterator, RowMapper<T> mapper) {
-			this.backingIterator = backingIterator;
-			this.mapper = mapper;
-		}
-
-		@Override
-		public final boolean hasNext() {
-			return backingIterator.hasNext();
-		}
-
-		@Override
-		public final T next() {
-			try {
-				return mapper.mapRow(backingIterator.next(), ++row);
-			} catch (RuntimeException e) {
-				throw translateIfPossible(e);
-			}
-		}
-
-		@Override
-		public final void remove() {
-			throw new UnsupportedOperationException("can not remove row from the ResultSet");
-		}
-	}
-
 	@Override
-	public <T> Collection<T> describeRing(HostMapper<T> hostMapper) {
+	public <T> List<T> describeRing(HostMapper<T> hostMapper) {
 		Assert.notNull(hostMapper);
+
 		Set<Host> hosts = getHosts();
-		return hostMapper.mapHosts(hosts);
+
+		List<T> results = new ArrayList<T>(hosts.size());
+		for (Host host : hosts) {
+			T obj = hostMapper.mapHost(host);
+			results.add(obj);
+		}
+
+		return results;
 	}
 
 	@Override
@@ -487,10 +523,10 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 		Assert.notNull(resultSet);
 		Assert.notNull(rch);
 
-		doProcess(resultSet, new ResultSetCallback<Object>() {
+		doProcess(resultSet, new ResultSetExtractor<Object>() {
 
 			@Override
-			public Object doWithResultSet(ResultSet resultSet) {
+			public Object extractData(ResultSet resultSet) {
 
 				for (Row row : resultSet) {
 					rch.processRow(row);
@@ -503,15 +539,25 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public <T> Iterator<T> process(ResultSet resultSet, final RowMapper<T> rowMapper) {
+	public <T> List<T> process(ResultSet resultSet, final RowMapper<T> rowMapper) {
 		Assert.notNull(resultSet);
 		Assert.notNull(rowMapper);
 
-		return doProcess(resultSet, new ResultSetCallback<Iterator<T>>() {
+		return doProcess(resultSet, new ResultSetExtractor<List<T>>() {
 
 			@Override
-			public Iterator<T> doWithResultSet(ResultSet resultSet) {
-				return new MappedRowIterator<T>(resultSet.iterator(), rowMapper);
+			public List<T> extractData(ResultSet resultSet) {
+
+				List<T> result = Lists.newArrayList();
+
+				int rowNum = 0;
+				for (Row row : resultSet) {
+					T obj = rowMapper.mapRow(row, rowNum++);
+					result.add(obj);
+				}
+
+				return Collections.unmodifiableList(result);
+
 			}
 
 		});
@@ -519,14 +565,14 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public <T> T processOne(ResultSet resultSet, final RowMapper<T> rowMapper) {
+	public <T> T processOne(ResultSet resultSet, final RowMapper<T> rowMapper, final boolean singleResult) {
 		Assert.notNull(resultSet);
 		Assert.notNull(rowMapper);
 
-		return doProcess(resultSet, new ResultSetCallback<T>() {
+		return doProcess(resultSet, new ResultSetExtractor<T>() {
 
 			@Override
-			public T doWithResultSet(ResultSet resultSet) {
+			public T extractData(ResultSet resultSet) {
 
 				Iterator<Row> iterator = resultSet.iterator();
 				if (!iterator.hasNext()) {
@@ -535,8 +581,8 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 
 				Row firstRow = iterator.next();
 
-				if (iterator.hasNext()) {
-					throw new DataIntegrityViolationException("expected single row in the resultSet");
+				if (singleResult && iterator.hasNext()) {
+					throw new CassandraNotSingleResultException(resultSet);
 				}
 
 				return rowMapper.mapRow(firstRow, 0);
@@ -548,21 +594,27 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T processOneFirstColumn(ResultSet resultSet, Class<T> elementType) {
+	public <T> T processOneFirstColumn(ResultSet resultSet, Class<T> elementType, final boolean singleResult) {
 		Assert.notNull(resultSet);
 		Assert.notNull(elementType);
 
-		return doProcess(resultSet, new ResultSetCallback<T>() {
+		return doProcess(resultSet, new ResultSetExtractor<T>() {
 
 			@Override
-			public T doWithResultSet(ResultSet resultSet) {
+			public T extractData(ResultSet resultSet) {
 
-				Row row = resultSet.one();
-				if (row == null) {
+				Iterator<Row> iterator = resultSet.iterator();
+				if (!iterator.hasNext()) {
 					return null;
 				}
 
-				return (T) firstColumnToObject(row);
+				Row firstRow = iterator.next();
+
+				if (singleResult && iterator.hasNext()) {
+					throw new CassandraNotSingleResultException(resultSet);
+				}
+
+				return (T) firstColumnToObject(firstRow);
 
 			}
 
@@ -571,19 +623,26 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public Map<String, Object> processOneAsMap(ResultSet resultSet) {
+	public Map<String, Object> processOneAsMap(ResultSet resultSet, final boolean singleResult) {
 		Assert.notNull(resultSet);
 
-		return doProcess(resultSet, new ResultSetCallback<Map<String, Object>>() {
+		return doProcess(resultSet, new ResultSetExtractor<Map<String, Object>>() {
 
 			@Override
-			public Map<String, Object> doWithResultSet(ResultSet resultSet) {
+			public Map<String, Object> extractData(ResultSet resultSet) {
 
-				Row row = resultSet.one();
-				if (row == null) {
+				Iterator<Row> iterator = resultSet.iterator();
+				if (!iterator.hasNext()) {
 					return Collections.emptyMap();
 				}
-				return toMap(row);
+
+				Row firstRow = iterator.next();
+
+				if (singleResult && iterator.hasNext()) {
+					throw new CassandraNotSingleResultException(resultSet);
+				}
+
+				return toMap(firstRow);
 
 			}
 
@@ -593,23 +652,22 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Iterator<T> processFirstColumn(ResultSet resultSet, Class<T> elementType) {
+	public <T> List<T> processFirstColumn(ResultSet resultSet, Class<T> elementType) {
 		Assert.notNull(resultSet);
 		Assert.notNull(elementType);
 
-		return doProcess(resultSet, new ResultSetCallback<Iterator<T>>() {
+		return doProcess(resultSet, new ResultSetExtractor<List<T>>() {
 
 			@Override
-			public Iterator<T> doWithResultSet(ResultSet resultSet) {
+			public List<T> extractData(ResultSet resultSet) {
 
-				return Iterators.transform(resultSet.iterator(), new Function<Row, T>() {
+				List<T> result = new ArrayList<T>();
+				for (Row row : resultSet) {
+					T obj = (T) firstColumnToObject(row);
+					result.add(obj);
+				}
 
-					@Override
-					public T apply(Row row) {
-						return (T) firstColumnToObject(row);
-					}
-
-				});
+				return Collections.unmodifiableList(result);
 
 			}
 
@@ -618,22 +676,22 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public Iterator<Map<String, Object>> processAsMap(ResultSet resultSet) {
+	public List<Map<String, Object>> processAsMap(ResultSet resultSet) {
 		Assert.notNull(resultSet);
 
-		return doProcess(resultSet, new ResultSetCallback<Iterator<Map<String, Object>>>() {
+		return doProcess(resultSet, new ResultSetExtractor<List<Map<String, Object>>>() {
 
 			@Override
-			public Iterator<Map<String, Object>> doWithResultSet(ResultSet resultSet) {
+			public List<Map<String, Object>> extractData(ResultSet resultSet) {
 
-				return Iterators.transform(resultSet.iterator(), new Function<Row, Map<String, Object>>() {
+				List<Map<String, Object>> result = Lists.newArrayList();
 
-					@Override
-					public Map<String, Object> apply(Row row) {
-						return toMap(row);
-					}
+				for (Row row : resultSet) {
+					Map<String, Object> map = toMap(row);
+					result.add(map);
+				}
 
-				});
+				return Collections.unmodifiableList(result);
 
 			}
 
@@ -752,12 +810,17 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public IngestOperation ingest(final PreparedStatement ps, Iterator<Object[]> rows) {
+	public List<ResultSet> ingest(PreparedStatement ps, Iterable<Object[]> rows) {
+		return getIngestOperation(ps, rows).execute();
+	}
+
+	@Override
+	public IngestOperation getIngestOperation(final PreparedStatement ps, Iterable<Object[]> rows) {
 
 		Assert.notNull(ps);
 		Assert.notNull(rows);
 
-		Iterator<Query> queryIterator = Iterators.transform(rows, new Function<Object[], Query>() {
+		Iterator<Query> queryIterator = Iterators.transform(rows.iterator(), new Function<Object[], Query>() {
 
 			@Override
 			public Query apply(final Object[] values) {
@@ -779,13 +842,27 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public IngestOperation ingest(PreparedStatement ps, final Object[][] rows) {
+	public List<ResultSet> ingest(PreparedStatement ps, Object[][] rows) {
+		return getIngestOperation(ps, rows).execute();
+	}
+
+	@Override
+	public IngestOperation getIngestOperation(PreparedStatement ps, final Object[][] rows) {
 
 		Assert.notNull(ps);
 		Assert.notNull(rows);
 		Assert.notEmpty(rows);
 
-		return ingest(ps, new ArrayIterator<Object[]>(rows));
+		final Iterator<Object[]> iterator = new ArrayIterator<Object[]>(rows);
+
+		return getIngestOperation(ps, new Iterable<Object[]>() {
+
+			@Override
+			public Iterator<Object[]> iterator() {
+				return iterator;
+			}
+
+		});
 	}
 
 	/**
@@ -820,10 +897,15 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 	}
 
 	@Override
-	public ProcessOperation<Long> countAll(final String tableName) {
+	public Long countAll(String tableName) {
+		return getCountAllOperation(tableName).execute();
+	}
+
+	@Override
+	public ProcessOperation<Long> getCountAllOperation(final String tableName) {
 		Assert.notNull(tableName);
 
-		return select(new QueryCreator() {
+		return getSelectOperation(new QueryCreator() {
 
 			@Override
 			public Query createQuery() {
@@ -831,11 +913,16 @@ public class CassandraCqlTemplate implements CassandraCqlOperations {
 				return select;
 			}
 
-		}).firstColumnOne(Long.class);
+		}).singleResult().firstColumn(Long.class);
 	}
 
 	@Override
-	public UpdateOperation truncate(final String tableName) {
+	public ResultSet truncate(String tableName) {
+		return getTruncateOperation(tableName).execute();
+	}
+
+	@Override
+	public UpdateOperation getTruncateOperation(final String tableName) {
 		Assert.notNull(tableName);
 		return new DefaultUpdateOperation(this, new QueryCreator() {
 

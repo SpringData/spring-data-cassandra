@@ -19,7 +19,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.springdata.cassandra.cql.core.AbstractQueryOperation;
 import org.springdata.cassandra.cql.core.CallbackHandler;
-import org.springdata.cassandra.cql.core.CassandraCqlTemplate;
+import org.springdata.cassandra.cql.core.CqlTemplate;
 import org.springdata.cassandra.cql.core.CassandraFuture;
 import org.springdata.cassandra.cql.core.QueryCreator;
 
@@ -44,8 +44,8 @@ public abstract class AbstractGetOperation<T> extends AbstractQueryOperation<T, 
 
 	public abstract T transform(ResultSet resultSet);
 
-	public AbstractGetOperation(CassandraCqlTemplate cassandraCqlTemplate) {
-		super(cassandraCqlTemplate);
+	public AbstractGetOperation(CqlTemplate cqlTemplate) {
+		super(cqlTemplate);
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public abstract class AbstractGetOperation<T> extends AbstractQueryOperation<T, 
 
 		}, getExecutor());
 
-		return new CassandraFuture<T>(future, cassandraCqlTemplate.getExceptionTranslator());
+		return new CassandraFuture<T>(future, cqlTemplate.getExceptionTranslator());
 
 	}
 

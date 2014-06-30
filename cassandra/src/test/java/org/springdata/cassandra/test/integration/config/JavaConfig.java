@@ -18,9 +18,6 @@ package org.springdata.cassandra.test.integration.config;
 import org.springdata.cassandra.config.java.AbstractCassandraConfiguration;
 import org.springframework.context.annotation.Configuration;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Cluster.Builder;
-
 /**
  * Simple JavaConfig
  * 
@@ -35,10 +32,4 @@ public class JavaConfig extends AbstractCassandraConfiguration {
 		return "test";
 	}
 
-	@Override
-	public Cluster cluster() {
-		Builder builder = Cluster.builder();
-		builder.addContactPoint("localhost").withPort(9042);
-		return builder.build();
-	}
 }

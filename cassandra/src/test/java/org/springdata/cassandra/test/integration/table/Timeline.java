@@ -17,7 +17,7 @@ package org.springdata.cassandra.test.integration.table;
 
 import java.util.Date;
 
-import org.springdata.cassandra.mapping.EmbeddedId;
+import org.springdata.cassandra.mapping.Id;
 import org.springdata.cassandra.mapping.Table;
 
 /**
@@ -35,7 +35,7 @@ public class Timeline {
 	/*
 	 * Row ID
 	 */
-	@EmbeddedId
+	@Id
 	private TimelinePK pk;
 
 	/*

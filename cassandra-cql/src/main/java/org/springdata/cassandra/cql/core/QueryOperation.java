@@ -18,9 +18,6 @@ package org.springdata.cassandra.cql.core;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
-import org.springdata.cassandra.cql.core.query.ConsistencyLevel;
-import org.springdata.cassandra.cql.core.query.RetryPolicy;
-
 /**
  * Cassandra Query Operation
  * 

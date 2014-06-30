@@ -231,13 +231,14 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 		}
 	}
 
-	private class DeletePropertyHandler implements PropertyHandler<CassandraPersistentProperty> {
+	private class WherePropertyHandler implements PropertyHandler<CassandraPersistentProperty> {
 
 		private final BeanWrapper<CassandraPersistentEntity<Object>, Object> wrapper;
-		private Delete.Where deleteWhere;
+		private final List<Clause> clauseList;
 
-		private DeletePropertyHandler(Delete.Where update, BeanWrapper<CassandraPersistentEntity<Object>, Object> wrapper) {
-			this.deleteWhere = update;
+		private WherePropertyHandler(List<Clause> clauseList,
+				BeanWrapper<CassandraPersistentEntity<Object>, Object> wrapper) {
+			this.clauseList = clauseList;
 			this.wrapper = wrapper;
 		}
 
@@ -250,9 +251,9 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 					final CassandraPersistentEntity<?> propEntity = mappingContext.getPersistentEntity(prop.getRawType());
 					final BeanWrapper<CassandraPersistentEntity<Object>, Object> propWrapper = BeanWrapper.create(propertyObj,
 							conversionService);
-					propEntity.doWithProperties(new DeletePropertyHandler(deleteWhere, propWrapper));
+					propEntity.doWithProperties(new WherePropertyHandler(clauseList, propWrapper));
 				} else if (prop.isIdProperty() || prop.getKeyPart() != null) {
-					deleteWhere.and(QueryBuilder.eq(prop.getColumnName(), propertyObj));
+					clauseList.add(QueryBuilder.eq(prop.getColumnName(), propertyObj));
 				}
 			}
 
@@ -310,8 +311,8 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 			writeInsertInternal(obj, (Insert) builtStatement, entity);
 		} else if (builtStatement instanceof Update) {
 			writeUpdateInternal(obj, (Update) builtStatement, entity);
-		} else if (builtStatement instanceof Delete.Where) {
-			writeDeleteWhereInternal(obj, (Delete.Where) builtStatement, entity);
+		} else if (builtStatement instanceof List) {
+			writeWhereInternal(obj, (List<Clause>) builtStatement, entity);
 		} else {
 			throw new MappingException("Unknown buildStatement " + builtStatement.getClass().getName());
 		}
@@ -334,13 +335,13 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 		entity.doWithProperties(new UpdatePropertyHandler(update, wrapper));
 	}
 
-	private void writeDeleteWhereInternal(final Object objectToSave, final Delete.Where whereId,
+	private void writeWhereInternal(final Object objectToSave, final List<Clause> clauseList,
 			CassandraPersistentEntity<?> entity) {
 
 		final BeanWrapper<CassandraPersistentEntity<Object>, Object> wrapper = BeanWrapper.create(objectToSave,
 				conversionService);
 
-		entity.doWithProperties(new DeletePropertyHandler(whereId, wrapper));
+		entity.doWithProperties(new WherePropertyHandler(clauseList, wrapper));
 	}
 
 	@Override
@@ -541,10 +542,6 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 
 				if (prop.isIdProperty()) {
 
-					result.add(QueryBuilder.eq(prop.getColumnName(), id));
-
-				} else if (prop.isEmbeddedIdProperty()) {
-
 					if (prop.hasEmbeddableType()) {
 
 						if (!prop.getRawType().isAssignableFrom(id.getClass())) {
@@ -554,8 +551,11 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 
 						embeddedPrimaryKey(prop.getRawType(), id, result, false);
 
-					}
+					} else {
 
+						result.add(QueryBuilder.eq(prop.getColumnName(), id));
+
+					}
 				}
 
 			}
@@ -578,19 +578,21 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 
 				if (prop.isIdProperty()) {
 
-					throw new MappingException(String.format("Entity %s must have an embeddable primary key", entity.getName()));
+					if (prop.hasEmbeddableType()) {
 
-				} else if (prop.isEmbeddedIdProperty() && prop.hasEmbeddableType()) {
+						if (!prop.getRawType().isAssignableFrom(id.getClass())) {
+							throw new MappingException("id class " + id.getClass() + " can not be converted to embeddedid property "
+									+ prop.getColumnName() + " in the entity " + entity.getName());
+						}
 
-					if (!prop.getRawType().isAssignableFrom(id.getClass())) {
-						throw new MappingException("id class " + id.getClass() + " can not be converted to embeddedid property "
-								+ prop.getColumnName() + " in the entity " + entity.getName());
+						embeddedPrimaryKey(prop.getRawType(), id, result, true);
+
+					} else {
+
+						result.add(QueryBuilder.eq(prop.getColumnName(), id));
+
 					}
-
-					embeddedPrimaryKey(prop.getRawType(), id, result, true);
-
 				}
-
 			}
 		});
 
@@ -645,7 +647,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 						throw new MappingException("entity not found for " + prop.getRawType());
 					}
 
-					if (prop.isEmbeddedIdProperty()) {
+					if (prop.isIdProperty()) {
 						validatePkEntity(pkEntity);
 					}
 
@@ -714,7 +716,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 		public int compare(CassandraPersistentProperty o1, CassandraPersistentProperty o2) {
 
 			Integer ordinal1 = o1.getOrdinal();
-			Integer ordinal2 = o1.getOrdinal();
+			Integer ordinal2 = o2.getOrdinal();
 
 			if (ordinal1 == null) {
 				if (ordinal2 == null) {

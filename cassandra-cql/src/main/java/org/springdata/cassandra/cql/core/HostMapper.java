@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,10 @@
  */
 package org.springdata.cassandra.cql.core;
 
-import java.util.Collection;
-import java.util.Set;
-
 import com.datastax.driver.core.Host;
 
 /**
- * HostMapper interface
+ * Map host to type T
  * 
  * @author Alex Shvid
  * 
@@ -30,6 +27,6 @@ import com.datastax.driver.core.Host;
 
 public interface HostMapper<T> {
 
-	Collection<T> mapHosts(Set<Host> host);
+	T mapHost(Host host);
 
 }

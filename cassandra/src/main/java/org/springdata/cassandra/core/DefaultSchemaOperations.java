@@ -17,9 +17,13 @@ package org.springdata.cassandra.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
-import org.springdata.cassandra.cql.core.query.StatementOptions;
+import org.springdata.cassandra.cql.core.DefaultIngestOperation;
+import org.springdata.cassandra.cql.core.DefaultUpdateOperation;
+import org.springdata.cassandra.cql.core.IngestOperation;
+import org.springdata.cassandra.cql.core.UpdateOperation;
 import org.springdata.cassandra.cql.generator.AlterTableCqlGenerator;
 import org.springdata.cassandra.cql.generator.CreateIndexCqlGenerator;
 import org.springdata.cassandra.cql.generator.CreateTableCqlGenerator;
@@ -31,12 +35,16 @@ import org.springdata.cassandra.cql.spec.CreateTableSpecification;
 import org.springdata.cassandra.cql.spec.DropIndexSpecification;
 import org.springdata.cassandra.cql.spec.DropTableSpecification;
 import org.springdata.cassandra.cql.spec.WithNameSpecification;
-import org.springdata.cassandra.cql.support.exception.CassandraTableExistsException;
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
 import org.springframework.data.mapping.model.MappingException;
 import org.springframework.util.Assert;
 
+import com.datastax.driver.core.Query;
+import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.TableMetadata;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterators;
 
 /**
  * SchemaOperations implementation
@@ -46,50 +54,46 @@ import com.datastax.driver.core.TableMetadata;
  */
 public class DefaultSchemaOperations implements SchemaOperations {
 
-	private CassandraTemplate dataTemplate;
+	private CassandraTemplate cassandraTemplate;
 
-	protected DefaultSchemaOperations(CassandraTemplate dataTemplate) {
-		Assert.notNull(dataTemplate);
+	protected DefaultSchemaOperations(CassandraTemplate cassandraTemplate) {
+		Assert.notNull(cassandraTemplate);
 
-		this.dataTemplate = dataTemplate;
+		this.cassandraTemplate = cassandraTemplate;
 	}
 
 	@Override
-	public boolean createTable(boolean ifNotExists, String tableName, Class<?> entityClass, StatementOptions optionsOrNull) {
+	public UpdateOperation createTable(String tableName, Class<?> entityClass) {
 
 		Assert.notNull(entityClass);
 
-		try {
+		final CassandraPersistentEntity<?> entity = cassandraTemplate.getPersistentEntity(entityClass);
+		CreateTableSpecification spec = cassandraTemplate.getConverter().getCreateTableSpecification(entity);
+		spec.name(tableName);
 
-			final CassandraPersistentEntity<?> entity = dataTemplate.getPersistentEntity(entityClass);
-			CreateTableSpecification spec = dataTemplate.getConverter().getCreateTableSpecification(entity);
-			spec.name(tableName);
+		CreateTableCqlGenerator generator = new CreateTableCqlGenerator(spec);
 
-			CreateTableCqlGenerator generator = new CreateTableCqlGenerator(spec);
+		String cql = generator.toCql();
 
-			String cql = generator.toCql();
+		return new DefaultUpdateOperation(cassandraTemplate.cqlTemplate(), cql);
 
-			dataTemplate.doExecute(cql, optionsOrNull);
-
-			return true;
-
-		} catch (CassandraTableExistsException ctex) {
-			return !ifNotExists;
-		} catch (RuntimeException x) {
-			throw dataTemplate.translateIfPossible(x);
-		}
 	}
 
 	@Override
-	public void alterTable(String tableName, Class<?> entityClass, boolean dropRemovedAttributeColumns,
-			StatementOptions optionsOrNull) {
+	public Optional<UpdateOperation> alterTable(String tableName, Class<?> entityClass,
+			boolean dropRemovedAttributeColumns) {
 
 		Assert.notNull(entityClass);
 
 		String cql = alterTableCql(tableName, entityClass, dropRemovedAttributeColumns);
 
 		if (cql != null) {
-			dataTemplate.doExecute(cql, optionsOrNull);
+
+			return Optional.<UpdateOperation> of(new DefaultUpdateOperation(cassandraTemplate.cqlTemplate(), cql));
+
+		} else {
+
+			return Optional.absent();
 		}
 	}
 
@@ -112,11 +116,11 @@ public class DefaultSchemaOperations implements SchemaOperations {
 	 */
 	protected String alterTableCql(String tableName, Class<?> entityClass, boolean dropRemovedAttributeColumns) {
 
-		final CassandraPersistentEntity<?> entity = dataTemplate.getPersistentEntity(entityClass);
+		final CassandraPersistentEntity<?> entity = cassandraTemplate.getPersistentEntity(entityClass);
 
-		TableMetadata tableMetadata = dataTemplate.cqlOps().schemaOps().getTableMetadata(tableName);
+		TableMetadata tableMetadata = cassandraTemplate.cqlOps().schemaOps().getTableMetadata(tableName);
 
-		AlterTableSpecification spec = dataTemplate.getConverter().getAlterTableSpecification(entity, tableMetadata,
+		AlterTableSpecification spec = cassandraTemplate.getConverter().getAlterTableSpecification(entity, tableMetadata,
 				dropRemovedAttributeColumns);
 
 		if (!spec.hasChanges()) {
@@ -132,42 +136,56 @@ public class DefaultSchemaOperations implements SchemaOperations {
 	}
 
 	@Override
-	public void dropTable(String tableName, StatementOptions optionsOrNull) {
+	public UpdateOperation dropTable(String tableName) {
 
 		DropTableSpecification spec = new DropTableSpecification().name(tableName);
 		String cql = new DropTableCqlGenerator(spec).toCql();
 
-		dataTemplate.doExecute(cql, optionsOrNull);
+		return new DefaultUpdateOperation(cassandraTemplate.cqlTemplate(), cql);
 
 	}
 
 	@Override
-	public void createIndexes(String tableName, Class<?> entityClass, StatementOptions optionsOrNull) {
+	public IngestOperation createIndexes(String tableName, Class<?> entityClass) {
 
 		Assert.notNull(entityClass);
 
-		CassandraPersistentEntity<?> entity = dataTemplate.getPersistentEntity(entityClass);
+		CassandraPersistentEntity<?> entity = cassandraTemplate.getPersistentEntity(entityClass);
 
-		List<CreateIndexSpecification> specList = dataTemplate.getConverter().getCreateIndexSpecifications(entity);
+		List<CreateIndexSpecification> specList = cassandraTemplate.getConverter().getCreateIndexSpecifications(entity);
 
-		for (CreateIndexSpecification spec : specList) {
-			String cql = new CreateIndexCqlGenerator(spec).toCql();
+		Iterator<Query> queryIterator = Iterators.transform(specList.iterator(),
+				new Function<CreateIndexSpecification, Query>() {
 
-			dataTemplate.doExecute(cql, optionsOrNull);
-		}
+					@Override
+					public Query apply(CreateIndexSpecification spec) {
+						String cql = new CreateIndexCqlGenerator(spec).toCql();
+						return new SimpleStatement(cql);
+					}
+
+				});
+
+		return new DefaultIngestOperation(cassandraTemplate.cqlTemplate(), queryIterator);
 
 	}
 
 	@Override
-	public void alterIndexes(String tableName, Class<?> entityClass, StatementOptions optionsOrNull) {
+	public IngestOperation alterIndexes(String tableName, Class<?> entityClass) {
 
 		Assert.notNull(entityClass);
 
 		List<String> cqlList = alterIndexesCql(tableName, entityClass);
 
-		for (String cql : cqlList) {
-			dataTemplate.doExecute(cql, optionsOrNull);
-		}
+		Iterator<Query> queryIterator = Iterators.transform(cqlList.iterator(), new Function<String, Query>() {
+
+			@Override
+			public Query apply(String cql) {
+				return new SimpleStatement(cql);
+			}
+
+		});
+
+		return new DefaultIngestOperation(cassandraTemplate.cqlTemplate(), queryIterator);
 
 	}
 
@@ -189,11 +207,11 @@ public class DefaultSchemaOperations implements SchemaOperations {
 
 	protected List<String> alterIndexesCql(String tableName, Class<?> entityClass) {
 
-		CassandraPersistentEntity<?> entity = dataTemplate.getPersistentEntity(entityClass);
+		CassandraPersistentEntity<?> entity = cassandraTemplate.getPersistentEntity(entityClass);
 
-		TableMetadata tableMetadata = dataTemplate.cqlOps().schemaOps().getTableMetadata(tableName);
+		TableMetadata tableMetadata = cassandraTemplate.cqlOps().schemaOps().getTableMetadata(tableName);
 
-		List<WithNameSpecification<?>> specList = dataTemplate.getConverter().getIndexChangeSpecifications(entity,
+		List<WithNameSpecification<?>> specList = cassandraTemplate.getConverter().getIndexChangeSpecifications(entity,
 				tableMetadata);
 
 		if (specList.isEmpty()) {

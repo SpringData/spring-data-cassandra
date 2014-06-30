@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2014 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,32 +15,35 @@
  */
 package org.springdata.cassandra.core;
 
+import org.springdata.cassandra.cql.core.RowMapper;
 import org.springframework.data.convert.EntityReader;
 import org.springframework.util.Assert;
 
 import com.datastax.driver.core.Row;
 
 /**
- * Simple {@link RowCallback} that will transform {@link Row} into the given target type using the given
- * {@link EntityReader}.
+ * Row mapper that converts Row to Entity
  * 
  * @author Alex Shvid
+ * 
+ * @param <T>
  */
-public class ReadRowCallback<T> implements RowCallback<T> {
+public class ReaderRowMapper<T> implements RowMapper<T> {
 
 	private final EntityReader<? super T, Object> reader;
-	private final Class<T> type;
+	private final Class<T> entityClass;
 
-	public ReadRowCallback(EntityReader<? super T, Object> reader, Class<T> type) {
+	public ReaderRowMapper(EntityReader<? super T, Object> reader, Class<T> entityClass) {
 		Assert.notNull(reader);
-		Assert.notNull(type);
+		Assert.notNull(entityClass);
 		this.reader = reader;
-		this.type = type;
+		this.entityClass = entityClass;
 	}
 
 	@Override
-	public T doWith(Row row) {
-		T source = reader.read(type, row);
+	public T mapRow(Row row, int rowNum) {
+		T source = reader.read(entityClass, row);
 		return source;
 	}
+
 }

@@ -50,17 +50,11 @@ public abstract class AbstractCassandraConverter implements CassandraConverter, 
 		this.instantiators = instantiators == null ? new EntityInstantiators() : instantiators;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.data.mongodb.core.core.convert.MongoConverter#getConversionService()
-	 */
 	public ConversionService getConversionService() {
 		return conversionService;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
+	@Override
 	public void afterPropertiesSet() {
 	}
 

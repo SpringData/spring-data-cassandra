@@ -15,8 +15,8 @@
  */
 package org.springdata.cassandra.repository.query;
 
-import org.springdata.cassandra.cql.core.query.ConsistencyLevel;
-import org.springdata.cassandra.cql.core.query.RetryPolicy;
+import org.springdata.cassandra.cql.core.ConsistencyLevel;
+import org.springdata.cassandra.cql.core.RetryPolicy;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 
 /**

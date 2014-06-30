@@ -15,8 +15,10 @@
  */
 package org.springdata.cassandra.cql.core;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import com.datastax.driver.core.ResultSet;
 
 /**
  * General class for select operations. Support transformation and mapping of the ResultSet
@@ -25,7 +27,21 @@ import java.util.Map;
  * 
  */
 
-public interface SelectOperation<T> extends QueryOperation<T, SelectOperation<T>> {
+public interface SelectOperation extends QueryOperation<ResultSet, SelectOperation> {
+
+	/**
+	 * Returns single result operation
+	 * 
+	 * @return SelectOneOperation
+	 */
+	SelectOneOperation firstRow();
+
+	/**
+	 * Returns single result operation
+	 * 
+	 * @return SelectOneOperation
+	 */
+	SelectOneOperation singleResult();
 
 	/**
 	 * Maps each row in ResultSet by RowMapper.
@@ -33,30 +49,14 @@ public interface SelectOperation<T> extends QueryOperation<T, SelectOperation<T>
 	 * @param rowMapper
 	 * @return ProcessOperation
 	 */
-	<R> ProcessOperation<Iterator<R>> map(RowMapper<R> rowMapper);
+	<R> ProcessOperation<List<R>> map(RowMapper<R> rowMapper);
 
 	/**
-	 * Maps first row in ResultSet by RowMapper.
-	 * 
-	 * @param rowMapper
-	 * @return ProcessOperation
-	 */
-	<R> ProcessOperation<R> mapOne(RowMapper<R> rowMapper);
-
-	/**
-	 * Returns true is ResultSet is not empty.
+	 * Returns true if ResultSet is not empty.
 	 * 
 	 * @return ProcessOperation
 	 */
-	ProcessOperation<Boolean> notEmpty();
-
-	/**
-	 * Retrieves first row in the first column, expected type is elementType class.
-	 * 
-	 * @param elementType
-	 * @return ProcessOperation
-	 */
-	<E> ProcessOperation<E> firstColumnOne(Class<E> elementType);
+	ProcessOperation<Boolean> exists();
 
 	/**
 	 * Retrieves only the first column from ResultSet, expected type is elementType class.
@@ -64,29 +64,22 @@ public interface SelectOperation<T> extends QueryOperation<T, SelectOperation<T>
 	 * @param elementType
 	 * @return ProcessOperation
 	 */
-	<E> ProcessOperation<Iterator<E>> firstColumn(Class<E> elementType);
+	<E> ProcessOperation<List<E>> firstColumn(Class<E> elementType);
 
 	/**
 	 * Maps all rows from ResultSet to Map<String, Object>.
 	 * 
 	 * @return ProcessOperation
 	 */
-	ProcessOperation<Iterator<Map<String, Object>>> map();
-
-	/**
-	 * Maps only first row from ResultSet to Map<String, Object>.
-	 * 
-	 * @return ProcessOperation
-	 */
-	ProcessOperation<Map<String, Object>> mapOne();
+	ProcessOperation<List<Map<String, Object>>> map();
 
 	/**
 	 * Uses ResultSetCallback to transform ResultSet to object with type T.
 	 * 
-	 * @param rsc
+	 * @param rse ResultSet Extractor to convert ResultSet to type T
 	 * @return ProcessOperation
 	 */
-	<O> ProcessOperation<O> transform(ResultSetCallback<O> rsc);
+	<O> ProcessOperation<O> transform(ResultSetExtractor<O> rse);
 
 	/**
 	 * Calls RowCallbackHandler for each row in ResultSet.
@@ -94,6 +87,6 @@ public interface SelectOperation<T> extends QueryOperation<T, SelectOperation<T>
 	 * @param rch
 	 * @return ProcessOperation
 	 */
-	ProcessOperation<Object> each(RowCallbackHandler rch);
+	ProcessOperation<Object> forEach(RowCallbackHandler rch);
 
 }

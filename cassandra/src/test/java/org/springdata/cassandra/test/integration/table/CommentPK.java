@@ -1,5 +1,3 @@
-package org.springdata.cassandra.test.integration.table;
-
 /*
  * Copyright 2013 the original author or authors.
  *
@@ -15,6 +13,8 @@ package org.springdata.cassandra.test.integration.table;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.springdata.cassandra.test.integration.table;
+
 import java.util.Date;
 
 import org.springdata.cassandra.cql.core.KeyPart;

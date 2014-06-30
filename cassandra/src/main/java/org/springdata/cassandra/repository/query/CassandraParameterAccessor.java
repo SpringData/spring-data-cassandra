@@ -15,7 +15,8 @@
  */
 package org.springdata.cassandra.repository.query;
 
-import org.springdata.cassandra.cql.core.query.StatementOptionsAccessor;
+import org.springdata.cassandra.cql.core.ConsistencyLevel;
+import org.springdata.cassandra.cql.core.RetryPolicy;
 import org.springframework.data.repository.query.ParameterAccessor;
 
 /**
@@ -24,6 +25,50 @@ import org.springframework.data.repository.query.ParameterAccessor;
  * @author Alex Shvid
  */
 
-public interface CassandraParameterAccessor extends ParameterAccessor, StatementOptionsAccessor {
+public interface CassandraParameterAccessor extends ParameterAccessor {
+
+	/**
+	 * Returns ConsistencyLevel for the query operation. By default Cassandra uses ConsistencyLevel.QUORUM. Useful for all
+	 * gets and puts operations
+	 * 
+	 * @return ConsistencyLevel enum
+	 */
+
+	ConsistencyLevel getConsistencyLevel();
+
+	/**
+	 * Returns RetryPolicy for the query operation. By default Cassandra uses RetryPolicy.DEFAULT. Useful for all gets and
+	 * puts operations
+	 * 
+	 * @return RetryPolicy enum
+	 */
+
+	RetryPolicy getRetryPolicy();
+
+	/**
+	 * Returns QueryTracing for the query operation.
+	 * 
+	 * @return QueryTracing boolean
+	 */
+
+	Boolean getQueryTracing();
+
+	/**
+	 * Returns TTL time in seconds for insert and update operations. It is an expiration time for the stored value in
+	 * Cassandra. Usefull for insert, update operations.
+	 * 
+	 * @return ttl in seconds
+	 */
+
+	Integer getTtl();
+
+	/**
+	 * Return timestamp long in milliseconds. Each cell in Cassandra has timestamp. Usefull for insert, update, delete
+	 * operations.
+	 * 
+	 * @return
+	 */
+
+	Long getTimestamp();
 
 }

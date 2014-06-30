@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,11 @@ public final class RingMember {
 		this.address = h.getAddress().getHostAddress();
 		this.DC = h.getDatacenter();
 		this.rack = h.getRack();
+	}
+
+	@Override
+	public String toString() {
+		return "RingMember [hostName=" + hostName + ", address=" + address + ", DC=" + DC + ", rack=" + rack + "]";
 	}
 
 }

@@ -1,10 +1,10 @@
 Spring Data Cassandra
 =====================
 
-This is a Spring Data project for Cassandra that uses the binary CQL3 protocol via
+This is a SpringFramework Data project for Cassandra that uses the binary CQL3 protocol via
 the official DataStax 1.x Java [driver](https://github.com/datastax/java-driver) for Cassandra 1.2.
 
-Supports native CQL3 queries in Spring Repositories.
+Supports native CQL3 queries in SpringFramework Data Repositories.
 
 Versions
 --------
@@ -31,6 +31,15 @@ CQL
 
 Fully supported CQL 3.0 version. Specification is available [here] (http://www.datastax.com/documentation/cql/3.0/pdf/cql30.pdf)
 
+Modules
+--------
+
+This project has two modules:
+ - [Spring Cassandra Cql](cassandra-cql)
+ - [Spring Data Cassandra](cassandra)
+
+Spring Cassandra Cql gives ability to use CqlTemplate and makes operations based in CQL.
+Spring Data Cassandra gives ability to use CassandraTemplate and CassandraRepository. 
 
 Building
 --------
