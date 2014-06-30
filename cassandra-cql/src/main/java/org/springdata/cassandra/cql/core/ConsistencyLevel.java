@@ -23,6 +23,6 @@ package org.springdata.cassandra.cql.core;
  */
 public enum ConsistencyLevel {
 
-	ANY, ONE, TWO, THREE, QUOROM, LOCAL_QUOROM, EACH_QUOROM, ALL
+	ANY, ONE, TWO, THREE, QUORUM, LOCAL_QUORUM, EACH_QUORUM, ALL
 
 }
