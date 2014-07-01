@@ -97,12 +97,8 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>, Initia
 			builder.withCompression(convertCompressionType(compressionType));
 		}
 
-		if (localPoolingOptions != null) {
-			builder.withPoolingOptions(configPoolingOptions(HostDistance.LOCAL, localPoolingOptions));
-		}
-
-		if (remotePoolingOptions != null) {
-			builder.withPoolingOptions(configPoolingOptions(HostDistance.REMOTE, remotePoolingOptions));
+		if(localPoolingOptions != null || remotePoolingOptions!=null){
+			builder.withPoolingOptions(getPoolingOptions());
 		}
 
 		if (socketOptions != null) {
@@ -141,6 +137,18 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>, Initia
 		this.cluster = cluster;
 	}
 
+	private com.datastax.driver.core.PoolingOptions getPoolingOptions(){
+		com.datastax.driver.core.PoolingOptions poolingOptions = new com.datastax.driver.core.PoolingOptions();
+		if (localPoolingOptions != null) {
+			configPoolingOptions(poolingOptions,HostDistance.LOCAL, localPoolingOptions);
+		}
+
+		if (remotePoolingOptions != null) {
+			configPoolingOptions(poolingOptions,HostDistance.REMOTE, remotePoolingOptions);
+		}
+		return poolingOptions;
+	}
+	
 	@Override
 	public void destroy() throws Exception {
 		this.cluster.shutdown();
@@ -200,9 +208,8 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>, Initia
 		throw new IllegalArgumentException("unknown compression type " + type);
 	}
 
-	private static com.datastax.driver.core.PoolingOptions configPoolingOptions(HostDistance hostDistance,
+	private static void configPoolingOptions(com.datastax.driver.core.PoolingOptions poolingOptions,HostDistance hostDistance,
 			PoolingOptions config) {
-		com.datastax.driver.core.PoolingOptions poolingOptions = new com.datastax.driver.core.PoolingOptions();
 
 		if (config.getMinSimultaneousRequests() != null) {
 			poolingOptions
@@ -218,8 +225,6 @@ public class CassandraClusterFactoryBean implements FactoryBean<Cluster>, Initia
 		if (config.getMaxConnections() != null) {
 			poolingOptions.setMaxConnectionsPerHost(hostDistance, config.getMaxConnections());
 		}
-
-		return poolingOptions;
 	}
 
 	private static com.datastax.driver.core.SocketOptions configSocketOptions(SocketOptions config) {
