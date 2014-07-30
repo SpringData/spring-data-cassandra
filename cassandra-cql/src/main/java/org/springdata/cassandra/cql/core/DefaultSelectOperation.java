@@ -162,6 +162,11 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 		return doExecuteNonstop(query, timeoutMls);
 	}
 
+	@Override
+	public Query toQuery() {
+		return query;
+	}
+
 	abstract class ForwardingSelectOperation<T> implements ProcessOperation<T> {
 
 		protected final SelectOperation delegate;
@@ -198,6 +203,11 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 		public ProcessOperation<T> withExecutor(Executor executor) {
 			delegate.withExecutor(executor);
 			return this;
+		}
+
+		@Override
+		public Query toQuery() {
+			return delegate.toQuery();
 		}
 
 	}

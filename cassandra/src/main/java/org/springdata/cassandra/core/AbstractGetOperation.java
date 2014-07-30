@@ -19,8 +19,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.springdata.cassandra.cql.core.AbstractQueryOperation;
 import org.springdata.cassandra.cql.core.CallbackHandler;
-import org.springdata.cassandra.cql.core.CqlTemplate;
 import org.springdata.cassandra.cql.core.CassandraFuture;
+import org.springdata.cassandra.cql.core.CqlTemplate;
 import org.springdata.cassandra.cql.core.QueryCreator;
 
 import com.datastax.driver.core.Query;
@@ -103,6 +103,11 @@ public abstract class AbstractGetOperation<T> extends AbstractQueryOperation<T, 
 		Query query = doCreateQuery(this);
 		ResultSet resultSet = doExecuteNonstop(query, timeoutMls);
 		return transform(resultSet);
+	}
+
+	@Override
+	public Query toQuery() {
+		return doCreateQuery(this);
 	}
 
 	protected T processWithFallback(ResultSet resultSet) {

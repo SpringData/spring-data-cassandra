@@ -18,6 +18,8 @@ package org.springdata.cassandra.cql.core;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
+import com.datastax.driver.core.Query;
+
 /**
  * Cassandra Query Operation
  * 
@@ -98,5 +100,13 @@ public interface QueryOperation<T, O extends QueryOperation<T, O>> {
 	 * 
 	 */
 	T executeNonstop(int timeoutMls) throws TimeoutException;
+
+	/**
+	 * Builds Cql Query for current operation
+	 * 
+	 * @return cql Query
+	 */
+
+	Query toQuery();
 
 }

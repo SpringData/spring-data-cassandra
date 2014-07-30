@@ -87,6 +87,11 @@ public abstract class AbstractSelectOneOperation extends AbstractQueryOperation<
 		return getRow(resultSet);
 	}
 
+	@Override
+	public Query toQuery() {
+		return query;
+	}
+
 	private Row getRow(ResultSet resultSet) {
 
 		Iterator<Row> iterator = resultSet.iterator();

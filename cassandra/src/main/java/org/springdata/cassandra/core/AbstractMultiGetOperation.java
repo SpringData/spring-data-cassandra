@@ -26,6 +26,9 @@ import org.springdata.cassandra.cql.core.CassandraFuture;
 
 import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.querybuilder.Batch;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -106,6 +109,27 @@ public abstract class AbstractMultiGetOperation<T> extends AbstractQueryOperatio
 		Iterator<Query> queryIterator = getQueryIterator();
 		List<ResultSet> resultSets = doExecuteNonstop(queryIterator, timeoutMls);
 		return transform(resultSets);
+	}
+
+	@Override
+	public Query toQuery() {
+
+		Iterator<Query> queryIterator = getQueryIterator();
+		Batch batch = QueryBuilder.batch();
+
+		while (queryIterator.hasNext()) {
+
+			Query query = queryIterator.next();
+
+			if (query instanceof Statement) {
+				Statement statement = (Statement) query;
+				batch.add(statement);
+			} else {
+				throw new IllegalArgumentException("query is not a statement " + query);
+			}
+
+		}
+		return batch;
 	}
 
 	protected T processWithFallback(List<ResultSet> resultSets) {

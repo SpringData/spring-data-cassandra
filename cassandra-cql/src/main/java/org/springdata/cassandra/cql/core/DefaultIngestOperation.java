@@ -21,6 +21,9 @@ import java.util.concurrent.TimeoutException;
 
 import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.querybuilder.Batch;
+import com.datastax.driver.core.querybuilder.QueryBuilder;
 
 /**
  * Default Ingest operation implementation
@@ -57,6 +60,26 @@ public class DefaultIngestOperation extends AbstractQueryOperation<List<ResultSe
 	@Override
 	public List<ResultSet> executeNonstop(int timeoutMls) throws TimeoutException {
 		return doExecuteNonstop(queryIterator, timeoutMls);
+	}
+
+	@Override
+	public Query toQuery() {
+
+		Batch batch = QueryBuilder.batch();
+
+		while (queryIterator.hasNext()) {
+
+			Query query = queryIterator.next();
+
+			if (query instanceof Statement) {
+				Statement statement = (Statement) query;
+				batch.add(statement);
+			} else {
+				throw new IllegalArgumentException("query is not a statement " + query);
+			}
+
+		}
+		return batch;
 	}
 
 }

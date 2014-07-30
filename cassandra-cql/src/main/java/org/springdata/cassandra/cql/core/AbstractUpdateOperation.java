@@ -57,4 +57,9 @@ public abstract class AbstractUpdateOperation<O extends QueryOperation<ResultSet
 		return doExecuteNonstop(query, timeoutMls);
 	}
 
+	@Override
+	public Query toQuery() {
+		return doCreateQuery(this);
+	}
+
 }
