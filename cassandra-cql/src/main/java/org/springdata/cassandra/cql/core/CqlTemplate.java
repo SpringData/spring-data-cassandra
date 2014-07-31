@@ -162,6 +162,12 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
+	public ResultSet execute(Query query) {
+		Assert.notNull(query);
+		return doExecute(query);
+	}
+
+	@Override
 	public ResultSet update(String cql) {
 		return getUpdateOperation(cql).execute();
 	}

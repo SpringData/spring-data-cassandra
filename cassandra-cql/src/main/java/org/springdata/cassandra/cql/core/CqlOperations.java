@@ -52,6 +52,15 @@ public interface CqlOperations {
 	<T> T execute(SessionCallback<T> sessionCallback);
 
 	/**
+	 * Executes the specific query
+	 * 
+	 * @param query
+	 * @return ResultSet
+	 */
+
+	ResultSet execute(Query query);
+
+	/**
 	 * Executes the supplied CQL Query and returns nothing.
 	 * 
 	 * @param cql The CQL String
