@@ -15,7 +15,6 @@
  */
 package org.springdata.cassandra.convert;
 
-import org.apache.commons.lang.enums.EnumUtils;
 import org.springdata.cassandra.mapping.CassandraPersistentProperty;
 
 /**
@@ -30,10 +29,11 @@ public final class CassandraValueConverter {
 	private CassandraValueConverter() {
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Object afterRead(CassandraPersistentProperty property, Object value) {
 
 		if (value != null && property.isEnum()) {
-			return EnumUtils.getEnum(property.getType(), value.toString());
+			return Enum.valueOf((Class<? extends Enum>) property.getType(), value.toString());
 		}
 
 		return value;
