@@ -74,8 +74,8 @@ public class CassandraTemplateTest {
 	private final static String CASSANDRA_CONFIG = "cassandra.yaml";
 	private final static String KEYSPACE_NAME = "test";
 	private final static String CASSANDRA_HOST = "localhost";
-	private final static int CASSANDRA_NATIVE_PORT = 9042;
-	private final static int CASSANDRA_THRIFT_PORT = 9160;
+	private final static int CASSANDRA_NATIVE_PORT = 9942;
+	private final static int CASSANDRA_THRIFT_PORT = 9960;
 
 	@Rule
 	public CassandraCQLUnit cassandraCQLUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("cql-dataload.cql",
@@ -628,8 +628,8 @@ public class CassandraTemplateTest {
 		Book b3 = new Book();
 		b3.setIsbn("123456-3");
 
-		cassandraTemplate.getDeleteByIdOperation(Book.class, b3.getIsbn()).fromTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+		cassandraTemplate.getDeleteByIdOperation(Book.class, b3.getIsbn()).fromTable("book")
+				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
 
 		/*
 		 * Test Single Insert with entity
@@ -666,8 +666,8 @@ public class CassandraTemplateTest {
 		Book b3 = new Book();
 		b3.setIsbn("123456-3");
 
-		cassandraTemplate.getDeleteByIdOperation(Book.class, b3.getIsbn()).fromTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+		cassandraTemplate.getDeleteByIdOperation(Book.class, b3.getIsbn()).fromTable("book")
+				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
 
 		/*
 		 * Test Single Insert with entity
@@ -883,7 +883,8 @@ public class CassandraTemplateTest {
 
 		Select select = QueryBuilder.select().all().from("book");
 
-		List<Book> b = Lists.newArrayList(cassandraTemplate.getFindOperation(Book.class, select.getQueryString()).execute());
+		List<Book> b = Lists
+				.newArrayList(cassandraTemplate.getFindOperation(Book.class, select.getQueryString()).execute());
 
 		log.info("Book Count -> " + b.size());
 

@@ -56,7 +56,6 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.TableMetadata;
 import com.datastax.driver.core.querybuilder.Clause;
-import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Update;
@@ -196,7 +195,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 						conversionService);
 				propEntity.doWithProperties(new InsertPropertyHandler(insert, propWrapper));
 			} else {
-				insert.value(prop.getColumnName(), propertyObj);
+				insert.value(prop.getColumnName(), CassandraValueConverter.beforeWrite(propertyObj));
 			}
 		}
 	}
@@ -222,9 +221,9 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 							conversionService);
 					propEntity.doWithProperties(new UpdatePropertyHandler(update, propWrapper));
 				} else if (prop.isIdProperty() || prop.getKeyPart() != null) {
-					update.where(QueryBuilder.eq(prop.getColumnName(), propertyObj));
+					update.where(QueryBuilder.eq(prop.getColumnName(), CassandraValueConverter.beforeWrite(propertyObj)));
 				} else {
-					update.with(QueryBuilder.set(prop.getColumnName(), propertyObj));
+					update.with(QueryBuilder.set(prop.getColumnName(), CassandraValueConverter.beforeWrite(propertyObj)));
 				}
 			}
 
@@ -236,8 +235,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 		private final BeanWrapper<CassandraPersistentEntity<Object>, Object> wrapper;
 		private final List<Clause> clauseList;
 
-		private WherePropertyHandler(List<Clause> clauseList,
-				BeanWrapper<CassandraPersistentEntity<Object>, Object> wrapper) {
+		private WherePropertyHandler(List<Clause> clauseList, BeanWrapper<CassandraPersistentEntity<Object>, Object> wrapper) {
 			this.clauseList = clauseList;
 			this.wrapper = wrapper;
 		}
@@ -253,7 +251,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 							conversionService);
 					propEntity.doWithProperties(new WherePropertyHandler(clauseList, propWrapper));
 				} else if (prop.isIdProperty() || prop.getKeyPart() != null) {
-					clauseList.add(QueryBuilder.eq(prop.getColumnName(), propertyObj));
+					clauseList.add(QueryBuilder.eq(prop.getColumnName(), CassandraValueConverter.beforeWrite(propertyObj)));
 				}
 			}
 
@@ -553,7 +551,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 
 					} else {
 
-						result.add(QueryBuilder.eq(prop.getColumnName(), id));
+						result.add(QueryBuilder.eq(prop.getColumnName(), CassandraValueConverter.beforeWrite(id)));
 
 					}
 				}
@@ -589,7 +587,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 
 					} else {
 
-						result.add(QueryBuilder.eq(prop.getColumnName(), id));
+						result.add(QueryBuilder.eq(prop.getColumnName(), CassandraValueConverter.beforeWrite(id)));
 
 					}
 				}
@@ -624,7 +622,7 @@ public class MappingCassandraConverter extends AbstractCassandraConverter implem
 									+ idEntity.getName());
 						}
 
-						result.add(QueryBuilder.eq(prop.getColumnName(), propertyObj));
+						result.add(QueryBuilder.eq(prop.getColumnName(), CassandraValueConverter.beforeWrite(propertyObj)));
 					}
 				}
 

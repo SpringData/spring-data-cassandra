@@ -32,4 +32,9 @@ public class JavaCqlConfig extends AbstractCassandraCqlConfiguration {
 		return "test";
 	}
 
+	@Override
+	protected int port() {
+		return 9942;
+	}
+
 }

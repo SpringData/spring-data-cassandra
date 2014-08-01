@@ -83,8 +83,8 @@ public class CassandraConversionTests {
 	private final static String CASSANDRA_CONFIG = "cassandra.yaml";
 	private final static String KEYSPACE_NAME = "test";
 	private final static String CASSANDRA_HOST = "localhost";
-	private final static int CASSANDRA_NATIVE_PORT = 9042;
-	private final static int CASSANDRA_THRIFT_PORT = 9160;
+	private final static int CASSANDRA_NATIVE_PORT = 9942;
+	private final static int CASSANDRA_THRIFT_PORT = 9960;
 
 	@Rule
 	public CassandraCQLUnit cassandraCQLUnit = new CassandraCQLUnit(new ClassPathCQLDataSet(
@@ -212,7 +212,8 @@ public class CassandraConversionTests {
 
 		cqlOperations.getUpdateOperation("insert into test.collection_types_table (id) values ('nulls')").execute();
 
-		CollectionTypesEntity nullProps = cassandraOperations.getFindByIdOperation(CollectionTypesEntity.class, "nulls").execute();
+		CollectionTypesEntity nullProps = cassandraOperations.getFindByIdOperation(CollectionTypesEntity.class, "nulls")
+				.execute();
 		assertThat(nullProps, is(not(nullValue(CollectionTypesEntity.class))));
 		assertThat(nullProps.getId(), is("nulls"));
 		assertThat(nullProps.getTextlist(), is(nullValue()));
@@ -238,7 +239,8 @@ public class CassandraConversionTests {
 						+ "{'settext1', 'settext2'}, {'uuid1':%s}, " + "[%s, %s], " + "{%s} )", mapUUID.toString(),
 						listUUID[0].toString(), listUUID[1].toString(), setUUID.toString())).execute();
 
-		CollectionTypesEntity entity = cassandraOperations.getFindByIdOperation(CollectionTypesEntity.class, "values").execute();
+		CollectionTypesEntity entity = cassandraOperations.getFindByIdOperation(CollectionTypesEntity.class, "values")
+				.execute();
 
 		assertThat(entity, is(not(nullValue(CollectionTypesEntity.class))));
 		assertThat(entity.getId(), is("values"));
@@ -290,7 +292,8 @@ public class CassandraConversionTests {
 
 		cassandraOperations.getSaveNewOperation(newEntity).execute();
 
-		CollectionTypesEntity entity = cassandraOperations.getFindByIdOperation(CollectionTypesEntity.class, "values").execute();
+		CollectionTypesEntity entity = cassandraOperations.getFindByIdOperation(CollectionTypesEntity.class, "values")
+				.execute();
 
 		assertThat(entity, is(not(nullValue(CollectionTypesEntity.class))));
 		assertThat(entity.getId(), is("values"));

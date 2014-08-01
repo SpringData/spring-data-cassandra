@@ -32,4 +32,9 @@ public class JavaConfig extends AbstractCassandraConfiguration {
 		return "test";
 	}
 
+	@Override
+	protected int port() {
+		return 9942;
+	}
+
 }

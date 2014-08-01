@@ -44,6 +44,14 @@ public interface CassandraPersistentProperty extends PersistentProperty<Cassandr
 	String getColumnName();
 
 	/**
+	 * Returns true for enum types
+	 * 
+	 * @return
+	 */
+
+	boolean isEnum();
+
+	/**
 	 * Returns ordering for the column. Valid only for clustered columns.
 	 * 
 	 * @return

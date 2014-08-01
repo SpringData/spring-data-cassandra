@@ -18,8 +18,6 @@ package org.springdata.cassandra.convert;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import com.datastax.driver.core.ColumnDefinitions;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdata.cassandra.mapping.CassandraPersistentProperty;
@@ -28,6 +26,7 @@ import org.springframework.data.mapping.model.PropertyValueProvider;
 import org.springframework.data.mapping.model.SpELExpressionEvaluator;
 import org.springframework.util.Assert;
 
+import com.datastax.driver.core.ColumnDefinitions;
 import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Row;
 
@@ -93,7 +92,9 @@ public class CassandraPropertyValueProvider implements PropertyValueProvider<Cas
 		}
 
 		ByteBuffer bytes = source.getBytesUnsafe(columnIndex);
-		return (T) columnType.deserialize(bytes);
-	}
+		Object value = columnType.deserialize(bytes);
 
+		return (T) CassandraValueConverter.afterRead(property, value);
+
+	}
 }
