@@ -118,7 +118,7 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 			return qualifyAnnotatedType(annotation);
 		}
 		if (isEnum()) {
-			return DataType.ascii();
+			return DataType.text();
 		}
 		if (isMap()) {
 			List<TypeInformation<?>> args = getTypeInformation().getTypeArguments();
