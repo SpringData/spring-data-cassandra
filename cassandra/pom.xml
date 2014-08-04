@@ -24,7 +24,7 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>spring-cassandra-cql</artifactId>
+			<artifactId>spring-data-cql</artifactId>
 		</dependency>
 
 		<!-- Guava -->

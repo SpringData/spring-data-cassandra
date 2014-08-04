@@ -39,7 +39,7 @@
 	</parent>
 
 	<modules>
-		<module>cassandra-cql</module>
+		<module>cql</module>
 		<module>cassandra</module>
 	</modules>
 
@@ -190,7 +190,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>spring-cassandra-cql</artifactId>
+				<artifactId>spring-data-cql</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
