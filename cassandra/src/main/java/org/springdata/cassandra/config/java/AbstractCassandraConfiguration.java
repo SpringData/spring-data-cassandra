@@ -23,14 +23,14 @@ import org.springdata.cassandra.convert.MappingCassandraConverter;
 import org.springdata.cassandra.core.CassandraSessionFactoryBean;
 import org.springdata.cassandra.core.CassandraTemplate;
 import org.springdata.cassandra.core.CassandraTemplateFactoryBean;
-import org.springdata.cassandra.cql.config.KeyspaceAttributes;
-import org.springdata.cassandra.cql.config.java.AbstractCassandraClusterConfiguration;
-import org.springdata.cassandra.cql.core.CqlTemplate;
-import org.springdata.cassandra.cql.core.CqlTemplateFactoryBean;
 import org.springdata.cassandra.mapping.CassandraMappingContext;
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
 import org.springdata.cassandra.mapping.CassandraPersistentProperty;
 import org.springdata.cassandra.mapping.Table;
+import org.springdata.cql.config.KeyspaceAttributes;
+import org.springdata.cql.config.java.AbstractCassandraClusterConfiguration;
+import org.springdata.cql.core.CqlTemplate;
+import org.springdata.cql.core.CqlTemplateFactoryBean;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
@@ -127,7 +127,7 @@ public abstract class AbstractCassandraConfiguration extends AbstractCassandraCl
 	 * @return CassandraOperations
 	 */
 	@Bean
-	public CassandraTemplateFactoryBean cassandraTemplate() throws Exception {
+	public CassandraTemplateFactoryBean template() throws Exception {
 		CassandraTemplateFactoryBean factory = new CassandraTemplateFactoryBean();
 		factory.setKeyspace(keyspace());
 		factory.setSession(session().getObject());

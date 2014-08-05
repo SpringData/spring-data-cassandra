@@ -15,9 +15,9 @@
  */
 package org.springdata.cassandra.test.integration.table;
 
-import org.springdata.cassandra.cql.option.TableOptions;
 import org.springdata.cassandra.mapping.Id;
 import org.springdata.cassandra.mapping.Table;
+import org.springdata.cql.option.TableOptions;
 
 /**
  * Test POJO

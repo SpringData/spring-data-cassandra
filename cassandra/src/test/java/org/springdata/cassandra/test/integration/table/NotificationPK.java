@@ -17,10 +17,10 @@ package org.springdata.cassandra.test.integration.table;
 
 import java.util.Date;
 
-import org.springdata.cassandra.cql.core.KeyPart;
 import org.springdata.cassandra.mapping.Embeddable;
 import org.springdata.cassandra.mapping.KeyColumn;
 import org.springdata.cassandra.mapping.Qualify;
+import org.springdata.cql.core.KeyPart;
 
 import com.datastax.driver.core.DataType;
 

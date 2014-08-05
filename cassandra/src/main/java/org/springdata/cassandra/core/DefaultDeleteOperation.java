@@ -18,8 +18,8 @@ package org.springdata.cassandra.core;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springdata.cassandra.cql.core.AbstractUpdateOperation;
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
+import org.springdata.cql.core.AbstractUpdateOperation;
 import org.springframework.util.Assert;
 
 import com.datastax.driver.core.Query;

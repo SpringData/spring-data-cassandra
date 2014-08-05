@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.core;
 
-import org.springdata.cassandra.cql.core.RowMapper;
+import org.springdata.cql.core.RowMapper;
 import org.springframework.data.convert.EntityReader;
 import org.springframework.util.Assert;
 

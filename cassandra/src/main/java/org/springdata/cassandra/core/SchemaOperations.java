@@ -17,8 +17,8 @@ package org.springdata.cassandra.core;
 
 import java.util.List;
 
-import org.springdata.cassandra.cql.core.IngestOperation;
-import org.springdata.cassandra.cql.core.UpdateOperation;
+import org.springdata.cql.core.IngestOperation;
+import org.springdata.cql.core.UpdateOperation;
 
 import com.google.common.base.Optional;
 

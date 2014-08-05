@@ -18,7 +18,7 @@ Defines the configuration elements for the Spring Data Cassandra support.
 	<xsd:element name="cluster" type="clusterType">
 		<xsd:annotation>
 			<xsd:documentation
-				source="org.springdata.cassandra.cql.core.CassandraClusterFactoryBean"><![CDATA[
+				source="org.springdata.cassandra.core.CassandraClusterFactoryBean"><![CDATA[
 Defines a Cassandra Cluster instance used for accessing Cassandra'.
 			]]></xsd:documentation>
 			<xsd:appinfo>
@@ -194,7 +194,7 @@ The keyspace name of the Cassandra database.
 							]]></xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="cassandra-cluster-ref" type="clusterRef"
+		<xsd:attribute name="cluster-ref" type="clusterRef"
 			use="optional">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
@@ -203,52 +203,11 @@ The reference to a Cassandra Cluster instance. Will default to 'cassandra-cluste
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="cassandra-converter-ref" type="converterRef"
+		<xsd:attribute name="converter-ref" type="converterRef"
 			use="optional">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
 The reference to a CassandraConverter instance. Will default to 'cassandra-converter'.
-                                        ]]>
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-	</xsd:complexType>
-	
-	<xsd:element name="cql-template" type="cqlTemplateType">
-		<xsd:annotation>
-			<xsd:documentation
-				source="org.springdata.cassandra.cql.core.CqlTemplateFactoryBean"><![CDATA[
-Defines a CqlTemplate instance.
-			]]></xsd:documentation>
-			<xsd:appinfo>
-				<tool:annotation>
-					<tool:exports type="org.springdata.cassandra.cql.core.CqlTemplate" />
-				</tool:annotation>
-			</xsd:appinfo>
-		</xsd:annotation>
-	</xsd:element>
-	
-	<xsd:complexType name="cqlTemplateType">
-		<xsd:attribute name="id" type="xsd:ID" use="optional">
-			<xsd:annotation>
-				<xsd:documentation>
-					The name of the CqlTemplate definition (by default
-					"cql-template")
-				</xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-		<xsd:attribute name="keyspace" type="xsd:string">
-			<xsd:annotation>
-				<xsd:documentation><![CDATA[
-The keyspace name of the Cassandra database.
-							]]></xsd:documentation>
-			</xsd:annotation>
-		</xsd:attribute>
-		<xsd:attribute name="cassandra-session-ref" type="sessionRef"
-			use="optional">
-			<xsd:annotation>
-				<xsd:documentation><![CDATA[
-The reference to a Cassandra Session instance. Will default to 'cassandra-session'.
                                         ]]>
 				</xsd:documentation>
 			</xsd:annotation>
@@ -311,7 +270,7 @@ The keyspace name of the Cassandra database.
 							]]></xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="cassandra-session-ref" type="sessionRef"
+		<xsd:attribute name="session-ref" type="sessionRef"
 			use="optional">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[
@@ -320,7 +279,7 @@ The reference to a Cassandra Session instance. Will default to 'cassandra-sessio
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="cassandra-converter-ref" type="converterRef"
+		<xsd:attribute name="converter-ref" type="converterRef"
 			use="optional">
 			<xsd:annotation>
 				<xsd:documentation><![CDATA[

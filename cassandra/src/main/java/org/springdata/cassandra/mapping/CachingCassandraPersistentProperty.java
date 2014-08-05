@@ -18,8 +18,8 @@ package org.springdata.cassandra.mapping;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
-import org.springdata.cassandra.cql.core.KeyPart;
-import org.springdata.cassandra.cql.core.Ordering;
+import org.springdata.cql.core.KeyPart;
+import org.springdata.cql.core.Ordering;
 import org.springframework.data.mapping.model.SimpleTypeHolder;
 
 import com.datastax.driver.core.DataType;

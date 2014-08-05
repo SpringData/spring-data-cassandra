@@ -17,8 +17,8 @@ package org.springdata.cassandra.core;
 
 import java.util.Iterator;
 
-import org.springdata.cassandra.cql.core.AbstractUpdateOperation;
-import org.springdata.cassandra.cql.core.SessionCallback;
+import org.springdata.cql.core.AbstractUpdateOperation;
+import org.springdata.cql.core.SessionCallback;
 
 import com.datastax.driver.core.Query;
 import com.datastax.driver.core.Session;

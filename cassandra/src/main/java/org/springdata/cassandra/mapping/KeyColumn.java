@@ -20,8 +20,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springdata.cassandra.cql.core.KeyPart;
-import org.springdata.cassandra.cql.core.Ordering;
+import org.springdata.cql.core.KeyPart;
+import org.springdata.cql.core.Ordering;
 
 /**
  * Identifies partition key in the Cassandra composite primary key class. Annotated column is the part of the Cassandra

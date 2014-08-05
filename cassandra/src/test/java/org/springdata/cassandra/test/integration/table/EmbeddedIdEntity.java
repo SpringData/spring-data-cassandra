@@ -17,11 +17,11 @@ package org.springdata.cassandra.test.integration.table;
 
 import java.io.Serializable;
 
-import org.springdata.cassandra.cql.core.KeyPart;
 import org.springdata.cassandra.mapping.Embeddable;
 import org.springdata.cassandra.mapping.Id;
 import org.springdata.cassandra.mapping.KeyColumn;
 import org.springdata.cassandra.mapping.Table;
+import org.springdata.cql.core.KeyPart;
 
 @Table(name = "embedded_id_table")
 public class EmbeddedIdEntity {

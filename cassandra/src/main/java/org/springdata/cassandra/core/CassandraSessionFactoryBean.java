@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.springdata.cassandra.config.TableAttributes;
 import org.springdata.cassandra.convert.CassandraConverter;
-import org.springdata.cassandra.cql.core.CqlTemplate;
-import org.springdata.cassandra.cql.core.SessionFactoryBean;
-import org.springdata.cassandra.cql.core.UpdateOperation;
+import org.springdata.cql.core.CqlTemplate;
+import org.springdata.cql.core.SessionFactoryBean;
+import org.springdata.cql.core.UpdateOperation;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;

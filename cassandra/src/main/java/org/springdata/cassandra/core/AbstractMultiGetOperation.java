@@ -19,10 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import org.springdata.cassandra.cql.core.AbstractQueryOperation;
-import org.springdata.cassandra.cql.core.CallbackHandler;
-import org.springdata.cassandra.cql.core.CqlTemplate;
-import org.springdata.cassandra.cql.core.CassandraFuture;
+import org.springdata.cql.core.AbstractQueryOperation;
+import org.springdata.cql.core.CallbackHandler;
+import org.springdata.cql.core.CassandraFuture;
+import org.springdata.cql.core.CqlTemplate;
 
 import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;

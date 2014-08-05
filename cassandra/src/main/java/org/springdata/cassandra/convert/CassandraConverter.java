@@ -17,12 +17,12 @@ package org.springdata.cassandra.convert;
 
 import java.util.List;
 
-import org.springdata.cassandra.cql.spec.AlterTableSpecification;
-import org.springdata.cassandra.cql.spec.CreateIndexSpecification;
-import org.springdata.cassandra.cql.spec.CreateTableSpecification;
-import org.springdata.cassandra.cql.spec.WithNameSpecification;
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
 import org.springdata.cassandra.mapping.CassandraPersistentProperty;
+import org.springdata.cql.spec.AlterTableSpecification;
+import org.springdata.cql.spec.CreateIndexSpecification;
+import org.springdata.cql.spec.CreateTableSpecification;
+import org.springdata.cql.spec.WithNameSpecification;
 import org.springframework.data.convert.EntityConverter;
 
 import com.datastax.driver.core.TableMetadata;

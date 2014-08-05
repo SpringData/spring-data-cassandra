@@ -20,7 +20,7 @@ import java.util.List;
 import org.springdata.cassandra.config.ConfigConstants;
 import org.springdata.cassandra.config.TableAttributes;
 import org.springdata.cassandra.core.CassandraSessionFactoryBean;
-import org.springdata.cassandra.cql.config.KeyspaceAttributes;
+import org.springdata.cql.config.KeyspaceAttributes;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -62,13 +62,13 @@ public class CassandraSessionParser extends AbstractSimpleBeanDefinitionParser {
 			builder.addPropertyValue("keyspace", keyspace);
 		}
 
-		String clusterRef = element.getAttribute("cassandra-cluster-ref");
+		String clusterRef = element.getAttribute("cluster-ref");
 		if (!StringUtils.hasText(clusterRef)) {
 			clusterRef = ConfigConstants.CASSANDRA_CLUSTER;
 		}
 		builder.addPropertyReference("cluster", clusterRef);
 
-		String converterRef = element.getAttribute("cassandra-converter-ref");
+		String converterRef = element.getAttribute("converter-ref");
 		if (!StringUtils.hasText(converterRef)) {
 			converterRef = ConfigConstants.CASSANDRA_CONVERTER;
 		}

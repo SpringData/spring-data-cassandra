@@ -20,8 +20,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Set;
 
-import org.springdata.cassandra.cql.core.KeyPart;
-import org.springdata.cassandra.cql.core.Ordering;
+import org.springdata.cql.core.KeyPart;
+import org.springdata.cql.core.Ordering;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.Association;
 import org.springframework.data.mapping.model.AnnotationBasedPersistentProperty;

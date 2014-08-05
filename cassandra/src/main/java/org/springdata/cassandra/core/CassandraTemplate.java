@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.springdata.cassandra.convert.CassandraConverter;
-import org.springdata.cassandra.cql.core.CqlOperations;
-import org.springdata.cassandra.cql.core.CqlTemplate;
-import org.springdata.cassandra.cql.core.ResultSetExtractor;
-import org.springdata.cassandra.cql.core.RowMapper;
-import org.springdata.cassandra.cql.core.RowMapperResultSetExtractor;
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
 import org.springdata.cassandra.mapping.CassandraPersistentProperty;
+import org.springdata.cql.core.CqlOperations;
+import org.springdata.cql.core.CqlTemplate;
+import org.springdata.cql.core.ResultSetExtractor;
+import org.springdata.cql.core.RowMapper;
+import org.springdata.cql.core.RowMapperResultSetExtractor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.model.MappingException;

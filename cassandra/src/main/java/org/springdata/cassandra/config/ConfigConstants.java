@@ -15,19 +15,21 @@
  */
 package org.springdata.cassandra.config;
 
-import org.springdata.cassandra.cql.config.xml.ConfigCqlConstants;
-
 /**
  * 
  * @author Alex Shvid
  * 
  */
 
-public interface ConfigConstants extends ConfigCqlConstants {
+public interface ConfigConstants {
 
+	public static final String CASSANDRA_CLUSTER = "cassandra-cluster";
+	public static final String CASSANDRA_SESSION = "cassandra-session";
 	public static final String CASSANDRA_CONVERTER = "cassandra-converter";
 	public static final String CASSANDRA_TEMPLATE = "cassandra-template";
 
+	public static final String CASSANDRA_CLUSTER_ELEMENT = "cluster";
+	public static final String CASSANDRA_SESSION_ELEMENT = "session";
 	public static final String CASSANDRA_MAPPING_CONVERTER_ELEMENT = "mapping-converter";
 	public static final String CASSANDRA_TEMPLATE_ELEMENT = "template";
 

@@ -18,9 +18,9 @@ package org.springdata.cassandra.core;
 import java.util.List;
 
 import org.springdata.cassandra.convert.CassandraConverter;
-import org.springdata.cassandra.cql.core.CqlOperations;
-import org.springdata.cassandra.cql.core.ResultSetExtractor;
-import org.springdata.cassandra.cql.core.RowMapper;
+import org.springdata.cql.core.CqlOperations;
+import org.springdata.cql.core.ResultSetExtractor;
+import org.springdata.cql.core.RowMapper;
 
 import com.datastax.driver.core.ResultSet;
 

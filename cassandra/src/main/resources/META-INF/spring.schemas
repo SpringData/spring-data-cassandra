@@ -1,2 +1,2 @@
-http\://www.springdata.org/schema/cassandra/cassandra-1.0.xsd=org/springdata/cassandra/config/cassandra-1.0.xsd
-http\://www.springdata.org/schema/cassandra/cassandra.xsd=org/springdata/cassandra/config/cassandra-1.0.xsd
+http\://www.springdata.org/schema/cassandra-1.0.xsd=org/springdata/cassandra/config/cassandra-1.0.xsd
+http\://www.springdata.org/schema/cassandra.xsd=org/springdata/cassandra/config/cassandra-1.0.xsd

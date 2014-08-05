@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.core;
 
-import org.springdata.cassandra.cql.core.QueryOperation;
+import org.springdata.cql.core.QueryOperation;
 
 /**
  * Base interface to get entity (actually select).

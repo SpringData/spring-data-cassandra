@@ -54,13 +54,13 @@ public class CassandraTemplateParser extends AbstractSimpleBeanDefinitionParser 
 			builder.addPropertyValue("keyspace", keyspace);
 		}
 
-		String sessionRef = element.getAttribute("cassandra-session-ref");
+		String sessionRef = element.getAttribute("session-ref");
 		if (!StringUtils.hasText(sessionRef)) {
 			sessionRef = ConfigConstants.CASSANDRA_SESSION;
 		}
 		builder.addPropertyReference("session", sessionRef);
 
-		String converterRef = element.getAttribute("cassandra-converter-ref");
+		String converterRef = element.getAttribute("converter-ref");
 		if (!StringUtils.hasText(converterRef)) {
 			converterRef = ConfigConstants.CASSANDRA_CONVERTER;
 		}

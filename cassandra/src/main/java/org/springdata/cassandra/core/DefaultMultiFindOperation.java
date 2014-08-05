@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springdata.cassandra.cql.core.QueryCreator;
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
+import org.springdata.cql.core.QueryCreator;
 import org.springframework.data.convert.EntityReader;
 
 import com.datastax.driver.core.Query;

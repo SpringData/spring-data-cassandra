@@ -15,8 +15,8 @@
  */
 package org.springdata.cassandra.core;
 
-import org.springdata.cassandra.cql.core.AbstractUpdateOperation;
-import org.springdata.cassandra.cql.core.QueryOperation;
+import org.springdata.cql.core.AbstractUpdateOperation;
+import org.springdata.cql.core.QueryOperation;
 import org.springframework.util.Assert;
 
 import com.datastax.driver.core.ResultSet;
