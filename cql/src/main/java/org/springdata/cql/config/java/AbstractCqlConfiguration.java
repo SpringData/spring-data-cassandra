@@ -38,15 +38,14 @@ public abstract class AbstractCqlConfiguration extends AbstractClusterConfigurat
 	 * 
 	 * @return for {@literal null} or empty keyspace will be used SYSTEM keyspace by default.
 	 */
-	protected abstract String keyspace();
+	protected abstract String getKeyspace();
 
 	/**
 	 * Return keyspace attributes
 	 * 
 	 * @return KeyspaceAttributes
 	 */
-	@Bean
-	public KeyspaceAttributes keyspaceAttributes() {
+	public KeyspaceAttributes getKeyspaceAttributes() {
 		return new KeyspaceAttributes();
 	}
 
@@ -61,9 +60,9 @@ public abstract class AbstractCqlConfiguration extends AbstractClusterConfigurat
 	@Bean
 	public CqlSessionFactoryBean session() throws Exception {
 		CqlSessionFactoryBean factory = new CqlSessionFactoryBean();
-		factory.setKeyspace(keyspace());
+		factory.setKeyspace(getKeyspace());
 		factory.setCluster(cluster().getObject());
-		factory.setKeyspaceAttributes(keyspaceAttributes());
+		factory.setKeyspaceAttributes(getKeyspaceAttributes());
 		return factory;
 	}
 
@@ -75,7 +74,7 @@ public abstract class AbstractCqlConfiguration extends AbstractClusterConfigurat
 	@Bean
 	public CqlTemplateFactoryBean template() throws Exception {
 		CqlTemplateFactoryBean factory = new CqlTemplateFactoryBean();
-		factory.setKeyspace(keyspace());
+		factory.setKeyspace(getKeyspace());
 		factory.setSession(session().getObject());
 		return factory;
 	}

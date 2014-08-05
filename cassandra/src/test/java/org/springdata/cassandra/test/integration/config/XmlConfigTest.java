@@ -69,6 +69,7 @@ public class XmlConfigTest {
 		EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
 	}
 
+	@SuppressWarnings("deprecation")
 	@AfterClass
 	public static void stopCassandra() {
 		EmbeddedCassandraServerHelper.stopEmbeddedCassandra();

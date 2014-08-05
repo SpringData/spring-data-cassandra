@@ -89,11 +89,6 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 			return StringUtils.hasText(column.value()) ? column.value() : field.getName();
 		}
 
-		KeyColumn keyColumn = findAnnotation(KeyColumn.class);
-		if (keyColumn != null) {
-			return StringUtils.hasText(keyColumn.name()) ? keyColumn.name() : field.getName();
-		}
-
 		return field.getName();
 	}
 
@@ -103,7 +98,7 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 	 * @return
 	 */
 	public Ordering getOrdering() {
-		KeyColumn annotation = findAnnotation(KeyColumn.class);
+		PrimaryKey annotation = findAnnotation(PrimaryKey.class);
 		return annotation != null ? annotation.ordering() : null;
 	}
 
@@ -205,7 +200,7 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 	 * @return
 	 */
 	public KeyPart getKeyPart() {
-		KeyColumn keyColumn = findAnnotation(KeyColumn.class);
+		PrimaryKey keyColumn = findAnnotation(PrimaryKey.class);
 		if (keyColumn != null) {
 			return keyColumn.keyPart();
 		}
@@ -218,7 +213,7 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 	 * @return
 	 */
 	public Integer getOrdinal() {
-		KeyColumn keyColumn = findAnnotation(KeyColumn.class);
+		PrimaryKey keyColumn = findAnnotation(PrimaryKey.class);
 		if (keyColumn != null) {
 			return keyColumn.ordinal();
 		}

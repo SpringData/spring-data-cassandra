@@ -16,6 +16,7 @@
 package org.springdata.cassandra.test.integration.config;
 
 import org.springdata.cassandra.config.java.AbstractCassandraConfiguration;
+import org.springdata.cassandra.test.integration.CassandraTestConstants;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -28,13 +29,17 @@ import org.springframework.context.annotation.Configuration;
 public class JavaConfig extends AbstractCassandraConfiguration {
 
 	@Override
-	protected String keyspace() {
-		return "test";
+	protected String getKeyspace() {
+		return CassandraTestConstants.DEFAULT_KEYSPACE;
 	}
 
 	@Override
-	protected int port() {
-		return 9942;
+	protected int getPort() {
+		return CassandraTestConstants.DEFAULT_PORT;
 	}
 
+	@Override
+	protected String getContactPoints() {
+		return CassandraTestConstants.DEFAULT_HOST;
+	}
 }

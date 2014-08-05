@@ -32,8 +32,8 @@ import com.datastax.driver.core.Session;
 public abstract class AbstractEmbeddedCassandraIntegrationTest {
 
 	protected final static String CASSANDRA_CONFIG = "cassandra.yaml";
-	protected final static String CASSANDRA_HOST = "localhost";
-	protected final static int CASSANDRA_NATIVE_PORT = 9042;
+	protected final static String CASSANDRA_HOST = CqlTestConstants.DEFAULT_HOST;
+	protected final static int CASSANDRA_NATIVE_PORT = CqlTestConstants.DEFAULT_PORT;
 
 	@BeforeClass
 	public static void beforeClass() throws ConfigurationException, TTransportException, IOException,

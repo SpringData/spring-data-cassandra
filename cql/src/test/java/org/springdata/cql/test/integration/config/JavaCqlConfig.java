@@ -16,6 +16,7 @@
 package org.springdata.cql.test.integration.config;
 
 import org.springdata.cql.config.java.AbstractCqlConfiguration;
+import org.springdata.cql.test.integration.CqlTestConstants;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -28,13 +29,18 @@ import org.springframework.context.annotation.Configuration;
 public class JavaCqlConfig extends AbstractCqlConfiguration {
 
 	@Override
-	protected String keyspace() {
-		return "test";
+	protected String getKeyspace() {
+		return CqlTestConstants.DEFAULT_KEYSPACE;
 	}
 
 	@Override
-	protected int port() {
-		return 9942;
+	protected int getPort() {
+		return CqlTestConstants.DEFAULT_PORT;
+	}
+
+	@Override
+	protected String getContactPoints() {
+		return CqlTestConstants.DEFAULT_HOST;
 	}
 
 }

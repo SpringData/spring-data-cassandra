@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 import org.springdata.cassandra.mapping.Embeddable;
 import org.springdata.cassandra.mapping.Id;
-import org.springdata.cassandra.mapping.KeyColumn;
+import org.springdata.cassandra.mapping.PrimaryKey;
 import org.springdata.cassandra.mapping.Table;
 import org.springdata.cql.core.KeyPart;
 
@@ -29,10 +29,10 @@ public class EmbeddedIdEntity {
 	@Embeddable
 	public static class PK implements Serializable {
 
-		@KeyColumn(keyPart = KeyPart.PARTITION, ordinal = 1)
+		@PrimaryKey(keyPart = KeyPart.PARTITION, ordinal = 1)
 		private int partitionKey;
 
-		@KeyColumn(keyPart = KeyPart.CLUSTERING, ordinal = 1)
+		@PrimaryKey(keyPart = KeyPart.CLUSTERING, ordinal = 1)
 		private String clusteringKey;
 
 		public PK() {

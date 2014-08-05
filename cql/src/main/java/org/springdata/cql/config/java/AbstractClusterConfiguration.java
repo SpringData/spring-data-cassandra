@@ -46,62 +46,62 @@ public class AbstractClusterConfiguration {
 	public CqlClusterFactoryBean cluster() {
 
 		CqlClusterFactoryBean bean = new CqlClusterFactoryBean();
-		bean.setAuthProvider(authProvider());
-		bean.setCompressionType(compressionType());
-		bean.setContactPoints(contactPoints());
-		bean.setPort(port());
-		bean.setMetricsEnabled(metricsEnabled());
-		bean.setLoadBalancingPolicy(loadBalancingPolicy());
-		bean.setReconnectionPolicy(reconnectionPolicy());
-		bean.setLocalPoolingOptions(localPoolingOptions());
-		bean.setRemotePoolingOptions(remotePoolingOptions());
-		bean.setRetryPolicy(retryPolicy());
-		bean.setSocketOptions(socketOptions());
+		bean.setAuthProvider(getAuthProvider());
+		bean.setCompressionType(getCompressionType());
+		bean.setContactPoints(getContactPoints());
+		bean.setPort(getPort());
+		bean.setMetricsEnabled(isMetricsEnabled());
+		bean.setLoadBalancingPolicy(getLoadBalancingPolicy());
+		bean.setReconnectionPolicy(getReconnectionPolicy());
+		bean.setLocalPoolingOptions(getLocalPoolingOptions());
+		bean.setRemotePoolingOptions(getRemotePoolingOptions());
+		bean.setRetryPolicy(getRetryPolicy());
+		bean.setSocketOptions(getSocketOptions());
 
 		return bean;
 	}
 
-	protected AuthProvider authProvider() {
+	protected AuthProvider getAuthProvider() {
 		return null;
 	}
 
-	protected CompressionType compressionType() {
+	protected CompressionType getCompressionType() {
 		return null;
 	}
 
-	protected String contactPoints() {
+	protected String getContactPoints() {
 		return CqlClusterFactoryBean.DEFAULT_CONTACT_POINTS;
 	}
 
-	protected int port() {
+	protected int getPort() {
 		return CqlClusterFactoryBean.DEFAULT_PORT;
 	}
 
-	protected boolean metricsEnabled() {
+	protected boolean isMetricsEnabled() {
 		return CqlClusterFactoryBean.DEFAULT_METRICS_ENABLED;
 	}
 
-	protected LoadBalancingPolicy loadBalancingPolicy() {
+	protected LoadBalancingPolicy getLoadBalancingPolicy() {
 		return null;
 	}
 
-	protected ReconnectionPolicy reconnectionPolicy() {
+	protected ReconnectionPolicy getReconnectionPolicy() {
 		return null;
 	}
 
-	protected PoolingOptions localPoolingOptions() {
+	protected PoolingOptions getLocalPoolingOptions() {
 		return null;
 	}
 
-	protected PoolingOptions remotePoolingOptions() {
+	protected PoolingOptions getRemotePoolingOptions() {
 		return null;
 	}
 
-	protected RetryPolicy retryPolicy() {
+	protected RetryPolicy getRetryPolicy() {
 		return null;
 	}
 
-	protected SocketOptions socketOptions() {
+	protected SocketOptions getSocketOptions() {
 		return null;
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdata.cassandra.test.integration.CassandraTestConstants;
 import org.springdata.cassandra.test.integration.config.JavaConfig;
 import org.springdata.cql.core.CqlOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 /**
  * @author David Webb
+ * @author Alex Shvid
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -63,7 +65,8 @@ public class CassandraAdminTest {
 		/*
 		 * Load data file to creat the test keyspace before we init the template
 		 */
-		DataLoader dataLoader = new DataLoader("Test Cluster", "localhost:9160");
+		DataLoader dataLoader = new DataLoader("Test Cluster", CassandraTestConstants.DEFAULT_HOST + ":"
+				+ CassandraTestConstants.DEFAULT_THRIFT_PORT);
 		dataLoader.load(new ClassPathYamlDataSet("cassandra-keyspace.yaml"));
 
 	}
@@ -74,7 +77,8 @@ public class CassandraAdminTest {
 		/*
 		 * Load data file to creat the test keyspace before we init the template
 		 */
-		DataLoader dataLoader = new DataLoader("Test Cluster", "localhost:9160");
+		DataLoader dataLoader = new DataLoader("Test Cluster", CassandraTestConstants.DEFAULT_HOST + ":"
+				+ CassandraTestConstants.DEFAULT_THRIFT_PORT);
 		dataLoader.load(new ClassPathYamlDataSet("cassandra-keyspace.yaml"));
 
 	}

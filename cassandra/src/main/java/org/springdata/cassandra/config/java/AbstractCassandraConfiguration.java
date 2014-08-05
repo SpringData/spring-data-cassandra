@@ -63,15 +63,14 @@ public abstract class AbstractCassandraConfiguration extends AbstractClusterConf
 	 * 
 	 * @return for {@literal null} or empty keyspace will be used SYSTEM keyspace by default.
 	 */
-	protected abstract String keyspace();
+	protected abstract String getKeyspace();
 
 	/**
 	 * Return keyspace attributes
 	 * 
 	 * @return KeyspaceAttributes
 	 */
-	@Bean
-	public KeyspaceAttributes keyspaceAttributes() {
+	public KeyspaceAttributes getKeyspaceAttributes() {
 		return new KeyspaceAttributes();
 	}
 
@@ -87,10 +86,10 @@ public abstract class AbstractCassandraConfiguration extends AbstractClusterConf
 	@Bean
 	public CassandraSessionFactoryBean session() throws Exception {
 		CassandraSessionFactoryBean factory = new CassandraSessionFactoryBean();
-		factory.setKeyspace(keyspace());
+		factory.setKeyspace(getKeyspace());
 		factory.setCluster(cluster().getObject());
 		factory.setConverter(converter());
-		factory.setKeyspaceAttributes(keyspaceAttributes());
+		factory.setKeyspaceAttributes(getKeyspaceAttributes());
 		factory.setBeanClassLoader(beanClassLoader);
 		return factory;
 	}
@@ -116,7 +115,7 @@ public abstract class AbstractCassandraConfiguration extends AbstractClusterConf
 	@Bean
 	public CqlTemplateFactoryBean cqlTemplate() throws Exception {
 		CqlTemplateFactoryBean factory = new CqlTemplateFactoryBean();
-		factory.setKeyspace(keyspace());
+		factory.setKeyspace(getKeyspace());
 		factory.setSession(session().getObject());
 		return factory;
 	}
@@ -129,7 +128,7 @@ public abstract class AbstractCassandraConfiguration extends AbstractClusterConf
 	@Bean
 	public CassandraTemplateFactoryBean template() throws Exception {
 		CassandraTemplateFactoryBean factory = new CassandraTemplateFactoryBean();
-		factory.setKeyspace(keyspace());
+		factory.setKeyspace(getKeyspace());
 		factory.setSession(session().getObject());
 		factory.setConverter(converter());
 		return factory;

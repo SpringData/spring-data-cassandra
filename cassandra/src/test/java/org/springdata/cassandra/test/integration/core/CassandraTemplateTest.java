@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdata.cassandra.core.CassandraOperations;
 import org.springdata.cassandra.core.EntryCallbackHandler;
+import org.springdata.cassandra.test.integration.CassandraTestConstants;
 import org.springdata.cassandra.test.integration.config.JavaConfig;
 import org.springdata.cassandra.test.integration.table.Book;
 import org.springdata.cql.core.ConsistencyLevel;
@@ -72,10 +73,10 @@ public class CassandraTemplateTest {
 	private static Logger log = LoggerFactory.getLogger(CassandraTemplateTest.class);
 
 	private final static String CASSANDRA_CONFIG = "cassandra.yaml";
-	private final static String KEYSPACE_NAME = "test";
-	private final static String CASSANDRA_HOST = "localhost";
-	private final static int CASSANDRA_NATIVE_PORT = 9942;
-	private final static int CASSANDRA_THRIFT_PORT = 9960;
+	private final static String KEYSPACE_NAME = CassandraTestConstants.DEFAULT_KEYSPACE;
+	private final static String CASSANDRA_HOST = CassandraTestConstants.DEFAULT_HOST;
+	private final static int CASSANDRA_NATIVE_PORT = CassandraTestConstants.DEFAULT_PORT;
+	private final static int CASSANDRA_THRIFT_PORT = CassandraTestConstants.DEFAULT_THRIFT_PORT;
 
 	@Rule
 	public CassandraCQLUnit cassandraCQLUnit = new CassandraCQLUnit(new ClassPathCQLDataSet("cql-dataload.cql",

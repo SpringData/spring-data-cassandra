@@ -5,6 +5,7 @@ import org.junit.Test;
 
 public class CassandraValueConverterTest {
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testEnum() {
 

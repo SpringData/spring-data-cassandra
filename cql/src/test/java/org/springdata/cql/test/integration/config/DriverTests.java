@@ -24,6 +24,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springdata.cql.test.integration.CqlTestConstants;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
@@ -39,7 +40,8 @@ public class DriverTests {
 	@Test
 	public void test() throws Exception {
 
-		Cluster.Builder builder = Cluster.builder().addContactPoint("127.0.0.1");
+		Cluster.Builder builder = Cluster.builder().addContactPoint(CqlTestConstants.DEFAULT_HOST)
+				.withPort(CqlTestConstants.DEFAULT_PORT);
 
 		// builder.withCompression(ProtocolOptions.Compression.SNAPPY);
 
