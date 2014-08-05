@@ -35,10 +35,10 @@ Modules
 --------
 
 This project has two modules:
- - [Spring Cassandra Cql](cassandra-cql)
+ - [Spring Data Cql](cql)
  - [Spring Data Cassandra](cassandra)
 
-Spring Cassandra Cql gives ability to use CqlTemplate and makes operations based in CQL.
+Spring Data Cql gives ability to use CqlTemplate and makes operations based in CQL.
 Spring Data Cassandra gives ability to use CassandraTemplate and CassandraRepository. 
 
 Building
@@ -69,7 +69,7 @@ Add dependencies to pom.xml
 
 <dependency>
   <groupId>org.springdata</groupId>
-  <artifactId>spring-cassandra-cql</artifactId>
+  <artifactId>spring-data-cql</artifactId>
   <version>1.2.0.BUILD-SNAPSHOT</version>
 </dependency>
 
@@ -87,18 +87,12 @@ Continuous integration
 https://travis-ci.org/SpringData/spring-data-cassandra
 
 
-Discussion forum
---------
-http://sdc.1003000.n3.nabble.com/
-
-
 Contribution
 --------
 
 A few steps to make this process easy for us:
 
  - Please use [eclipse-formatting.xml] (eclipse-formatting.xml) or similar formatting for Idea with auto-save option.
- - Post a new feature/bug on discussion [forum](http://sdc.1003000.n3.nabble.com/).
  - Create a new issue in https://github.com/SpringData/spring-data-cassandra/issues/ and refer this issue in the push request.
  - Thank you.
 
