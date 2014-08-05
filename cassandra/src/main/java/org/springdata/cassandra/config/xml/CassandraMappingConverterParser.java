@@ -15,8 +15,8 @@
  */
 package org.springdata.cassandra.config.xml;
 
-import org.springdata.cassandra.config.ConfigConstants;
-import org.springdata.cassandra.core.CassandraMappingConverterFactoryBean;
+import org.springdata.cassandra.config.CassandraConstants;
+import org.springdata.cassandra.config.CassandraMappingConverterFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
@@ -42,7 +42,7 @@ public class CassandraMappingConverterParser extends AbstractSimpleBeanDefinitio
 			throws BeanDefinitionStoreException {
 
 		String id = super.resolveId(element, definition, parserContext);
-		return StringUtils.hasText(id) ? id : ConfigConstants.CASSANDRA_CONVERTER;
+		return StringUtils.hasText(id) ? id : CassandraConstants.CASSANDRA_CONVERTER;
 	}
 
 }

@@ -15,7 +15,8 @@
  */
 package org.springdata.cql.config.xml;
 
-import org.springdata.cql.core.CqlTemplateFactoryBean;
+import org.springdata.cql.config.CqlConstants;
+import org.springdata.cql.config.CqlTemplateFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -30,7 +31,7 @@ import org.w3c.dom.Element;
  * @author Alex Shvid
  */
 
-public class CassandraCqlTemplateParser extends AbstractSimpleBeanDefinitionParser {
+public class CqlTemplateParser extends AbstractSimpleBeanDefinitionParser {
 
 	@Override
 	protected Class<?> getBeanClass(Element element) {
@@ -42,7 +43,7 @@ public class CassandraCqlTemplateParser extends AbstractSimpleBeanDefinitionPars
 			throws BeanDefinitionStoreException {
 
 		String id = super.resolveId(element, definition, parserContext);
-		return StringUtils.hasText(id) ? id : ConfigCqlConstants.CASSANDRA_CQL_TEMPLATE;
+		return StringUtils.hasText(id) ? id : CqlConstants.CASSANDRA_CQL_TEMPLATE;
 	}
 
 	@Override
@@ -55,7 +56,7 @@ public class CassandraCqlTemplateParser extends AbstractSimpleBeanDefinitionPars
 
 		String sessionRef = element.getAttribute("session-ref");
 		if (!StringUtils.hasText(sessionRef)) {
-			sessionRef = ConfigCqlConstants.CASSANDRA_SESSION;
+			sessionRef = CqlConstants.CASSANDRA_SESSION;
 		}
 		builder.addPropertyReference("session", sessionRef);
 

@@ -16,9 +16,9 @@
 package org.springdata.cql.config.java;
 
 import org.springdata.cql.config.CompressionType;
+import org.springdata.cql.config.CqlClusterFactoryBean;
 import org.springdata.cql.config.PoolingOptions;
 import org.springdata.cql.config.SocketOptions;
-import org.springdata.cql.core.CassandraClusterFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,7 +35,7 @@ import com.datastax.driver.core.policies.RetryPolicy;
  */
 
 @Configuration
-public class AbstractCassandraClusterConfiguration {
+public class AbstractClusterConfiguration {
 
 	/**
 	 * Return the {@link Cluster} instance to connect to.
@@ -43,9 +43,9 @@ public class AbstractCassandraClusterConfiguration {
 	 * @return Cluster object
 	 */
 	@Bean
-	public CassandraClusterFactoryBean cluster() {
+	public CqlClusterFactoryBean cluster() {
 
-		CassandraClusterFactoryBean bean = new CassandraClusterFactoryBean();
+		CqlClusterFactoryBean bean = new CqlClusterFactoryBean();
 		bean.setAuthProvider(authProvider());
 		bean.setCompressionType(compressionType());
 		bean.setContactPoints(contactPoints());
@@ -70,15 +70,15 @@ public class AbstractCassandraClusterConfiguration {
 	}
 
 	protected String contactPoints() {
-		return CassandraClusterFactoryBean.DEFAULT_CONTACT_POINTS;
+		return CqlClusterFactoryBean.DEFAULT_CONTACT_POINTS;
 	}
 
 	protected int port() {
-		return CassandraClusterFactoryBean.DEFAULT_PORT;
+		return CqlClusterFactoryBean.DEFAULT_PORT;
 	}
 
 	protected boolean metricsEnabled() {
-		return CassandraClusterFactoryBean.DEFAULT_METRICS_ENABLED;
+		return CqlClusterFactoryBean.DEFAULT_METRICS_ENABLED;
 	}
 
 	protected LoadBalancingPolicy loadBalancingPolicy() {

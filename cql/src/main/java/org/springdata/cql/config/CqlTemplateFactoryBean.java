@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cql.core;
+package org.springdata.cql.config;
 
+import org.springdata.cql.core.CqlOperations;
+import org.springdata.cql.core.CqlTemplate;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 

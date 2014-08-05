@@ -21,7 +21,7 @@ package org.springdata.cassandra.config;
  * 
  */
 
-public interface ConfigConstants {
+public interface CassandraConstants {
 
 	public static final String CASSANDRA_CLUSTER = "cassandra-cluster";
 	public static final String CASSANDRA_SESSION = "cassandra-session";

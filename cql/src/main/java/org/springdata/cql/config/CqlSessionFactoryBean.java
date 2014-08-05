@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cql.core;
+package org.springdata.cql.config;
 
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springdata.cql.config.KeyspaceAttributes;
+import org.springdata.cql.core.AdminCqlOperations;
+import org.springdata.cql.core.CqlTemplate;
 import org.springdata.cql.option.KeyspaceOption;
 import org.springdata.cql.option.KeyspaceOptions;
 import org.springdata.cql.option.KeyspaceReplicationOptions;
@@ -43,10 +44,10 @@ import com.datastax.driver.core.Session;
  * @author Alex Shvid
  */
 
-public class SessionFactoryBean implements FactoryBean<Session>, InitializingBean, DisposableBean,
+public class CqlSessionFactoryBean implements FactoryBean<Session>, InitializingBean, DisposableBean,
 		PersistenceExceptionTranslator {
 
-	private static final Logger log = LoggerFactory.getLogger(SessionFactoryBean.class);
+	private static final Logger log = LoggerFactory.getLogger(CqlSessionFactoryBean.class);
 
 	protected Session session;
 

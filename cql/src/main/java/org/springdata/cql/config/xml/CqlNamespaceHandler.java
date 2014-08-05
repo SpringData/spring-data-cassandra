@@ -15,6 +15,7 @@
  */
 package org.springdata.cql.config.xml;
 
+import org.springdata.cql.config.CqlConstants;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -23,14 +24,14 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * @author Alex Shvid
  */
 
-public class CassandraCqlNamespaceHandler extends NamespaceHandlerSupport {
+public class CqlNamespaceHandler extends NamespaceHandlerSupport {
 
 	public void init() {
 
-		registerBeanDefinitionParser(ConfigCqlConstants.CASSANDRA_CLUSTER_ELEMENT, new CassandraCqlClusterParser(
-				ConfigCqlConstants.CASSANDRA_CLUSTER));
-		registerBeanDefinitionParser(ConfigCqlConstants.CASSANDRA_SESSION_ELEMENT, new CassandraCqlSessionParser());
-		registerBeanDefinitionParser(ConfigCqlConstants.CASSANDRA_CQL_TEMPLATE_ELEMENT, new CassandraCqlTemplateParser());
+		registerBeanDefinitionParser(CqlConstants.CASSANDRA_CLUSTER_ELEMENT, new CqlClusterParser(
+				CqlConstants.CASSANDRA_CLUSTER));
+		registerBeanDefinitionParser(CqlConstants.CASSANDRA_SESSION_ELEMENT, new CqlSessionParser());
+		registerBeanDefinitionParser(CqlConstants.CASSANDRA_CQL_TEMPLATE_ELEMENT, new CqlTemplateParser());
 
 	}
 

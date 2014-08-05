@@ -18,7 +18,7 @@ Defines the configuration elements for the Spring Data Cassandra Driver support.
 	<xsd:element name="cluster" type="clusterType">
 		<xsd:annotation>
 			<xsd:documentation
-				source="org.springdata.cql.core.CassandraClusterFactoryBean"><![CDATA[
+				source="org.springdata.cql.config.CqlClusterFactoryBean"><![CDATA[
 Defines a Cassandra Cluster instance used for accessing Cassandra'.
 			]]></xsd:documentation>
 			<xsd:appinfo>
@@ -163,7 +163,7 @@ RetryPolicy implementation.
 	<xsd:element name="session" type="sessionType">
 		<xsd:annotation>
 			<xsd:documentation
-				source="org.springdata.cql.core.SessionFactoryBean"><![CDATA[
+				source="org.springdata.cql.config.CqlSessionFactoryBean"><![CDATA[
 Defines a Cassandra Session instance.
 			]]></xsd:documentation>
 			<xsd:appinfo>
@@ -208,7 +208,7 @@ The reference to a Cassandra Cluster instance. Will default to 'cql-cluster'.
 	<xsd:element name="template" type="cqlTemplateType">
 		<xsd:annotation>
 			<xsd:documentation
-				source="org.springdata.cql.core.CqlTemplateFactoryBean"><![CDATA[
+				source="org.springdata.cql.config.CqlTemplateFactoryBean"><![CDATA[
 Defines a CqlTemplate instance.
 			]]></xsd:documentation>
 			<xsd:appinfo>

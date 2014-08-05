@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.config.xml;
 
-import org.springdata.cassandra.config.ConfigConstants;
+import org.springdata.cassandra.config.CassandraConstants;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -28,12 +28,12 @@ public class CassandraNamespaceHandler extends NamespaceHandlerSupport {
 
 	public void init() {
 
-		registerBeanDefinitionParser(ConfigConstants.CASSANDRA_CLUSTER_ELEMENT, new CassandraClusterParser());
-		registerBeanDefinitionParser(ConfigConstants.CASSANDRA_SESSION_ELEMENT, new CassandraSessionParser());
+		registerBeanDefinitionParser(CassandraConstants.CASSANDRA_CLUSTER_ELEMENT, new CassandraClusterParser());
+		registerBeanDefinitionParser(CassandraConstants.CASSANDRA_SESSION_ELEMENT, new CassandraSessionParser());
 
-		registerBeanDefinitionParser(ConfigConstants.CASSANDRA_MAPPING_CONVERTER_ELEMENT,
+		registerBeanDefinitionParser(CassandraConstants.CASSANDRA_MAPPING_CONVERTER_ELEMENT,
 				new CassandraMappingConverterParser());
-		registerBeanDefinitionParser(ConfigConstants.CASSANDRA_TEMPLATE_ELEMENT, new CassandraTemplateParser());
+		registerBeanDefinitionParser(CassandraConstants.CASSANDRA_TEMPLATE_ELEMENT, new CassandraTemplateParser());
 
 	}
 

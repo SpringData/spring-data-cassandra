@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cql.core;
+package org.springdata.cql.config;
 
-import org.springdata.cql.config.CompressionType;
-import org.springdata.cql.config.PoolingOptions;
-import org.springdata.cql.config.SocketOptions;
 import org.springdata.cql.support.CassandraExceptionTranslator;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -40,7 +37,7 @@ import com.datastax.driver.core.policies.RetryPolicy;
  * @author Alex Shvid
  */
 
-public class CassandraClusterFactoryBean implements FactoryBean<Cluster>, InitializingBean, DisposableBean,
+public class CqlClusterFactoryBean implements FactoryBean<Cluster>, InitializingBean, DisposableBean,
 		PersistenceExceptionTranslator {
 
 	public static final String DEFAULT_CONTACT_POINTS = "localhost";

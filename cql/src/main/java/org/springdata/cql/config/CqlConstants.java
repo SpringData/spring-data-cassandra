@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cql.config.xml;
+package org.springdata.cql.config;
 
 /**
  * @author Alex Shvid
  */
-public interface ConfigCqlConstants {
+public interface CqlConstants {
 
 	public static final String CASSANDRA_CLUSTER = "cql-cluster";
 	public static final String CASSANDRA_SESSION = "cql-session";

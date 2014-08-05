@@ -15,10 +15,10 @@
  */
 package org.springdata.cql.config.java;
 
+import org.springdata.cql.config.CqlSessionFactoryBean;
+import org.springdata.cql.config.CqlTemplateFactoryBean;
 import org.springdata.cql.config.KeyspaceAttributes;
 import org.springdata.cql.core.CqlTemplate;
-import org.springdata.cql.core.CqlTemplateFactoryBean;
-import org.springdata.cql.core.SessionFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,7 +31,7 @@ import com.datastax.driver.core.Session;
  * @author Alex Shvid
  */
 @Configuration
-public abstract class AbstractCassandraCqlConfiguration extends AbstractCassandraClusterConfiguration {
+public abstract class AbstractCqlConfiguration extends AbstractClusterConfiguration {
 
 	/**
 	 * Return the name of the keyspace to connect to.
@@ -59,8 +59,8 @@ public abstract class AbstractCassandraCqlConfiguration extends AbstractCassandr
 	 * @return Session
 	 */
 	@Bean
-	public SessionFactoryBean session() throws Exception {
-		SessionFactoryBean factory = new SessionFactoryBean();
+	public CqlSessionFactoryBean session() throws Exception {
+		CqlSessionFactoryBean factory = new CqlSessionFactoryBean();
 		factory.setKeyspace(keyspace());
 		factory.setCluster(cluster().getObject());
 		factory.setKeyspaceAttributes(keyspaceAttributes());

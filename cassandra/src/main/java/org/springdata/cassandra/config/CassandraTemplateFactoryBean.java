@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cassandra.core;
+package org.springdata.cassandra.config;
 
 import org.springdata.cassandra.convert.CassandraConverter;
+import org.springdata.cassandra.core.CassandraOperations;
+import org.springdata.cassandra.core.CassandraTemplate;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 

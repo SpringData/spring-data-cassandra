@@ -17,8 +17,9 @@ package org.springdata.cql.config.xml;
 
 import java.util.List;
 
+import org.springdata.cql.config.CqlConstants;
+import org.springdata.cql.config.CqlSessionFactoryBean;
 import org.springdata.cql.config.KeyspaceAttributes;
-import org.springdata.cql.core.SessionFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -35,11 +36,11 @@ import org.w3c.dom.Element;
  * @author Alex Shvid
  */
 
-public class CassandraCqlSessionParser extends AbstractSimpleBeanDefinitionParser {
+public class CqlSessionParser extends AbstractSimpleBeanDefinitionParser {
 
 	@Override
 	protected Class<?> getBeanClass(Element element) {
-		return SessionFactoryBean.class;
+		return CqlSessionFactoryBean.class;
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class CassandraCqlSessionParser extends AbstractSimpleBeanDefinitionParse
 			throws BeanDefinitionStoreException {
 
 		String id = super.resolveId(element, definition, parserContext);
-		return StringUtils.hasText(id) ? id : ConfigCqlConstants.CASSANDRA_SESSION;
+		return StringUtils.hasText(id) ? id : CqlConstants.CASSANDRA_SESSION;
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class CassandraCqlSessionParser extends AbstractSimpleBeanDefinitionParse
 
 		String clusterRef = element.getAttribute("cluster-ref");
 		if (!StringUtils.hasText(clusterRef)) {
-			clusterRef = ConfigCqlConstants.CASSANDRA_CLUSTER;
+			clusterRef = CqlConstants.CASSANDRA_CLUSTER;
 		}
 		builder.addPropertyReference("cluster", clusterRef);
 

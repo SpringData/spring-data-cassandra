@@ -1,1 +1,1 @@
-http\://www.springdata.org/schema/cql=org.springdata.cql.config.xml.CassandraCqlNamespaceHandler
+http\://www.springdata.org/schema/cql=org.springdata.cql.config.xml.CqlNamespaceHandler

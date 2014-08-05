@@ -18,9 +18,9 @@ package org.springdata.cql.config.xml;
 import java.util.List;
 
 import org.springdata.cql.config.CompressionType;
+import org.springdata.cql.config.CqlClusterFactoryBean;
 import org.springdata.cql.config.PoolingOptions;
 import org.springdata.cql.config.SocketOptions;
-import org.springdata.cql.core.CassandraClusterFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -37,17 +37,17 @@ import org.w3c.dom.Element;
  * @author Alex Shvid
  */
 
-public class CassandraCqlClusterParser extends AbstractSimpleBeanDefinitionParser {
+public class CqlClusterParser extends AbstractSimpleBeanDefinitionParser {
 
 	private final String defaultId;
 
-	public CassandraCqlClusterParser(String defaultId) {
+	public CqlClusterParser(String defaultId) {
 		this.defaultId = defaultId;
 	}
 
 	@Override
 	protected Class<?> getBeanClass(Element element) {
-		return CassandraClusterFactoryBean.class;
+		return CqlClusterFactoryBean.class;
 	}
 
 	@Override

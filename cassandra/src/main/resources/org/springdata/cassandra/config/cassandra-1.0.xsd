@@ -163,7 +163,7 @@ RetryPolicy implementation.
 	<xsd:element name="session" type="sessionType">
 		<xsd:annotation>
 			<xsd:documentation
-				source="org.springdata.cassandra.core.CassandraSessionFactoryBean"><![CDATA[
+				source="org.springdata.cassandra.config.CassandraSessionFactoryBean"><![CDATA[
 Defines a Cassandra Session instance.
 			]]></xsd:documentation>
 			<xsd:appinfo>
@@ -243,7 +243,7 @@ Defines a Cassandra Mapping Converter instance.
 	<xsd:element name="template" type="templateType">
 		<xsd:annotation>
 			<xsd:documentation
-				source="org.springdata.cassandra.core.CassandraTemplateFactoryBean"><![CDATA[
+				source="org.springdata.cassandra.config.CassandraTemplateFactoryBean"><![CDATA[
 Defines a Cassandra Template instance.
 			]]></xsd:documentation>
 			<xsd:appinfo>

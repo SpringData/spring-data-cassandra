@@ -15,8 +15,8 @@
  */
 package org.springdata.cassandra.config.xml;
 
-import org.springdata.cassandra.config.ConfigConstants;
-import org.springdata.cassandra.core.CassandraTemplateFactoryBean;
+import org.springdata.cassandra.config.CassandraConstants;
+import org.springdata.cassandra.config.CassandraTemplateFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -43,7 +43,7 @@ public class CassandraTemplateParser extends AbstractSimpleBeanDefinitionParser 
 			throws BeanDefinitionStoreException {
 
 		String id = super.resolveId(element, definition, parserContext);
-		return StringUtils.hasText(id) ? id : ConfigConstants.CASSANDRA_TEMPLATE;
+		return StringUtils.hasText(id) ? id : CassandraConstants.CASSANDRA_TEMPLATE;
 	}
 
 	@Override
@@ -56,13 +56,13 @@ public class CassandraTemplateParser extends AbstractSimpleBeanDefinitionParser 
 
 		String sessionRef = element.getAttribute("session-ref");
 		if (!StringUtils.hasText(sessionRef)) {
-			sessionRef = ConfigConstants.CASSANDRA_SESSION;
+			sessionRef = CassandraConstants.CASSANDRA_SESSION;
 		}
 		builder.addPropertyReference("session", sessionRef);
 
 		String converterRef = element.getAttribute("converter-ref");
 		if (!StringUtils.hasText(converterRef)) {
-			converterRef = ConfigConstants.CASSANDRA_CONVERTER;
+			converterRef = CassandraConstants.CASSANDRA_CONVERTER;
 		}
 		builder.addPropertyReference("converter", converterRef);
 

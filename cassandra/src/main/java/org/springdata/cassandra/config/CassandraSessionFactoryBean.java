@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cassandra.core;
+package org.springdata.cassandra.config;
 
 import java.util.Collection;
 import java.util.List;
 
-import org.springdata.cassandra.config.TableAttributes;
 import org.springdata.cassandra.convert.CassandraConverter;
+import org.springdata.cassandra.core.CassandraTemplate;
+import org.springdata.cql.config.CqlSessionFactoryBean;
 import org.springdata.cql.core.CqlTemplate;
-import org.springdata.cql.core.SessionFactoryBean;
 import org.springdata.cql.core.UpdateOperation;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.DisposableBean;
@@ -43,7 +43,7 @@ import com.google.common.base.Optional;
  * @author Alex Shvid
  */
 
-public class CassandraSessionFactoryBean extends SessionFactoryBean implements FactoryBean<Session>, InitializingBean,
+public class CassandraSessionFactoryBean extends CqlSessionFactoryBean implements FactoryBean<Session>, InitializingBean,
 		DisposableBean, BeanClassLoaderAware, PersistenceExceptionTranslator {
 
 	private ClassLoader beanClassLoader;

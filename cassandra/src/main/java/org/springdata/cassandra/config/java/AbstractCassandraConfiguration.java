@@ -18,19 +18,19 @@ package org.springdata.cassandra.config.java;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springdata.cassandra.config.CassandraSessionFactoryBean;
+import org.springdata.cassandra.config.CassandraTemplateFactoryBean;
 import org.springdata.cassandra.convert.CassandraConverter;
 import org.springdata.cassandra.convert.MappingCassandraConverter;
-import org.springdata.cassandra.core.CassandraSessionFactoryBean;
 import org.springdata.cassandra.core.CassandraTemplate;
-import org.springdata.cassandra.core.CassandraTemplateFactoryBean;
 import org.springdata.cassandra.mapping.CassandraMappingContext;
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
 import org.springdata.cassandra.mapping.CassandraPersistentProperty;
 import org.springdata.cassandra.mapping.Table;
+import org.springdata.cql.config.CqlTemplateFactoryBean;
 import org.springdata.cql.config.KeyspaceAttributes;
-import org.springdata.cql.config.java.AbstractCassandraClusterConfiguration;
+import org.springdata.cql.config.java.AbstractClusterConfiguration;
 import org.springdata.cql.core.CqlTemplate;
-import org.springdata.cql.core.CqlTemplateFactoryBean;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +50,7 @@ import com.datastax.driver.core.Session;
  * @author Alex Shvid
  */
 @Configuration
-public abstract class AbstractCassandraConfiguration extends AbstractCassandraClusterConfiguration implements
+public abstract class AbstractCassandraConfiguration extends AbstractClusterConfiguration implements
 		BeanClassLoaderAware {
 
 	/**
