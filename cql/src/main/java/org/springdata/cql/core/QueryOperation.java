@@ -18,6 +18,7 @@ package org.springdata.cql.core;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Query;
 
 /**

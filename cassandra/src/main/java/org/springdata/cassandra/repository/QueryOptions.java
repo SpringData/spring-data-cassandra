@@ -21,8 +21,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springdata.cql.core.ConsistencyLevel;
 import org.springdata.cql.core.RetryPolicy;
+
+import com.datastax.driver.core.ConsistencyLevel;
 
 /**
  * Annotation to declare query options for methods.

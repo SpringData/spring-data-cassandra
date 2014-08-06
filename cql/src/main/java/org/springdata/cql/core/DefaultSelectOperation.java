@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
 import com.google.common.base.Function;

@@ -19,10 +19,11 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springdata.cql.core.ConsistencyLevel;
 import org.springdata.cql.core.RetryPolicy;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.repository.query.Parameters;
+
+import com.datastax.driver.core.ConsistencyLevel;
 
 /**
  * Custom extension of {@link Parameters} for Cassandra

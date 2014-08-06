@@ -16,6 +16,7 @@
 package org.springdata.cql.core;
 
 import com.datastax.driver.core.BoundStatement;
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Query;
 
@@ -79,7 +80,7 @@ public class SimplePreparedStatementQueryCreator implements QueryCreator {
 		}
 
 		if (consistency != null) {
-			bs.setConsistencyLevel(ConsistencyLevelResolver.resolve(consistency));
+			bs.setConsistencyLevel(consistency);
 		}
 		if (retryPolicy != null) {
 			bs.setRetryPolicy(RetryPolicyResolver.resolve(retryPolicy));

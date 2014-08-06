@@ -24,6 +24,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.springframework.util.Assert;
 
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
@@ -104,7 +105,7 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 		 */
 
 		if (consistencyLevel != null) {
-			query.setConsistencyLevel(ConsistencyLevelResolver.resolve(consistencyLevel));
+			query.setConsistencyLevel(consistencyLevel);
 		}
 
 		if (retryPolicy != null) {

@@ -17,6 +17,7 @@ package org.springdata.cql.core;
 
 import org.springframework.util.Assert;
 
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 
@@ -78,7 +79,7 @@ public class SimplePreparedStatementCreator implements PreparedStatementCreator 
 		PreparedStatement ps = session.prepare(this.cql);
 
 		if (consistency != null) {
-			ps.setConsistencyLevel(ConsistencyLevelResolver.resolve(consistency));
+			ps.setConsistencyLevel(consistency);
 		}
 		if (retryPolicy != null) {
 			ps.setRetryPolicy(RetryPolicyResolver.resolve(retryPolicy));

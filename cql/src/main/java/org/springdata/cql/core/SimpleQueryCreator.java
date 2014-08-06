@@ -15,6 +15,7 @@
  */
 package org.springdata.cql.core;
 
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Query;
 import com.datastax.driver.core.SimpleStatement;
 
@@ -39,7 +40,7 @@ public class SimpleQueryCreator implements QueryCreator {
 
 	public SimpleQueryCreator withConsistencyLevel(ConsistencyLevel consistency) {
 		if (consistency != null) {
-			statement.setConsistencyLevel(ConsistencyLevelResolver.resolve(consistency));
+			statement.setConsistencyLevel(consistency);
 		}
 		return this;
 	}

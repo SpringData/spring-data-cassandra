@@ -42,7 +42,6 @@ import org.springdata.cassandra.core.EntryCallbackHandler;
 import org.springdata.cassandra.test.integration.CassandraTestConstants;
 import org.springdata.cassandra.test.integration.config.JavaConfig;
 import org.springdata.cassandra.test.integration.table.Book;
-import org.springdata.cql.core.ConsistencyLevel;
 import org.springdata.cql.core.QueryCreator;
 import org.springdata.cql.core.RetryPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +49,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
