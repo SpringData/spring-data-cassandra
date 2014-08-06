@@ -106,7 +106,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 			}
 		});
 
-		Book b1 = cqlTemplate.getSelectOperation(bs).transform(new ResultSetExtractor<Book>() {
+		Book b1 = cqlTemplate.buildSelectOperation(bs).transform(new ResultSetExtractor<Book>() {
 
 			@Override
 			public Book extractData(ResultSet rs) {
@@ -132,7 +132,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 
 		PreparedStatement ps = cqlTemplate.prepareStatement(cql);
 
-		cqlTemplate.getSelectOperation(new SimplePreparedStatementQueryCreator(ps, new PreparedStatementBinder() {
+		cqlTemplate.buildSelectOperation(new SimplePreparedStatementQueryCreator(ps, new PreparedStatementBinder() {
 
 			@Override
 			public BoundStatement bindValues(PreparedStatement ps) {
@@ -162,7 +162,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 
 		PreparedStatement ps = cqlTemplate.prepareStatement(cql);
 
-		List<Book> books = cqlTemplate.getSelectOperation(ps, new PreparedStatementBinder() {
+		List<Book> books = cqlTemplate.buildSelectOperation(ps, new PreparedStatementBinder() {
 
 			@Override
 			public BoundStatement bindValues(PreparedStatement ps) {
@@ -199,7 +199,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 
 		BoundStatement bs = cqlTemplate.bind(ps);
 
-		List<Book> books = cqlTemplate.getSelectOperation(bs).transform(new ResultSetExtractor<List<Book>>() {
+		List<Book> books = cqlTemplate.buildSelectOperation(bs).transform(new ResultSetExtractor<List<Book>>() {
 
 			@Override
 			public List<Book> extractData(ResultSet rs) {
@@ -236,7 +236,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 
 		BoundStatement bs = cqlTemplate.bind(ps);
 
-		cqlTemplate.getSelectOperation(bs).forEach(new RowCallbackHandler() {
+		cqlTemplate.buildSelectOperation(bs).forEach(new RowCallbackHandler() {
 
 			@Override
 			public void processRow(Row row) {
@@ -267,7 +267,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 
 		BoundStatement bs = cqlTemplate.bind(ps);
 
-		List<Book> books = cqlTemplate.getSelectOperation(bs).map(new RowMapper<Book>() {
+		List<Book> books = cqlTemplate.buildSelectOperation(bs).map(new RowMapper<Book>() {
 
 			@Override
 			public Book mapRow(Row row, int rowNum) {
@@ -302,7 +302,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 			}
 		});
 
-		List<Book> books = cqlTemplate.getSelectOperation(new SimpleQueryCreator(bs)).transform(new ResultSetExtractor<List<Book>>() {
+		List<Book> books = cqlTemplate.buildSelectOperation(new SimpleQueryCreator(bs)).transform(new ResultSetExtractor<List<Book>>() {
 
 			@Override
 			public List<Book> extractData(ResultSet rs) {
@@ -346,7 +346,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 			}
 		});
 
-		cqlTemplate.getSelectOperation(new SimpleQueryCreator(bs)).forEach(new RowCallbackHandler() {
+		cqlTemplate.buildSelectOperation(new SimpleQueryCreator(bs)).forEach(new RowCallbackHandler() {
 
 			@Override
 			public void processRow(Row row) {
@@ -380,7 +380,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 			}
 		});
 
-		List<Book> books = cqlTemplate.getSelectOperation(new SimpleQueryCreator(bs)).map(new RowMapper<Book>() {
+		List<Book> books = cqlTemplate.buildSelectOperation(new SimpleQueryCreator(bs)).map(new RowMapper<Book>() {
 
 			@Override
 			public Book mapRow(Row row, int rowNum) {

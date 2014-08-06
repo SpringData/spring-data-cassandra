@@ -17,7 +17,7 @@ package org.springdata.cassandra.core;
 
 import java.util.Iterator;
 
-import org.springdata.cql.core.AbstractUpdateOperation;
+import org.springdata.cql.core.AbstractExecuteOperation;
 import org.springdata.cql.core.SessionCallback;
 
 import com.datastax.driver.core.Query;
@@ -32,7 +32,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
  * @author Alex Shvid
  * 
  */
-public class DefaultBatchOperation extends AbstractUpdateOperation<BatchOperation> implements BatchOperation {
+public class DefaultBatchOperation extends AbstractExecuteOperation<BatchOperation> implements BatchOperation {
 
 	private final CassandraTemplate cassandraTemplate;
 	private String tableName;

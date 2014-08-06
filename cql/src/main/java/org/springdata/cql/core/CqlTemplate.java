@@ -168,36 +168,43 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public ResultSet update(String cql) {
-		return getUpdateOperation(cql).execute();
-	}
-
-	@Override
-	public UpdateOperation getUpdateOperation(String cql) {
+	public ResultSet execute(String cql) {
 		Assert.notNull(cql);
-		return new DefaultUpdateOperation(this, cql);
+		return doExecute(new SimpleStatement(cql));
 	}
 
 	@Override
-	public ResultSet update(PreparedStatement ps, PreparedStatementBinder psb) {
-		return getUpdateOperation(ps, psb).execute();
+	public ExecuteOperation buildExecuteOperation(String cql) {
+		Assert.notNull(cql);
+		return new DefaultExecuteOperation(this, cql);
 	}
 
 	@Override
-	public UpdateOperation getUpdateOperation(PreparedStatement ps, PreparedStatementBinder psb) {
+	public ExecuteOperation buildExecuteOperation(Query query) {
+		Assert.notNull(query);
+		return new DefaultExecuteOperation(this, query);
+	}
+
+	@Override
+	public ResultSet execute(PreparedStatement ps, PreparedStatementBinder psb) {
+		return buildExecuteOperation(ps, psb).execute();
+	}
+
+	@Override
+	public ExecuteOperation buildExecuteOperation(PreparedStatement ps, PreparedStatementBinder psb) {
 		Assert.notNull(ps);
-		return new DefaultUpdateOperation(this, new SimplePreparedStatementQueryCreator(ps, psb));
+		return new DefaultExecuteOperation(this, new SimplePreparedStatementQueryCreator(ps, psb));
 	}
 
 	@Override
-	public ResultSet update(BoundStatement bs) {
-		return getUpdateOperation(bs).execute();
+	public ResultSet execute(BoundStatement bs) {
+		return buildExecuteOperation(bs).execute();
 	}
 
 	@Override
-	public UpdateOperation getUpdateOperation(final BoundStatement bs) {
+	public ExecuteOperation buildExecuteOperation(final BoundStatement bs) {
 		Assert.notNull(bs);
-		return new DefaultUpdateOperation(this, new QueryCreator() {
+		return new DefaultExecuteOperation(this, new QueryCreator() {
 
 			@Override
 			public Query createQuery() {
@@ -208,23 +215,23 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public ResultSet update(QueryCreator qc) {
-		return getUpdateOperation(qc).execute();
+	public ResultSet execute(QueryCreator qc) {
+		return buildExecuteOperation(qc).execute();
 	}
 
 	@Override
-	public UpdateOperation getUpdateOperation(QueryCreator qc) {
+	public ExecuteOperation buildExecuteOperation(QueryCreator qc) {
 		Assert.notNull(qc);
-		return new DefaultUpdateOperation(this, qc);
+		return new DefaultExecuteOperation(this, qc);
 	}
 
 	@Override
-	public ResultSet batchUpdate(String[] cqls) {
-		return getBatchUpdateOperation(cqls).execute();
+	public ResultSet executeInBatch(String[] cqls) {
+		return buildExecuteInBatchOperation(cqls).execute();
 	}
 
 	@Override
-	public UpdateOperation getBatchUpdateOperation(final String[] cqls) {
+	public ExecuteOperation buildExecuteInBatchOperation(final String[] cqls) {
 		Assert.notNull(cqls);
 
 		final Iterator<Statement> statements = Iterators.transform(new ArrayIterator<String>(cqls),
@@ -237,7 +244,7 @@ public class CqlTemplate implements CqlOperations {
 
 				});
 
-		return getBatchUpdateOperation(new Iterable<Statement>() {
+		return buildExecuteInBatchOperation(new Iterable<Statement>() {
 
 			@Override
 			public Iterator<Statement> iterator() {
@@ -248,15 +255,15 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public ResultSet batchUpdate(Iterable<Statement> statements) {
-		return getBatchUpdateOperation(statements).execute();
+	public ResultSet executeInBatch(Iterable<Statement> statements) {
+		return buildExecuteInBatchOperation(statements).execute();
 	}
 
 	@Override
-	public UpdateOperation getBatchUpdateOperation(final Iterable<Statement> statements) {
+	public ExecuteOperation buildExecuteInBatchOperation(final Iterable<Statement> statements) {
 		Assert.notNull(statements);
 
-		return new DefaultUpdateOperation(this, new QueryCreator() {
+		return new DefaultExecuteOperation(this, new QueryCreator() {
 
 			@Override
 			public Query createQuery() {
@@ -286,47 +293,27 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public ResultSet select(String cql) {
-		return getSelectOperation(cql).execute();
-	}
-
-	@Override
-	public SelectOperation getSelectOperation(String cql) {
+	public SelectOperation buildSelectOperation(String cql) {
 		Assert.notNull(cql);
 		Query query = new SimpleStatement(cql);
 		return new DefaultSelectOperation(this, query);
 	}
 
 	@Override
-	public ResultSet select(PreparedStatement ps, PreparedStatementBinder psb) {
-		return getSelectOperation(ps, psb).execute();
-	}
-
-	@Override
-	public SelectOperation getSelectOperation(PreparedStatement ps, PreparedStatementBinder psb) {
+	public SelectOperation buildSelectOperation(PreparedStatement ps, PreparedStatementBinder psb) {
 		Assert.notNull(ps);
 		BoundStatement bs = doBind(ps, psb);
 		return new DefaultSelectOperation(this, bs);
 	}
 
 	@Override
-	public ResultSet select(BoundStatement bs) {
-		return getSelectOperation(bs).execute();
-	}
-
-	@Override
-	public SelectOperation getSelectOperation(BoundStatement bs) {
+	public SelectOperation buildSelectOperation(BoundStatement bs) {
 		Assert.notNull(bs);
 		return new DefaultSelectOperation(this, bs);
 	}
 
 	@Override
-	public ResultSet select(QueryCreator qc) {
-		return getSelectOperation(qc).execute();
-	}
-
-	@Override
-	public SelectOperation getSelectOperation(QueryCreator qc) {
+	public SelectOperation buildSelectOperation(QueryCreator qc) {
 		Assert.notNull(qc);
 		Query query = doCreateQuery(qc);
 		return new DefaultSelectOperation(this, query);
@@ -817,11 +804,11 @@ public class CqlTemplate implements CqlOperations {
 
 	@Override
 	public List<ResultSet> ingest(PreparedStatement ps, Iterable<Object[]> rows) {
-		return getIngestOperation(ps, rows).execute();
+		return buildIngestOperation(ps, rows).execute();
 	}
 
 	@Override
-	public IngestOperation getIngestOperation(final PreparedStatement ps, Iterable<Object[]> rows) {
+	public IngestOperation buildIngestOperation(final PreparedStatement ps, Iterable<Object[]> rows) {
 
 		Assert.notNull(ps);
 		Assert.notNull(rows);
@@ -849,11 +836,11 @@ public class CqlTemplate implements CqlOperations {
 
 	@Override
 	public List<ResultSet> ingest(PreparedStatement ps, Object[][] rows) {
-		return getIngestOperation(ps, rows).execute();
+		return buildIngestOperation(ps, rows).execute();
 	}
 
 	@Override
-	public IngestOperation getIngestOperation(PreparedStatement ps, final Object[][] rows) {
+	public IngestOperation buildIngestOperation(PreparedStatement ps, final Object[][] rows) {
 
 		Assert.notNull(ps);
 		Assert.notNull(rows);
@@ -861,7 +848,7 @@ public class CqlTemplate implements CqlOperations {
 
 		final Iterator<Object[]> iterator = new ArrayIterator<Object[]>(rows);
 
-		return getIngestOperation(ps, new Iterable<Object[]>() {
+		return buildIngestOperation(ps, new Iterable<Object[]>() {
 
 			@Override
 			public Iterator<Object[]> iterator() {
@@ -904,14 +891,14 @@ public class CqlTemplate implements CqlOperations {
 
 	@Override
 	public Long countAll(String tableName) {
-		return getCountAllOperation(tableName).execute();
+		return buildCountAllOperation(tableName).execute();
 	}
 
 	@Override
-	public ProcessOperation<Long> getCountAllOperation(final String tableName) {
+	public ProcessOperation<Long> buildCountAllOperation(final String tableName) {
 		Assert.notNull(tableName);
 
-		return getSelectOperation(new QueryCreator() {
+		return buildSelectOperation(new QueryCreator() {
 
 			@Override
 			public Query createQuery() {
@@ -924,13 +911,13 @@ public class CqlTemplate implements CqlOperations {
 
 	@Override
 	public ResultSet truncate(String tableName) {
-		return getTruncateOperation(tableName).execute();
+		return buildTruncateOperation(tableName).execute();
 	}
 
 	@Override
-	public UpdateOperation getTruncateOperation(final String tableName) {
+	public ExecuteOperation buildTruncateOperation(final String tableName) {
 		Assert.notNull(tableName);
-		return new DefaultUpdateOperation(this, new QueryCreator() {
+		return new DefaultExecuteOperation(this, new QueryCreator() {
 
 			@Override
 			public Query createQuery() {
@@ -941,12 +928,12 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public AdminCqlOperations adminOps() {
+	public AdminCqlOperations getAdminOperations() {
 		return adminOperations;
 	}
 
 	@Override
-	public SchemaCqlOperations schemaOps() {
+	public SchemaCqlOperations getSchemaOperations() {
 		return schemaOperations;
 	}
 

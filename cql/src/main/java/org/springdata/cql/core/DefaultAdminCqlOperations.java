@@ -47,7 +47,7 @@ public class DefaultAdminCqlOperations implements AdminCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation createKeyspace(String keyspace, final KeyspaceOptions keyspaceOptions) {
+	public ExecuteOperation createKeyspace(String keyspace, final KeyspaceOptions keyspaceOptions) {
 
 		Assert.notNull(keyspace);
 		Assert.notNull(keyspaceOptions);
@@ -60,18 +60,18 @@ public class DefaultAdminCqlOperations implements AdminCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation createKeyspace(CreateKeyspaceSpecification spec) {
+	public ExecuteOperation createKeyspace(CreateKeyspaceSpecification spec) {
 
 		Assert.notNull(spec);
 
 		CreateKeyspaceCqlGenerator generator = new CreateKeyspaceCqlGenerator(spec);
 
-		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+		return new DefaultExecuteOperation(cqlTemplate, generator.toCql());
 
 	}
 
 	@Override
-	public UpdateOperation alterKeyspace(String keyspace, KeyspaceOptions keyspaceOptions) {
+	public ExecuteOperation alterKeyspace(String keyspace, KeyspaceOptions keyspaceOptions) {
 
 		Assert.notNull(keyspace);
 		Assert.notNull(keyspaceOptions);
@@ -84,18 +84,18 @@ public class DefaultAdminCqlOperations implements AdminCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation alterKeyspace(AlterKeyspaceSpecification spec) {
+	public ExecuteOperation alterKeyspace(AlterKeyspaceSpecification spec) {
 
 		Assert.notNull(spec);
 
 		AlterKeyspaceCqlGenerator generator = new AlterKeyspaceCqlGenerator(spec);
 
-		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+		return new DefaultExecuteOperation(cqlTemplate, generator.toCql());
 
 	}
 
 	@Override
-	public UpdateOperation dropKeyspace(String keyspace) {
+	public ExecuteOperation dropKeyspace(String keyspace) {
 
 		Assert.notNull(keyspace);
 
@@ -106,18 +106,18 @@ public class DefaultAdminCqlOperations implements AdminCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation dropKeyspace(DropKeyspaceSpecification spec) {
+	public ExecuteOperation dropKeyspace(DropKeyspaceSpecification spec) {
 
 		Assert.notNull(spec);
 
 		DropKeyspaceCqlGenerator generator = new DropKeyspaceCqlGenerator(spec);
 
-		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+		return new DefaultExecuteOperation(cqlTemplate, generator.toCql());
 
 	}
 
 	@Override
-	public UpdateOperation useKeyspace(String keyspace) {
+	public ExecuteOperation useKeyspace(String keyspace) {
 
 		Assert.notNull(keyspace);
 
@@ -128,23 +128,23 @@ public class DefaultAdminCqlOperations implements AdminCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation useKeyspace(UseKeyspaceSpecification spec) {
+	public ExecuteOperation useKeyspace(UseKeyspaceSpecification spec) {
 
 		Assert.notNull(spec);
 
 		UseKeyspaceCqlGenerator generator = new UseKeyspaceCqlGenerator(spec);
 
-		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+		return new DefaultExecuteOperation(cqlTemplate, generator.toCql());
 
 	}
 
 	@Override
-	public UpdateOperation useSystemKeyspace() {
+	public ExecuteOperation useSystemKeyspace() {
 
 		UseKeyspaceSpecification spec = new UseKeyspaceSpecification().name(SYSTEM_KEYSPACE);
 		UseKeyspaceCqlGenerator generator = new UseKeyspaceCqlGenerator(spec);
 
-		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+		return new DefaultExecuteOperation(cqlTemplate, generator.toCql());
 
 	}
 

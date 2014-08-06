@@ -97,7 +97,7 @@ public class CqlSessionFactoryBean implements FactoryBean<Session>, Initializing
 		if (StringUtils.hasText(keyspace)) {
 
 			CqlTemplate cqlTemplate = new CqlTemplate(session, keyspace);
-			AdminCqlOperations adminOps = cqlTemplate.adminOps();
+			AdminCqlOperations adminOps = cqlTemplate.getAdminOperations();
 
 			KeyspaceMetadata keyspaceMetadata = adminOps.getKeyspaceMetadata(keyspace);
 			boolean keyspaceExists = keyspaceMetadata != null;
@@ -175,7 +175,7 @@ public class CqlSessionFactoryBean implements FactoryBean<Session>, Initializing
 			log.info("Drop keyspace " + keyspace + " on destroy");
 
 			CqlTemplate casandraCqlTemplate = new CqlTemplate(session, keyspace);
-			AdminCqlOperations adminOps = casandraCqlTemplate.adminOps();
+			AdminCqlOperations adminOps = casandraCqlTemplate.getAdminOperations();
 
 			adminOps.useSystemKeyspace().execute();
 			adminOps.dropKeyspace(keyspace).execute();

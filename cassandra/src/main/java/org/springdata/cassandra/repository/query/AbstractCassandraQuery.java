@@ -119,7 +119,7 @@ public abstract class AbstractCassandraQuery implements RepositoryQuery {
 
 			CassandraEntityMetadata<?> metadata = method.getEntityInformation();
 
-			return cassandraOperations.getFindOperation(metadata.getJavaType(), query).execute();
+			return cassandraOperations.buildFindOperation(metadata.getJavaType(), query).execute();
 		}
 	}
 
@@ -157,9 +157,9 @@ public abstract class AbstractCassandraQuery implements RepositoryQuery {
 
 			CassandraEntityMetadata<?> metadata = method.getEntityInformation();
 			if (countProjection) {
-				return cassandraOperations.cqlOps().getSelectOperation(query).singleResult().firstColumn(Long.class).execute();
+				return cassandraOperations.getCqlOperations().buildSelectOperation(query).singleResult().firstColumn(Long.class).execute();
 			} else {
-				return cassandraOperations.getFindOneOperation(metadata.getJavaType(), query).execute();
+				return cassandraOperations.buildFindOneOperation(metadata.getJavaType(), query).execute();
 			}
 
 		}

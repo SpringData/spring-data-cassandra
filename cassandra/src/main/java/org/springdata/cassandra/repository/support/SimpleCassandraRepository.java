@@ -62,7 +62,7 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 	@Override
 	public <S extends T> S save(S entity) {
 		Assert.notNull(entity, "Entity must not be null!");
-		cassandraTemplate.getSaveNewOperation(entity).execute();
+		cassandraTemplate.buildSaveNewOperation(entity).execute();
 		return entity;
 	}
 
@@ -70,7 +70,7 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 	public <S extends T> List<S> save(Iterable<S> entities) {
 
 		Assert.notNull(entities, "The given Iterable of entities must not be null!");
-		cassandraTemplate.getSaveNewInBatchOperation(entities).execute();
+		cassandraTemplate.buildSaveNewInBatchOperation(entities).execute();
 
 		if (entities instanceof List) {
 			return (List<S>) entities;
@@ -82,59 +82,59 @@ public class SimpleCassandraRepository<T, ID extends Serializable> implements Ca
 	@Override
 	public T findOne(ID id) {
 		Assert.notNull(id, "The given id must not be null!");
-		return cassandraTemplate.getFindByIdOperation(entityInformation.getJavaType(), id).execute();
+		return cassandraTemplate.buildFindByIdOperation(entityInformation.getJavaType(), id).execute();
 	}
 
 	@Override
 	public List<T> findByPartitionKey(ID id) {
 		Assert.notNull(id, "The given id must not be null!");
-		return cassandraTemplate.getFindByPartitionKeyOperation(entityInformation.getJavaType(), id).execute();
+		return cassandraTemplate.buildFindByPartitionKeyOperation(entityInformation.getJavaType(), id).execute();
 	}
 
 	@Override
 	public boolean exists(ID id) {
 		Assert.notNull(id, "The given id must not be null!");
-		return cassandraTemplate.getExistsOperation(entityInformation.getJavaType(), id).execute();
+		return cassandraTemplate.buildExistsOperation(entityInformation.getJavaType(), id).execute();
 	}
 
 	@Override
 	public long count() {
-		Long result = cassandraTemplate.getCountAllOperation(entityInformation.getJavaType()).execute();
+		Long result = cassandraTemplate.buildCountAllOperation(entityInformation.getJavaType()).execute();
 		return result != null ? result : 0;
 	}
 
 	@Override
 	public void delete(ID id) {
 		Assert.notNull(id, "The given id must not be null!");
-		cassandraTemplate.getDeleteByIdOperation(entityInformation.getJavaType(), id).execute();
+		cassandraTemplate.buildDeleteByIdOperation(entityInformation.getJavaType(), id).execute();
 	}
 
 	@Override
 	public void delete(T entity) {
 		Assert.notNull(entity, "The given entity must not be null!");
-		cassandraTemplate.getDeleteOperation(entity).execute();
+		cassandraTemplate.buildDeleteOperation(entity).execute();
 	}
 
 	@Override
 	public void delete(Iterable<? extends T> entities) {
 		Assert.notNull(entities, "The given Iterable of entities not be null!");
-		cassandraTemplate.getDeleteInBatchOperation(entities).execute();
+		cassandraTemplate.buildDeleteInBatchOperation(entities).execute();
 	}
 
 	@Override
 	public void deleteAll() {
-		cassandraTemplate.getDeleteAllOperation(entityInformation.getJavaType()).execute();
+		cassandraTemplate.buildDeleteAllOperation(entityInformation.getJavaType()).execute();
 	}
 
 	@Override
 	public List<T> findAll() {
-		return cassandraTemplate.getFindAllOperation(entityInformation.getJavaType()).execute();
+		return cassandraTemplate.buildFindAllOperation(entityInformation.getJavaType()).execute();
 	}
 
 	@Override
 	public Iterable<T> findAll(Iterable<ID> ids) {
 		Assert.notNull(ids, "The given Iterable of ids not be null!");
-		return cassandraTemplate.getFindAllOperation(entityInformation.getJavaType(), ids).execute();
+		return cassandraTemplate.buildFindAllOperation(entityInformation.getJavaType(), ids).execute();
 	}
 
 	/**

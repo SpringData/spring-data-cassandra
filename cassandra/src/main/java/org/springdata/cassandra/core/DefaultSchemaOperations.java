@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
 import org.springdata.cql.core.DefaultIngestOperation;
-import org.springdata.cql.core.DefaultUpdateOperation;
+import org.springdata.cql.core.DefaultExecuteOperation;
 import org.springdata.cql.core.IngestOperation;
-import org.springdata.cql.core.UpdateOperation;
+import org.springdata.cql.core.ExecuteOperation;
 import org.springdata.cql.generator.AlterTableCqlGenerator;
 import org.springdata.cql.generator.CreateIndexCqlGenerator;
 import org.springdata.cql.generator.CreateTableCqlGenerator;
@@ -63,7 +63,7 @@ public class DefaultSchemaOperations implements SchemaOperations {
 	}
 
 	@Override
-	public UpdateOperation createTable(String tableName, Class<?> entityClass) {
+	public ExecuteOperation createTable(String tableName, Class<?> entityClass) {
 
 		Assert.notNull(entityClass);
 
@@ -75,12 +75,12 @@ public class DefaultSchemaOperations implements SchemaOperations {
 
 		String cql = generator.toCql();
 
-		return new DefaultUpdateOperation(cassandraTemplate.cqlTemplate(), cql);
+		return new DefaultExecuteOperation(cassandraTemplate.cqlTemplate(), cql);
 
 	}
 
 	@Override
-	public Optional<UpdateOperation> alterTable(String tableName, Class<?> entityClass,
+	public Optional<ExecuteOperation> alterTable(String tableName, Class<?> entityClass,
 			boolean dropRemovedAttributeColumns) {
 
 		Assert.notNull(entityClass);
@@ -89,7 +89,7 @@ public class DefaultSchemaOperations implements SchemaOperations {
 
 		if (cql != null) {
 
-			return Optional.<UpdateOperation> of(new DefaultUpdateOperation(cassandraTemplate.cqlTemplate(), cql));
+			return Optional.<ExecuteOperation> of(new DefaultExecuteOperation(cassandraTemplate.cqlTemplate(), cql));
 
 		} else {
 
@@ -118,7 +118,7 @@ public class DefaultSchemaOperations implements SchemaOperations {
 
 		final CassandraPersistentEntity<?> entity = cassandraTemplate.getPersistentEntity(entityClass);
 
-		TableMetadata tableMetadata = cassandraTemplate.cqlOps().schemaOps().getTableMetadata(tableName);
+		TableMetadata tableMetadata = cassandraTemplate.getCqlOperations().getSchemaOperations().getTableMetadata(tableName);
 
 		AlterTableSpecification spec = cassandraTemplate.getConverter().getAlterTableSpecification(entity, tableMetadata,
 				dropRemovedAttributeColumns);
@@ -136,12 +136,12 @@ public class DefaultSchemaOperations implements SchemaOperations {
 	}
 
 	@Override
-	public UpdateOperation dropTable(String tableName) {
+	public ExecuteOperation dropTable(String tableName) {
 
 		DropTableSpecification spec = new DropTableSpecification().name(tableName);
 		String cql = new DropTableCqlGenerator(spec).toCql();
 
-		return new DefaultUpdateOperation(cassandraTemplate.cqlTemplate(), cql);
+		return new DefaultExecuteOperation(cassandraTemplate.cqlTemplate(), cql);
 
 	}
 
@@ -209,7 +209,7 @@ public class DefaultSchemaOperations implements SchemaOperations {
 
 		CassandraPersistentEntity<?> entity = cassandraTemplate.getPersistentEntity(entityClass);
 
-		TableMetadata tableMetadata = cassandraTemplate.cqlOps().schemaOps().getTableMetadata(tableName);
+		TableMetadata tableMetadata = cassandraTemplate.getCqlOperations().getSchemaOperations().getTableMetadata(tableName);
 
 		List<WithNameSpecification<?>> specList = cassandraTemplate.getConverter().getIndexChangeSpecifications(entity,
 				tableMetadata);

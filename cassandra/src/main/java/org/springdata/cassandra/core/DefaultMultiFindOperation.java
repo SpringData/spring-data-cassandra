@@ -65,7 +65,7 @@ public class DefaultMultiFindOperation<T> extends AbstractMultiGetOperation<List
 
 			@Override
 			public Query apply(final Object id) {
-				return cassandraTemplate.cqlOps().createQuery(new QueryCreator() {
+				return cassandraTemplate.getCqlOperations().createQuery(new QueryCreator() {
 
 					@Override
 					public Query createQuery() {

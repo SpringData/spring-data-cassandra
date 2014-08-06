@@ -38,7 +38,7 @@ public interface AdminCqlOperations {
 	 * @param keyspace The keyspace name
 	 * @param keyspaceOptions Keyspace options.
 	 */
-	UpdateOperation createKeyspace(String keyspace, KeyspaceOptions keyspaceOptions);
+	ExecuteOperation createKeyspace(String keyspace, KeyspaceOptions keyspaceOptions);
 
 	/**
 	 * Creates keyspace with a given CreateKeyspaceSpecification
@@ -46,7 +46,7 @@ public interface AdminCqlOperations {
 	 * @param createKeyspaceSpecification
 	 * @return
 	 */
-	UpdateOperation createKeyspace(CreateKeyspaceSpecification createKeyspaceSpecification);
+	ExecuteOperation createKeyspace(CreateKeyspaceSpecification createKeyspaceSpecification);
 
 	/**
 	 * Alters Keyspace with given name and options
@@ -54,7 +54,7 @@ public interface AdminCqlOperations {
 	 * @param keyspace The keyspace name
 	 * @param keyspaceOptions Keyspace options.
 	 */
-	UpdateOperation alterKeyspace(String keyspace, KeyspaceOptions keyspaceOptions);
+	ExecuteOperation alterKeyspace(String keyspace, KeyspaceOptions keyspaceOptions);
 
 	/**
 	 * Alters keyspace with a given AlterKeyspaceSpecification
@@ -62,7 +62,7 @@ public interface AdminCqlOperations {
 	 * @param alterKeyspaceSpecification
 	 * @return
 	 */
-	UpdateOperation alterKeyspace(AlterKeyspaceSpecification alterKeyspaceSpecification);
+	ExecuteOperation alterKeyspace(AlterKeyspaceSpecification alterKeyspaceSpecification);
 
 	/**
 	 * Drops keyspace with given keyspace name
@@ -70,7 +70,7 @@ public interface AdminCqlOperations {
 	 * @param keyspace The keyspace name
 	 * 
 	 */
-	UpdateOperation dropKeyspace(String keyspace);
+	ExecuteOperation dropKeyspace(String keyspace);
 
 	/**
 	 * Drops keyspace with a given DropKeyspaceSpecification
@@ -78,7 +78,7 @@ public interface AdminCqlOperations {
 	 * @param dropKeyspaceSpecification
 	 * @return
 	 */
-	UpdateOperation dropKeyspace(DropKeyspaceSpecification dropKeyspaceSpecification);
+	ExecuteOperation dropKeyspace(DropKeyspaceSpecification dropKeyspaceSpecification);
 
 	/**
 	 * Use keyspace
@@ -86,7 +86,7 @@ public interface AdminCqlOperations {
 	 * @param keyspace The keyspace name
 	 * 
 	 */
-	UpdateOperation useKeyspace(String keyspace);
+	ExecuteOperation useKeyspace(String keyspace);
 
 	/**
 	 * Use keyspace with a given UseKeyspaceSpecification
@@ -94,7 +94,7 @@ public interface AdminCqlOperations {
 	 * @param useKeyspaceSpecification
 	 * @return
 	 */
-	UpdateOperation useKeyspace(UseKeyspaceSpecification useKeyspaceSpecification);
+	ExecuteOperation useKeyspace(UseKeyspaceSpecification useKeyspaceSpecification);
 
 	/**
 	 * Use system keyspace
@@ -102,7 +102,7 @@ public interface AdminCqlOperations {
 	 * @param optionsOrNull The Execute Options Object if exists
 	 * 
 	 */
-	UpdateOperation useSystemKeyspace();
+	ExecuteOperation useSystemKeyspace();
 
 	/**
 	 * Gets the keyspace metadata.

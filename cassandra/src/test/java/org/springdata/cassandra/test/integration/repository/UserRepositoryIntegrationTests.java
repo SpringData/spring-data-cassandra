@@ -71,7 +71,7 @@ public class UserRepositoryIntegrationTests {
 	@Before
 	public void setUp() throws InterruptedException {
 
-		cassandraOperations.getDeleteAllOperation(User.class).execute();
+		cassandraOperations.buildDeleteAllOperation(User.class).execute();
 
 		tom = new User();
 		tom.setUsername("tom");
@@ -103,7 +103,7 @@ public class UserRepositoryIntegrationTests {
 
 		all = Arrays.asList(tom, bob, alice, scott);
 
-		cassandraOperations.getSaveNewInBatchOperation(all).execute();
+		cassandraOperations.buildSaveNewInBatchOperation(all).execute();
 	}
 
 	@Test

@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
-import org.springdata.cql.core.AbstractUpdateOperation;
+import org.springdata.cql.core.AbstractExecuteOperation;
 import org.springframework.util.Assert;
 
 import com.datastax.driver.core.Query;
@@ -37,7 +37,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
  * @author Alex Shvid
  * 
  */
-public class DefaultDeleteOperation<T> extends AbstractUpdateOperation<DeleteOperation> implements DeleteOperation,
+public class DefaultDeleteOperation<T> extends AbstractExecuteOperation<DeleteOperation> implements DeleteOperation,
 		BatchedStatementCreator {
 
 	enum DeleteBy {

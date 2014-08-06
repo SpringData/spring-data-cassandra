@@ -15,31 +15,15 @@
  */
 package org.springdata.cql.core;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.ResultSet;
 
 /**
- * Default update operation implementation
+ * Base interface that describes methods that can be used for Cassandra execute operation.
  * 
  * @author Alex Shvid
  * 
  */
 
-public class DefaultUpdateOperation extends AbstractUpdateOperation<UpdateOperation> implements UpdateOperation {
-
-	private final QueryCreator qc;
-
-	public DefaultUpdateOperation(CqlTemplate cqlTemplate, String cql) {
-		this(cqlTemplate, new SimpleQueryCreator(cql));
-	}
-
-	public DefaultUpdateOperation(CqlTemplate cqlTemplate, QueryCreator qc) {
-		super(cqlTemplate);
-		this.qc = qc;
-	}
-
-	@Override
-	public Query createQuery() {
-		return qc.createQuery();
-	}
+public interface ExecuteOperation extends QueryOperation<ResultSet, ExecuteOperation> {
 
 }

@@ -51,7 +51,7 @@ public interface SchemaCqlOperations {
 	 * @param createTableSpecification
 	 * @return
 	 */
-	UpdateOperation createTable(CreateTableSpecification createTableSpecification);
+	ExecuteOperation createTable(CreateTableSpecification createTableSpecification);
 
 	/**
 	 * Creates table by using parameters of the function
@@ -64,7 +64,7 @@ public interface SchemaCqlOperations {
 	 * @param tableOptions
 	 * @return
 	 */
-	UpdateOperation createTable(boolean ifNotExists, String tableName, List<CqlColumn> partitionedColumns,
+	ExecuteOperation createTable(boolean ifNotExists, String tableName, List<CqlColumn> partitionedColumns,
 			List<ClusteringCqlColumn> clusteringColumns, List<CqlColumn> nonKeyColumns, TableOptions tableOptions);
 
 	/**
@@ -77,7 +77,7 @@ public interface SchemaCqlOperations {
 	 * @param tableOptions
 	 * @return
 	 */
-	UpdateOperation alterTable(String tableName, List<CqlColumn> addColumns, List<CqlColumn> alterColumns,
+	ExecuteOperation alterTable(String tableName, List<CqlColumn> addColumns, List<CqlColumn> alterColumns,
 			List<String> dropColumns, TableOptions tableOptions);
 
 	/**
@@ -86,7 +86,7 @@ public interface SchemaCqlOperations {
 	 * @param alterTableSpecification
 	 * @return
 	 */
-	UpdateOperation alterTable(AlterTableSpecification alterTableSpecification);
+	ExecuteOperation alterTable(AlterTableSpecification alterTableSpecification);
 
 	/**
 	 * Drops table by using tableName
@@ -95,7 +95,7 @@ public interface SchemaCqlOperations {
 	 * @param tableName
 	 * @return
 	 */
-	UpdateOperation dropTable(boolean ifExists, String tableName);
+	ExecuteOperation dropTable(boolean ifExists, String tableName);
 
 	/**
 	 * Drops table by using AlterTableSpecification
@@ -103,7 +103,7 @@ public interface SchemaCqlOperations {
 	 * @param dropTableSpecification
 	 * @return
 	 */
-	UpdateOperation dropTable(DropTableSpecification dropTableSpecification);
+	ExecuteOperation dropTable(DropTableSpecification dropTableSpecification);
 
 	/**
 	 * Creates index by using index name
@@ -111,7 +111,7 @@ public interface SchemaCqlOperations {
 	 * @param createIndexSpecification
 	 * @return
 	 */
-	UpdateOperation createIndex(String indexName);
+	ExecuteOperation createIndex(String indexName);
 
 	/**
 	 * Creates index by using default index name for table.column
@@ -119,7 +119,7 @@ public interface SchemaCqlOperations {
 	 * @param createIndexSpecification
 	 * @return
 	 */
-	UpdateOperation createIndex(String tableName, String columnName);
+	ExecuteOperation createIndex(String tableName, String columnName);
 
 	/**
 	 * Creates index by using CreateIndexSpecification
@@ -127,7 +127,7 @@ public interface SchemaCqlOperations {
 	 * @param createIndexSpecification
 	 * @return
 	 */
-	UpdateOperation createIndex(CreateIndexSpecification createIndexSpecification);
+	ExecuteOperation createIndex(CreateIndexSpecification createIndexSpecification);
 
 	/**
 	 * Drops index by using index name
@@ -135,7 +135,7 @@ public interface SchemaCqlOperations {
 	 * @param dropIndexSpecification
 	 * @return
 	 */
-	UpdateOperation dropIndex(String indexName);
+	ExecuteOperation dropIndex(String indexName);
 
 	/**
 	 * Drops index by using default index name for table.column
@@ -143,7 +143,7 @@ public interface SchemaCqlOperations {
 	 * @param dropIndexSpecification
 	 * @return
 	 */
-	UpdateOperation dropIndex(String tableName, String columnName);
+	ExecuteOperation dropIndex(String tableName, String columnName);
 
 	/**
 	 * Drops index by using DropIndexSpecification
@@ -151,6 +151,6 @@ public interface SchemaCqlOperations {
 	 * @param dropIndexSpecification
 	 * @return
 	 */
-	UpdateOperation dropIndex(DropIndexSpecification dropIndexSpecification);
+	ExecuteOperation dropIndex(DropIndexSpecification dropIndexSpecification);
 
 }

@@ -18,7 +18,7 @@ package org.springdata.cassandra.core;
 import java.util.List;
 
 import org.springdata.cql.core.IngestOperation;
-import org.springdata.cql.core.UpdateOperation;
+import org.springdata.cql.core.ExecuteOperation;
 
 import com.google.common.base.Optional;
 
@@ -40,7 +40,7 @@ public interface SchemaOperations {
 	 *          ignored and the method will return {@literal false}.
 	 * @param entityClass The class whose fields determine the columns created.
 	 */
-	UpdateOperation createTable(String tableName, Class<?> entityClass);
+	ExecuteOperation createTable(String tableName, Class<?> entityClass);
 
 	/**
 	 * Add columns to the given table from the given class. If parameter dropRemovedAttributColumns is true, then this
@@ -51,7 +51,7 @@ public interface SchemaOperations {
 	 *          corresponding fields in the class. If true, this effectively becomes a synchronziation operation.
 	 * @param optionsOrNull The Execute Options Object if exists
 	 */
-	Optional<UpdateOperation> alterTable(String tableName, Class<?> entityClass, boolean dropRemovedAttributeColumns);
+	Optional<ExecuteOperation> alterTable(String tableName, Class<?> entityClass, boolean dropRemovedAttributeColumns);
 
 	/**
 	 * Validate columns in the given table from the given class.
@@ -67,7 +67,7 @@ public interface SchemaOperations {
 	 * @param optionsOrNull The Execute Options Object if exists
 	 * 
 	 */
-	UpdateOperation dropTable(String tableName);
+	ExecuteOperation dropTable(String tableName);
 
 	/**
 	 * Create all indexed annotated in entityClass

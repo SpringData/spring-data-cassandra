@@ -72,7 +72,7 @@ public class DefaultSchemaCqlOperations implements SchemaCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation createTable(boolean ifNotExists, String tableName, List<CqlColumn> partitionedColumns,
+	public ExecuteOperation createTable(boolean ifNotExists, String tableName, List<CqlColumn> partitionedColumns,
 			List<ClusteringCqlColumn> clusteringColumns, List<CqlColumn> nonKeyColumns, TableOptions tableOptions) {
 		Assert.notNull(tableName);
 		Assert.notNull(partitionedColumns);
@@ -98,16 +98,16 @@ public class DefaultSchemaCqlOperations implements SchemaCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation createTable(CreateTableSpecification createTableSpecification) {
+	public ExecuteOperation createTable(CreateTableSpecification createTableSpecification) {
 		Assert.notNull(createTableSpecification);
 
 		CreateTableCqlGenerator generator = new CreateTableCqlGenerator(createTableSpecification);
 
-		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+		return new DefaultExecuteOperation(cqlTemplate, generator.toCql());
 	}
 
 	@Override
-	public UpdateOperation alterTable(String tableName, List<CqlColumn> addColumns, List<CqlColumn> alterColumns,
+	public ExecuteOperation alterTable(String tableName, List<CqlColumn> addColumns, List<CqlColumn> alterColumns,
 			List<String> dropColumns, TableOptions tableOptions) {
 		Assert.notNull(tableName);
 		Assert.notNull(addColumns);
@@ -135,16 +135,16 @@ public class DefaultSchemaCqlOperations implements SchemaCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation alterTable(AlterTableSpecification alterTableSpecification) {
+	public ExecuteOperation alterTable(AlterTableSpecification alterTableSpecification) {
 		Assert.notNull(alterTableSpecification);
 
 		AlterTableCqlGenerator generator = new AlterTableCqlGenerator(alterTableSpecification);
 
-		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+		return new DefaultExecuteOperation(cqlTemplate, generator.toCql());
 	}
 
 	@Override
-	public UpdateOperation dropTable(boolean ifExists, String tableName) {
+	public ExecuteOperation dropTable(boolean ifExists, String tableName) {
 		Assert.notNull(tableName);
 
 		DropTableSpecification spec = new DropTableSpecification().ifExists(ifExists).name(tableName);
@@ -153,16 +153,16 @@ public class DefaultSchemaCqlOperations implements SchemaCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation dropTable(DropTableSpecification dropTableSpecification) {
+	public ExecuteOperation dropTable(DropTableSpecification dropTableSpecification) {
 		Assert.notNull(dropTableSpecification);
 
 		DropTableCqlGenerator generator = new DropTableCqlGenerator(dropTableSpecification);
 
-		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+		return new DefaultExecuteOperation(cqlTemplate, generator.toCql());
 	}
 
 	@Override
-	public UpdateOperation createIndex(String indexName) {
+	public ExecuteOperation createIndex(String indexName) {
 		Assert.notNull(indexName);
 
 		CreateIndexSpecification spec = new CreateIndexSpecification().name(indexName);
@@ -171,7 +171,7 @@ public class DefaultSchemaCqlOperations implements SchemaCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation createIndex(String tableName, String columnName) {
+	public ExecuteOperation createIndex(String tableName, String columnName) {
 		Assert.notNull(tableName);
 		Assert.notNull(columnName);
 
@@ -181,16 +181,16 @@ public class DefaultSchemaCqlOperations implements SchemaCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation createIndex(CreateIndexSpecification createIndexSpecification) {
+	public ExecuteOperation createIndex(CreateIndexSpecification createIndexSpecification) {
 		Assert.notNull(createIndexSpecification);
 
 		CreateIndexCqlGenerator generator = new CreateIndexCqlGenerator(createIndexSpecification);
 
-		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+		return new DefaultExecuteOperation(cqlTemplate, generator.toCql());
 	}
 
 	@Override
-	public UpdateOperation dropIndex(String indexName) {
+	public ExecuteOperation dropIndex(String indexName) {
 		Assert.notNull(indexName);
 
 		DropIndexSpecification spec = new DropIndexSpecification().name(indexName);
@@ -199,7 +199,7 @@ public class DefaultSchemaCqlOperations implements SchemaCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation dropIndex(String tableName, String columnName) {
+	public ExecuteOperation dropIndex(String tableName, String columnName) {
 		Assert.notNull(tableName);
 		Assert.notNull(columnName);
 
@@ -209,12 +209,12 @@ public class DefaultSchemaCqlOperations implements SchemaCqlOperations {
 	}
 
 	@Override
-	public UpdateOperation dropIndex(DropIndexSpecification dropIndexSpecification) {
+	public ExecuteOperation dropIndex(DropIndexSpecification dropIndexSpecification) {
 		Assert.notNull(dropIndexSpecification);
 
 		DropIndexCqlGenerator generator = new DropIndexCqlGenerator(dropIndexSpecification);
 
-		return new DefaultUpdateOperation(cqlTemplate, generator.toCql());
+		return new DefaultExecuteOperation(cqlTemplate, generator.toCql());
 	}
 
 }

@@ -39,7 +39,7 @@ public class AsyncCassandraTemplateTest extends AbstractCassandraOperations {
 		final String author = "David Webb";
 		final Integer pages = 1;
 
-		cqlTemplate.getUpdateOperation(
+		cqlTemplate.buildExecuteOperation(
 				new SimpleQueryCreator("insert into book (isbn, title, author, pages) values ('" + isbn + "', '" + title
 						+ "', '" + author + "', " + pages + ")")).executeAsync();
 
@@ -60,7 +60,7 @@ public class AsyncCassandraTemplateTest extends AbstractCassandraOperations {
 
 		final String isbn = "999999999";
 
-		ResultSet frs = cqlTemplate.getSelectOperation("select * from book where isbn='" + isbn + "'").executeAsync()
+		ResultSet frs = cqlTemplate.buildSelectOperation("select * from book where isbn='" + isbn + "'").executeAsync()
 				.getUninterruptibly();
 
 		Row r = frs.one();

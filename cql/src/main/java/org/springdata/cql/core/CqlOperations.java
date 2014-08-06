@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,164 +61,134 @@ public interface CqlOperations {
 	ResultSet execute(Query query);
 
 	/**
-	 * Executes the supplied CQL Query and returns nothing.
+	 * Executes the supplied CQL Query and returns ResultSet
 	 * 
 	 * @param cql The CQL String
 	 */
-	ResultSet update(String cql);
+	ResultSet execute(String cql);
 
 	/**
-	 * Executes the supplied CQL Query and returns nothing.
+	 * Builds ExecuteOperation for the supplied CQL Query
 	 * 
 	 * @param cql The CQL String
 	 */
-	UpdateOperation getUpdateOperation(String cql);
+	ExecuteOperation buildExecuteOperation(String cql);
 
 	/**
-	 * Executes the supplied PreparedStatement with custom binder.
+	 * Builds ExecuteOperation for the supplied Query
+	 * 
+	 * @param cql The CQL String
+	 */
+	ExecuteOperation buildExecuteOperation(Query query);
+
+	/**
+	 * Executes the supplied PreparedStatement with custom binder
 	 * 
 	 * @param ps PreparedStatement
 	 * @param psb PreparedStatementBinder if exists
 	 */
-	ResultSet update(PreparedStatement ps, PreparedStatementBinder psb);
+	ResultSet execute(PreparedStatement ps, PreparedStatementBinder psb);
 
 	/**
-	 * Executes the supplied PreparedStatement with custom binder.
+	 * Builds ExecuteOperation for the supplied PreparedStatement with custom binder
 	 * 
 	 * @param ps PreparedStatement
 	 * @param psb PreparedStatementBinder if exists
 	 */
-	UpdateOperation getUpdateOperation(PreparedStatement ps, PreparedStatementBinder psb);
+	ExecuteOperation buildExecuteOperation(PreparedStatement ps, PreparedStatementBinder psb);
 
 	/**
-	 * Executes the supplied PreparedStatement with custom binder.
+	 * Executes the supplied PreparedStatement with custom binder
 	 * 
 	 * @param bs BoundStatement
 	 */
-	ResultSet update(BoundStatement bs);
+	ResultSet execute(BoundStatement bs);
 
 	/**
-	 * Executes the supplied PreparedStatement with custom binder.
+	 * Builds ExecuteOperation for the supplied PreparedStatement with custom binder
 	 * 
 	 * @param bs BoundStatement
 	 */
-	UpdateOperation getUpdateOperation(BoundStatement bs);
+	ExecuteOperation buildExecuteOperation(BoundStatement bs);
 
 	/**
-	 * Executes the supplied CQL Query and returns nothing.
+	 * Executes the supplied CQL Query and returns ResultSet
 	 * 
 	 * @param qc The QueryCreator
 	 */
-	ResultSet update(QueryCreator qc);
+	ResultSet execute(QueryCreator qc);
 
 	/**
-	 * Executes the supplied CQL Query and returns nothing.
+	 * Builds ExecuteOperation for the supplied CQL Query
 	 * 
 	 * @param qc The QueryCreator
 	 */
-	UpdateOperation getUpdateOperation(QueryCreator qc);
+	ExecuteOperation buildExecuteOperation(QueryCreator qc);
 
 	/**
-	 * Executes the supplied CQL Query batch and returns nothing.
+	 * Executes the supplied CQL Query batch and returns ResultSet
 	 * 
 	 * @param sqls The CQL queries
 	 */
-	ResultSet batchUpdate(String[] cqls);
+	ResultSet executeInBatch(String[] cqls);
 
 	/**
-	 * Executes the supplied CQL Query batch and returns nothing.
+	 * Builds ExecuteOperation for the supplied CQL Query batch
 	 * 
 	 * @param sqls The CQL queries
 	 */
-	UpdateOperation getBatchUpdateOperation(String[] cqls);
+	ExecuteOperation buildExecuteInBatchOperation(String[] cqls);
 
 	/**
-	 * Executes the supplied CQL Query batch and returns nothing.
+	 * Executes the supplied CQL Query batch and returns ResultSet
 	 * 
 	 * @param statements The Statements
 	 */
-	ResultSet batchUpdate(Iterable<Statement> statements);
+	ResultSet executeInBatch(Iterable<Statement> statements);
 
 	/**
-	 * Executes the supplied CQL Query batch and returns nothing.
+	 * Builds ExecuteOperation for the supplied CQL Query batch
 	 * 
 	 * @param statements The Statements
 	 */
-	UpdateOperation getBatchUpdateOperation(Iterable<Statement> statements);
+	ExecuteOperation buildExecuteInBatchOperation(Iterable<Statement> statements);
 
 	/**
-	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
-	 * 
-	 * @param cql The CQL Query String
-	 * 
-	 * @return ResultSet
-	 */
-	ResultSet select(String cql);
-
-	/**
-	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
+	 * Builds SelectOperation for the provided CQL Query
 	 * 
 	 * @param cql The CQL Query String
 	 * 
 	 * @return SelectOperation
 	 */
-	SelectOperation getSelectOperation(String cql);
+	SelectOperation buildSelectOperation(String cql);
 
 	/**
-	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
-	 * 
-	 * @param ps PreparedStatement
-	 * @param psb PreparedStatementBinder if exists
-	 * 
-	 * @return ResultSet
-	 */
-	ResultSet select(PreparedStatement ps, PreparedStatementBinder psb);
-
-	/**
-	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
+	 * Builds SelectOperation for the provided prepared statement
 	 * 
 	 * @param ps PreparedStatement
 	 * @param psb PreparedStatementBinder if exists
 	 * 
 	 * @return SelectOperation
 	 */
-	SelectOperation getSelectOperation(PreparedStatement ps, PreparedStatementBinder psb);
+	SelectOperation buildSelectOperation(PreparedStatement ps, PreparedStatementBinder psb);
 
 	/**
-	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
-	 * 
-	 * @param bs BoundStatement
-	 * 
-	 * @return ResultSet
-	 */
-	ResultSet select(BoundStatement bs);
-
-	/**
-	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
+	 * Builds SelectOperation for the provided BoundStatement
 	 * 
 	 * @param bs BoundStatement
 	 * 
 	 * @return SelectOperation
 	 */
-	SelectOperation getSelectOperation(BoundStatement bs);
+	SelectOperation buildSelectOperation(BoundStatement bs);
 
 	/**
-	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
-	 * 
-	 * @param qc The QueryCreator
-	 * 
-	 * @return ResultSet
-	 */
-	ResultSet select(QueryCreator qc);
-
-	/**
-	 * Executes the provided CQL Query, and extracts the results with the ResultSetCallback.
+	 * Builds SelectOperation for the provided QueryCreator
 	 * 
 	 * @param qc The QueryCreator
 	 * 
 	 * @return SelectOperation
 	 */
-	SelectOperation getSelectOperation(QueryCreator qc);
+	SelectOperation buildSelectOperation(QueryCreator qc);
 
 	/**
 	 * Processes the ResultSet through the RowCallbackHandler and return nothing. This is used internal to the Template
@@ -394,7 +364,7 @@ public interface CqlOperations {
 	 * @param ps The PreparedStatement
 	 * @param rows Implementation to provide the Object[] to be bound to the CQL.
 	 */
-	IngestOperation getIngestOperation(PreparedStatement ps, Iterable<Object[]> rows);
+	IngestOperation buildIngestOperation(PreparedStatement ps, Iterable<Object[]> rows);
 
 	/**
 	 * This is an operation designed for high performance writes. The cql is used to create a PreparedStatement once, then
@@ -422,7 +392,7 @@ public interface CqlOperations {
 	 * @param ps The PreparedStatement
 	 * @param rows Object array of Object array of values to bind to the CQL.
 	 */
-	IngestOperation getIngestOperation(PreparedStatement ps, Object[][] rows);
+	IngestOperation buildIngestOperation(PreparedStatement ps, Object[][] rows);
 
 	/**
 	 * Calculates number of rows in table
@@ -438,7 +408,7 @@ public interface CqlOperations {
 	 * @param tableName
 	 * @return
 	 */
-	ProcessOperation<Long> getCountAllOperation(String tableName);
+	ProcessOperation<Long> buildCountAllOperation(String tableName);
 
 	/**
 	 * Delete all rows in the table
@@ -452,7 +422,7 @@ public interface CqlOperations {
 	 * 
 	 * @param tableName
 	 */
-	UpdateOperation getTruncateOperation(String tableName);
+	ExecuteOperation buildTruncateOperation(String tableName);
 
 	/**
 	 * Support admin operations
@@ -460,7 +430,7 @@ public interface CqlOperations {
 	 * @return CassandraAdminOperations
 	 */
 
-	AdminCqlOperations adminOps();
+	AdminCqlOperations getAdminOperations();
 
 	/**
 	 * Support schema operations
@@ -468,6 +438,6 @@ public interface CqlOperations {
 	 * @return CassandraSchemaOperations
 	 */
 
-	SchemaCqlOperations schemaOps();
+	SchemaCqlOperations getSchemaOperations();
 
 }
