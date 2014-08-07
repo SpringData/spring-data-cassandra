@@ -2,7 +2,7 @@ Spring Data Cassandra
 =====================
 
 This is a SpringFramework Data project for Cassandra that uses the binary CQL3 protocol via
-the official DataStax 1.x Java [driver](https://github.com/datastax/java-driver) for Cassandra 1.2.
+the official DataStax 2.x Java [driver](https://github.com/datastax/java-driver) for Cassandra 2.0.
 
 Supports native CQL3 queries in SpringFramework Data Repositories.
 
@@ -11,13 +11,12 @@ Versions
 
 Current versions:
 
- - CQL 3.0
+ - CQL 3.1
 
- - Cassandra 1.2.12
+ - Cassandra 2.0
 
- - Datastax Java Driver 1.0.5-dse
+ - Datastax Java Driver 2.0.4
 
-Works with Cassandra 2.0.x through Datastax Driver 1.0.5-dse as well.
 
 Requirements
 --------
@@ -39,7 +38,7 @@ This project has two modules:
  - [Spring Data Cassandra](cassandra)
 
 Spring Data Cql gives ability to use CqlTemplate and makes operations based in CQL.
-Spring Data Cassandra gives ability to use CassandraTemplate and CassandraRepository. 
+Spring Data Cassandra gives ability to use CassandraTemplate and CassandraRepository.
 
 Building
 --------
@@ -70,13 +69,13 @@ Add dependencies to pom.xml
 <dependency>
   <groupId>org.springdata</groupId>
   <artifactId>spring-data-cql</artifactId>
-  <version>1.2.0.BUILD-SNAPSHOT</version>
+  <version>2.0.0.BUILD-SNAPSHOT</version>
 </dependency>
 
 <dependency>
   <groupId>org.springdata</groupId>
   <artifactId>spring-data-cassandra</artifactId>
-  <version>1.2.0.BUILD-SNAPSHOT</version>
+  <version>2.0.0.BUILD-SNAPSHOT</version>
 </dependency>
 
 ```
@@ -95,4 +94,3 @@ A few steps to make this process easy for us:
  - Please use [eclipse-formatting.xml] (eclipse-formatting.xml) or similar formatting for Idea with auto-save option.
  - Create a new issue in https://github.com/SpringData/spring-data-cassandra/issues/ and refer this issue in the push request.
  - Thank you.
-
