@@ -47,9 +47,9 @@
 		<project.type>multi</project.type>
 		<dist.id>spring-data-cassandra</dist.id>
 		<springdata.commons>1.6.2.RELEASE</springdata.commons>
-		<cassandra-unit.version>1.2.0.1</cassandra-unit.version>
-		<cassandra-driver-core.version>1.0.5-dse</cassandra-driver-core.version>
-		<guava.version>14.0.1</guava.version>
+		<cassandra-unit.version>2.0.2.1</cassandra-unit.version>
+		<cassandra-driver-core.version>2.0.4</cassandra-driver-core.version>
+		<guava.version>16.0.1</guava.version>
 
 		<apt>1.1.0</apt>
 		<aspectj>1.7.2</aspectj>
@@ -63,6 +63,8 @@
 		<slf4j>1.7.1</slf4j>
 		<spring>3.2.9.RELEASE</spring>
 		<webbeans>1.1.7</webbeans>
+		<slf4j>1.7.4</slf4j>
+		<jackson>1.9.13</jackson>
 	</properties>
 
 	<developers>
@@ -198,10 +200,18 @@
 				<artifactId>cassandra-driver-core</artifactId>
 				<version>${cassandra-driver-core.version}</version>
 				<exclusions>
+				    <exclusion>
+						<artifactId>slf4j-log4j12</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>				
 					<exclusion>
 						<artifactId>slf4j-log4j12</artifactId>
 						<groupId>org.slf4j</groupId>
 					</exclusion>
+					<exclusion>
+						<artifactId>guava</artifactId>
+						<groupId>com.google.guava</groupId>
+					</exclusion>					
 				</exclusions>
 			</dependency>
 
@@ -247,7 +257,7 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.7.4</version>
+				<version>${slf4j}</version>
 			</dependency>
 
 			<!-- CDI -->
@@ -276,14 +286,14 @@
 			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-mapper-asl</artifactId>
-				<version>1.9.13</version>
+				<version>${jackson}</version>
 				<scope>test</scope>
 			</dependency>
 
 			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-core-asl</artifactId>
-				<version>1.9.13</version>
+				<version>${jackson}</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -294,8 +304,8 @@
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>
-						<artifactId>cassandra-all</artifactId>
-						<groupId>org.apache.cassandra</groupId>
+						<groupId>com.datastax.cassandra</groupId>
+						<artifactId>cassandra-driver-core</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

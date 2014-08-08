@@ -22,7 +22,7 @@ import org.springdata.cassandra.mapping.CassandraPersistentEntity;
 import org.springdata.cql.core.AbstractExecuteOperation;
 import org.springframework.util.Assert;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.Delete;
@@ -119,13 +119,13 @@ public class DefaultDeleteOperation<T> extends AbstractExecuteOperation<DeleteOp
 	}
 
 	@Override
-	public Query createQuery() {
+	public Statement createQuery() {
 		return createStatement();
 	}
 
 	@SuppressWarnings("incomplete-switch")
 	@Override
-	public Statement createStatement() {
+	public RegularStatement createStatement() {
 
 		if (deleteBy == DeleteBy.ALL) {
 			return QueryBuilder.truncate(cassandraTemplate.getKeyspace(), getTableName());

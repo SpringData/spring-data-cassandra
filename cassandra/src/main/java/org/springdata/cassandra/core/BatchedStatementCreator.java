@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.core;
 
-import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.RegularStatement;
 
 /**
  * Batched Statement Creator interface to create Statements that are using in Batch operations.
@@ -30,7 +30,7 @@ public interface BatchedStatementCreator {
 	 * 
 	 * @return
 	 */
-	Statement createStatement();
+	RegularStatement createStatement();
 
 	/**
 	 * Defines specific table name for Statement creator

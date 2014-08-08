@@ -94,7 +94,7 @@ public class CqlClusterFactoryBean implements FactoryBean<Cluster>, Initializing
 			builder.withCompression(convertCompressionType(compressionType));
 		}
 
-		if(localPoolingOptions != null || remotePoolingOptions!=null){
+		if (localPoolingOptions != null || remotePoolingOptions != null) {
 			builder.withPoolingOptions(getPoolingOptions());
 		}
 
@@ -134,21 +134,21 @@ public class CqlClusterFactoryBean implements FactoryBean<Cluster>, Initializing
 		this.cluster = cluster;
 	}
 
-	private com.datastax.driver.core.PoolingOptions getPoolingOptions(){
+	private com.datastax.driver.core.PoolingOptions getPoolingOptions() {
 		com.datastax.driver.core.PoolingOptions poolingOptions = new com.datastax.driver.core.PoolingOptions();
 		if (localPoolingOptions != null) {
-			configPoolingOptions(poolingOptions,HostDistance.LOCAL, localPoolingOptions);
+			configPoolingOptions(poolingOptions, HostDistance.LOCAL, localPoolingOptions);
 		}
 
 		if (remotePoolingOptions != null) {
-			configPoolingOptions(poolingOptions,HostDistance.REMOTE, remotePoolingOptions);
+			configPoolingOptions(poolingOptions, HostDistance.REMOTE, remotePoolingOptions);
 		}
 		return poolingOptions;
 	}
-	
+
 	@Override
 	public void destroy() throws Exception {
-		this.cluster.shutdown();
+		this.cluster.close();
 	}
 
 	public void setContactPoints(String contactPoints) {
@@ -205,8 +205,8 @@ public class CqlClusterFactoryBean implements FactoryBean<Cluster>, Initializing
 		throw new IllegalArgumentException("unknown compression type " + type);
 	}
 
-	private static void configPoolingOptions(com.datastax.driver.core.PoolingOptions poolingOptions,HostDistance hostDistance,
-			PoolingOptions config) {
+	private static void configPoolingOptions(com.datastax.driver.core.PoolingOptions poolingOptions,
+			HostDistance hostDistance, PoolingOptions config) {
 
 		if (config.getMinSimultaneousRequests() != null) {
 			poolingOptions

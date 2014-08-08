@@ -22,10 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdata.cassandra.core.CassandraOperations;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.Statement;
 
 /**
- * Query to use a plain CQL String to create the {@link Query} to actually execute.
+ * Query to use a plain CQL String to create the {@link Statement} to actually execute.
  * 
  * @author Alex Shvid
  */

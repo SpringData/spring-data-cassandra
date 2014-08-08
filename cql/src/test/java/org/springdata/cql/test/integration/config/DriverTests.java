@@ -49,9 +49,9 @@ public class DriverTests {
 
 		Session session = cluster.connect();
 
-		session.shutdown();
+		session.close();
 
-		cluster.shutdown();
+		cluster.close();
 
 	}
 

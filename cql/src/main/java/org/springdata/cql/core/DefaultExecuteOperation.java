@@ -15,7 +15,7 @@
  */
 package org.springdata.cql.core;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.Statement;
 
 /**
  * Default update operation implementation
@@ -32,7 +32,7 @@ public class DefaultExecuteOperation extends AbstractExecuteOperation<ExecuteOpe
 		this(cqlTemplate, new SimpleQueryCreator(cql));
 	}
 
-	public DefaultExecuteOperation(CqlTemplate cqlTemplate, Query query) {
+	public DefaultExecuteOperation(CqlTemplate cqlTemplate, Statement query) {
 		this(cqlTemplate, new SimpleQueryCreator(query));
 	}
 
@@ -42,7 +42,7 @@ public class DefaultExecuteOperation extends AbstractExecuteOperation<ExecuteOpe
 	}
 
 	@Override
-	public Query createQuery() {
+	public Statement createQuery() {
 		return qc.createQuery();
 	}
 

@@ -23,8 +23,8 @@ import org.springdata.cql.core.CassandraFuture;
 import org.springdata.cql.core.CqlTemplate;
 import org.springdata.cql.core.QueryCreator;
 
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Statement;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -60,14 +60,14 @@ public abstract class AbstractGetOperation<T> extends AbstractQueryOperation<T, 
 
 	@Override
 	public T execute() {
-		Query query = doCreateQuery(this);
+		Statement query = doCreateQuery(this);
 		ResultSet resultSet = doExecute(query);
 		return transform(resultSet);
 	}
 
 	@Override
 	public CassandraFuture<T> executeAsync() {
-		Query query = doCreateQuery(this);
+		Statement query = doCreateQuery(this);
 		CassandraFuture<ResultSet> resultSetFuture = doExecuteAsync(query);
 
 		ListenableFuture<T> future = Futures.transform(resultSetFuture, new Function<ResultSet, T>() {
@@ -86,7 +86,7 @@ public abstract class AbstractGetOperation<T> extends AbstractQueryOperation<T, 
 	@Override
 	public void executeAsync(final CallbackHandler<T> cb) {
 
-		Query query = doCreateQuery(this);
+		Statement query = doCreateQuery(this);
 		doExecuteAsync(query, new CallbackHandler<ResultSet>() {
 
 			@Override
@@ -100,13 +100,13 @@ public abstract class AbstractGetOperation<T> extends AbstractQueryOperation<T, 
 
 	@Override
 	public T executeNonstop(int timeoutMls) throws TimeoutException {
-		Query query = doCreateQuery(this);
+		Statement query = doCreateQuery(this);
 		ResultSet resultSet = doExecuteNonstop(query, timeoutMls);
 		return transform(resultSet);
 	}
 
 	@Override
-	public Query toQuery() {
+	public Statement toQuery() {
 		return doCreateQuery(this);
 	}
 

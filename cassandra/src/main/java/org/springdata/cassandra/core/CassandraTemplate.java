@@ -35,10 +35,10 @@ import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.model.MappingException;
 import org.springframework.util.Assert;
 
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SimpleStatement;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
@@ -106,7 +106,7 @@ public class CassandraTemplate implements CassandraOperations {
 		return new AbstractFindOperation<T>(this, entityClass) {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				Select select = QueryBuilder.select().all().from(cassandraTemplate.getKeyspace(), getTableName());
 				return select;
 			}
@@ -140,7 +140,7 @@ public class CassandraTemplate implements CassandraOperations {
 		return new AbstractFindOneOperation<T>(this, entityClass) {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				Select select = QueryBuilder.select().all().from(cassandraTemplate.getKeyspace(), getTableName());
 				Select.Where w = select.where();
 
@@ -172,7 +172,7 @@ public class CassandraTemplate implements CassandraOperations {
 		return new AbstractFindOperation<T>(this, entityClass) {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				Select select = QueryBuilder.select().all().from(cassandraTemplate.getKeyspace(), getTableName());
 				Select.Where w = select.where();
 
@@ -204,7 +204,7 @@ public class CassandraTemplate implements CassandraOperations {
 		return new AbstractFindOperation<T>(this, entityClass) {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				return new SimpleStatement(cql);
 			}
 
@@ -225,7 +225,7 @@ public class CassandraTemplate implements CassandraOperations {
 		return new AbstractFindOneOperation<T>(this, entityClass) {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				return new SimpleStatement(cql);
 			}
 

@@ -24,7 +24,7 @@ import org.springdata.cql.core.CallbackHandler;
 import org.springdata.cql.core.CassandraFuture;
 import org.springdata.cql.core.CqlTemplate;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.Batch;
@@ -46,7 +46,7 @@ public abstract class AbstractMultiGetOperation<T> extends AbstractQueryOperatio
 
 	private String tableName;
 
-	public abstract Iterator<Query> getQueryIterator();
+	public abstract Iterator<Statement> getQueryIterator();
 
 	public abstract T transform(List<ResultSet> resultSets);
 
@@ -66,14 +66,14 @@ public abstract class AbstractMultiGetOperation<T> extends AbstractQueryOperatio
 
 	@Override
 	public T execute() {
-		Iterator<Query> queryIterator = getQueryIterator();
+		Iterator<Statement> queryIterator = getQueryIterator();
 		List<ResultSet> resultSets = doExecute(queryIterator);
 		return transform(resultSets);
 	}
 
 	@Override
 	public CassandraFuture<T> executeAsync() {
-		Iterator<Query> queryIterator = getQueryIterator();
+		Iterator<Statement> queryIterator = getQueryIterator();
 		CassandraFuture<List<ResultSet>> resultSetsFuture = doExecuteAsync(queryIterator);
 
 		ListenableFuture<T> future = Futures.transform(resultSetsFuture, new Function<List<ResultSet>, T>() {
@@ -92,7 +92,7 @@ public abstract class AbstractMultiGetOperation<T> extends AbstractQueryOperatio
 	@Override
 	public void executeAsync(final CallbackHandler<T> cb) {
 
-		Iterator<Query> queryIterator = getQueryIterator();
+		Iterator<Statement> queryIterator = getQueryIterator();
 		doExecuteAsync(queryIterator, new CallbackHandler<List<ResultSet>>() {
 
 			@Override
@@ -106,23 +106,23 @@ public abstract class AbstractMultiGetOperation<T> extends AbstractQueryOperatio
 
 	@Override
 	public T executeNonstop(int timeoutMls) throws TimeoutException {
-		Iterator<Query> queryIterator = getQueryIterator();
+		Iterator<Statement> queryIterator = getQueryIterator();
 		List<ResultSet> resultSets = doExecuteNonstop(queryIterator, timeoutMls);
 		return transform(resultSets);
 	}
 
 	@Override
-	public Query toQuery() {
+	public Statement toQuery() {
 
-		Iterator<Query> queryIterator = getQueryIterator();
+		Iterator<Statement> queryIterator = getQueryIterator();
 		Batch batch = QueryBuilder.batch();
 
 		while (queryIterator.hasNext()) {
 
-			Query query = queryIterator.next();
+			Statement query = queryIterator.next();
 
-			if (query instanceof Statement) {
-				Statement statement = (Statement) query;
+			if (query instanceof RegularStatement) {
+				RegularStatement statement = (RegularStatement) query;
 				batch.add(statement);
 			} else {
 				throw new IllegalArgumentException("query is not a statement " + query);

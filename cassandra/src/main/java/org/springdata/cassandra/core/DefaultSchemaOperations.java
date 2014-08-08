@@ -21,10 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
-import org.springdata.cql.core.DefaultIngestOperation;
 import org.springdata.cql.core.DefaultExecuteOperation;
-import org.springdata.cql.core.IngestOperation;
+import org.springdata.cql.core.DefaultIngestOperation;
 import org.springdata.cql.core.ExecuteOperation;
+import org.springdata.cql.core.IngestOperation;
 import org.springdata.cql.generator.AlterTableCqlGenerator;
 import org.springdata.cql.generator.CreateIndexCqlGenerator;
 import org.springdata.cql.generator.CreateTableCqlGenerator;
@@ -39,8 +39,8 @@ import org.springdata.cql.spec.WithNameSpecification;
 import org.springframework.data.mapping.model.MappingException;
 import org.springframework.util.Assert;
 
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.SimpleStatement;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.TableMetadata;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -118,7 +118,8 @@ public class DefaultSchemaOperations implements SchemaOperations {
 
 		final CassandraPersistentEntity<?> entity = cassandraTemplate.getPersistentEntity(entityClass);
 
-		TableMetadata tableMetadata = cassandraTemplate.getCqlOperations().getSchemaOperations().getTableMetadata(tableName);
+		TableMetadata tableMetadata = cassandraTemplate.getCqlOperations().getSchemaOperations()
+				.getTableMetadata(tableName);
 
 		AlterTableSpecification spec = cassandraTemplate.getConverter().getAlterTableSpecification(entity, tableMetadata,
 				dropRemovedAttributeColumns);
@@ -154,11 +155,11 @@ public class DefaultSchemaOperations implements SchemaOperations {
 
 		List<CreateIndexSpecification> specList = cassandraTemplate.getConverter().getCreateIndexSpecifications(entity);
 
-		Iterator<Query> queryIterator = Iterators.transform(specList.iterator(),
-				new Function<CreateIndexSpecification, Query>() {
+		Iterator<Statement> queryIterator = Iterators.transform(specList.iterator(),
+				new Function<CreateIndexSpecification, Statement>() {
 
 					@Override
-					public Query apply(CreateIndexSpecification spec) {
+					public Statement apply(CreateIndexSpecification spec) {
 						String cql = new CreateIndexCqlGenerator(spec).toCql();
 						return new SimpleStatement(cql);
 					}
@@ -176,10 +177,10 @@ public class DefaultSchemaOperations implements SchemaOperations {
 
 		List<String> cqlList = alterIndexesCql(tableName, entityClass);
 
-		Iterator<Query> queryIterator = Iterators.transform(cqlList.iterator(), new Function<String, Query>() {
+		Iterator<Statement> queryIterator = Iterators.transform(cqlList.iterator(), new Function<String, Statement>() {
 
 			@Override
-			public Query apply(String cql) {
+			public Statement apply(String cql) {
 				return new SimpleStatement(cql);
 			}
 
@@ -209,7 +210,8 @@ public class DefaultSchemaOperations implements SchemaOperations {
 
 		CassandraPersistentEntity<?> entity = cassandraTemplate.getPersistentEntity(entityClass);
 
-		TableMetadata tableMetadata = cassandraTemplate.getCqlOperations().getSchemaOperations().getTableMetadata(tableName);
+		TableMetadata tableMetadata = cassandraTemplate.getCqlOperations().getSchemaOperations()
+				.getTableMetadata(tableName);
 
 		List<WithNameSpecification<?>> specList = cassandraTemplate.getConverter().getIndexChangeSpecifications(entity,
 				tableMetadata);

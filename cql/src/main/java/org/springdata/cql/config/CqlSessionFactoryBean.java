@@ -181,7 +181,7 @@ public class CqlSessionFactoryBean implements FactoryBean<Session>, Initializing
 			adminOps.dropKeyspace(keyspace).execute();
 
 		}
-		this.session.shutdown();
+		this.session.close();
 	}
 
 	public void setKeyspace(String keyspace) {

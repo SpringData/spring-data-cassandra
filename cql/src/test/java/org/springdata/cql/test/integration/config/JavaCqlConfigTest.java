@@ -15,12 +15,8 @@
  */
 package org.springdata.cql.test.integration.config;
 
-import java.io.IOException;
-
 import javax.inject.Inject;
 
-import org.apache.cassandra.exceptions.ConfigurationException;
-import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -43,7 +39,7 @@ import com.datastax.driver.core.Session;
 public class JavaCqlConfigTest {
 
 	@BeforeClass
-	public static void startCassandra() throws ConfigurationException, TTransportException, IOException {
+	public static void startCassandra() throws Exception {
 		EmbeddedCassandraServerHelper.startEmbeddedCassandra("cassandra.yaml");
 	}
 

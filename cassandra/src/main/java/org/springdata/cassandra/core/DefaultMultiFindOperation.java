@@ -23,9 +23,9 @@ import org.springdata.cassandra.mapping.CassandraPersistentEntity;
 import org.springdata.cql.core.QueryCreator;
 import org.springframework.data.convert.EntityReader;
 
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
@@ -57,18 +57,18 @@ public class DefaultMultiFindOperation<T> extends AbstractMultiGetOperation<List
 	}
 
 	@Override
-	public Iterator<Query> getQueryIterator() {
+	public Iterator<Statement> getQueryIterator() {
 
 		final String tableName = getTableName() != null ? getTableName() : entity.getTableName();
 
-		return Iterators.transform(ids, new Function<Object, Query>() {
+		return Iterators.transform(ids, new Function<Object, Statement>() {
 
 			@Override
-			public Query apply(final Object id) {
+			public Statement apply(final Object id) {
 				return cassandraTemplate.getCqlOperations().createQuery(new QueryCreator() {
 
 					@Override
-					public Query createQuery() {
+					public Statement createQuery() {
 
 						Select select = QueryBuilder.select().all().from(cassandraTemplate.getKeyspace(), tableName);
 						Select.Where w = select.where();

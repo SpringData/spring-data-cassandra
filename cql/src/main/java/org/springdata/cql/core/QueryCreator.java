@@ -15,7 +15,7 @@
  */
 package org.springdata.cql.core;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.Statement;
 
 /**
  * Base interface to create query
@@ -32,6 +32,6 @@ public interface QueryCreator {
 	 * @return
 	 */
 
-	Query createQuery();
+	Statement createQuery();
 
 }

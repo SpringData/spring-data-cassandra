@@ -19,9 +19,9 @@ import java.util.Iterator;
 
 import org.springframework.util.Assert;
 
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 
@@ -58,7 +58,7 @@ public class DefaultCountOperation<T> extends AbstractGetOperation<Long> {
 	}
 
 	@Override
-	public Query createQuery() {
+	public Statement createQuery() {
 
 		String tableName = getTableName();
 		if (tableName == null) {

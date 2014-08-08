@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.core;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
@@ -34,12 +34,12 @@ public class DefaultSaveNewOperation<T> extends AbstractSaveOperation<T, SaveNew
 	}
 
 	@Override
-	public Query createQuery() {
+	public Statement createQuery() {
 		return createStatement();
 	}
 
 	@Override
-	public Statement createStatement() {
+	public RegularStatement createStatement() {
 
 		Insert query = QueryBuilder.insertInto(cassandraTemplate.getKeyspace(), getTableName());
 

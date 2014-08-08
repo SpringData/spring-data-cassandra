@@ -18,7 +18,7 @@ package org.springdata.cql.support.exception;
 
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.Statement;
 
 /**
  * Spring data access exception for a Cassandra query syntax error.
@@ -29,7 +29,7 @@ import com.datastax.driver.core.Query;
 public class CassandraQuerySyntaxException extends InvalidDataAccessApiUsageException implements CassandraQueryAware {
 
 	private static final long serialVersionUID = 4398474399882434154L;
-	private Query query;
+	private Statement query;
 
 	public CassandraQuerySyntaxException(String msg) {
 		super(msg);
@@ -40,7 +40,7 @@ public class CassandraQuerySyntaxException extends InvalidDataAccessApiUsageExce
 	}
 
 	@Override
-	public void setQuery(Query query) {
+	public void setQuery(Statement query) {
 		this.query = query;
 	}
 

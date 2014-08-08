@@ -22,9 +22,9 @@ import java.util.List;
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
 import org.springframework.util.Assert;
 
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.Clause;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
@@ -76,7 +76,7 @@ public class DefaultExistsOperation<T> extends AbstractGetOperation<Boolean> {
 	}
 
 	@Override
-	public Query createQuery() {
+	public Statement createQuery() {
 
 		String tableName = getTableName();
 		if (tableName == null) {

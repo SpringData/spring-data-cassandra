@@ -19,7 +19,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.Statement;
 
 /**
  * Cassandra Query Operation
@@ -108,6 +108,6 @@ public interface QueryOperation<T, O extends QueryOperation<T, O>> {
 	 * @return cql Query
 	 */
 
-	Query toQuery();
+	Statement toQuery();
 
 }

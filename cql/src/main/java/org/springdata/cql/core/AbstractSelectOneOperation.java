@@ -20,9 +20,9 @@ import java.util.concurrent.TimeoutException;
 
 import org.springdata.cql.support.exception.CassandraNotSingleResultException;
 
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
+import com.datastax.driver.core.Statement;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -36,10 +36,10 @@ import com.google.common.util.concurrent.ListenableFuture;
 public abstract class AbstractSelectOneOperation extends AbstractQueryOperation<Row, SelectOneOperation> implements
 		SelectOneOperation {
 
-	private final Query query;
+	private final Statement query;
 	private final boolean singleResult;
 
-	protected AbstractSelectOneOperation(CqlTemplate cqlTemplate, Query query, boolean singleResult) {
+	protected AbstractSelectOneOperation(CqlTemplate cqlTemplate, Statement query, boolean singleResult) {
 		super(cqlTemplate);
 		this.query = query;
 		this.singleResult = singleResult;
@@ -88,7 +88,7 @@ public abstract class AbstractSelectOneOperation extends AbstractQueryOperation<
 	}
 
 	@Override
-	public Query toQuery() {
+	public Statement toQuery() {
 		return query;
 	}
 

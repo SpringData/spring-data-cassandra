@@ -25,9 +25,9 @@ import java.util.concurrent.TimeoutException;
 import org.springframework.util.Assert;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
+import com.datastax.driver.core.Statement;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.util.concurrent.FutureCallback;
@@ -98,7 +98,7 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 		return (O) this;
 	}
 
-	protected void addQueryOptions(Query query) {
+	protected void addQueryOptions(Statement query) {
 
 		/*
 		 * Add Query Options
@@ -121,16 +121,16 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 		}
 	}
 
-	protected Query doCreateQuery(QueryCreator qc) {
+	protected Statement doCreateQuery(QueryCreator qc) {
 		return cqlTemplate.createQuery(qc);
 	}
 
-	protected ResultSet doExecute(Query query) {
+	protected ResultSet doExecute(Statement query) {
 		addQueryOptions(query);
 		return cqlTemplate.doExecute(query);
 	}
 
-	protected CassandraFuture<ResultSet> doExecuteAsync(Query query) {
+	protected CassandraFuture<ResultSet> doExecuteAsync(Statement query) {
 		addQueryOptions(query);
 		ResultSetFuture resultSetFuture = cqlTemplate.doExecuteAsync(query);
 		CassandraFuture<ResultSet> wrappedFuture = new CassandraFuture<ResultSet>(resultSetFuture,
@@ -138,7 +138,7 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 		return wrappedFuture;
 	}
 
-	protected void doExecuteAsync(Query query, final CallbackHandler<ResultSet> cb) {
+	protected void doExecuteAsync(Statement query, final CallbackHandler<ResultSet> cb) {
 		addQueryOptions(query);
 		ResultSetFuture resultSetFuture = cqlTemplate.doExecuteAsync(query);
 		doFutureCallback(resultSetFuture, cb);
@@ -164,7 +164,7 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 		}, getExecutor());
 	}
 
-	protected ResultSet doExecuteNonstop(Query query, int timeoutMls) throws TimeoutException {
+	protected ResultSet doExecuteNonstop(Statement query, int timeoutMls) throws TimeoutException {
 		addQueryOptions(query);
 		ResultSetFuture resultSetFuture = cqlTemplate.doExecuteAsync(query);
 		CassandraFuture<ResultSet> wrappedFuture = new CassandraFuture<ResultSet>(resultSetFuture,
@@ -186,11 +186,11 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 	 * Parallel execution
 	 */
 
-	protected List<ResultSet> doExecute(Iterator<Query> queryIterator) {
+	protected List<ResultSet> doExecute(Iterator<Statement> queryIterator) {
 		return doExecuteAsync(queryIterator).getUninterruptibly();
 	}
 
-	protected CassandraFuture<List<ResultSet>> doExecuteAsync(Iterator<Query> queryIterator) {
+	protected CassandraFuture<List<ResultSet>> doExecuteAsync(Iterator<Statement> queryIterator) {
 
 		if (!queryIterator.hasNext()) {
 			ListenableFuture<List<ResultSet>> emptyResultFuture = Futures
@@ -203,10 +203,10 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 		}
 
 		final Iterator<ListenableFuture<ResultSet>> resultSetFutures = Iterators.transform(queryIterator,
-				new Function<Query, ListenableFuture<ResultSet>>() {
+				new Function<Statement, ListenableFuture<ResultSet>>() {
 
 					@Override
-					public ListenableFuture<ResultSet> apply(Query query) {
+					public ListenableFuture<ResultSet> apply(Statement query) {
 						return doExecuteAsync(query);
 					}
 
@@ -228,12 +228,12 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 		return wrappedFuture;
 	}
 
-	protected void doExecuteAsync(Iterator<Query> queryIterator, CallbackHandler<List<ResultSet>> cb) {
+	protected void doExecuteAsync(Iterator<Statement> queryIterator, CallbackHandler<List<ResultSet>> cb) {
 		CassandraFuture<List<ResultSet>> allResultSetFuture = doExecuteAsync(queryIterator);
 		doFutureCallback(allResultSetFuture, cb);
 	}
 
-	protected List<ResultSet> doExecuteNonstop(Iterator<Query> queryIterator, int timeoutMls) throws TimeoutException {
+	protected List<ResultSet> doExecuteNonstop(Iterator<Statement> queryIterator, int timeoutMls) throws TimeoutException {
 		return doExecuteAsync(queryIterator).getUninterruptibly(timeoutMls, TimeUnit.MILLISECONDS);
 	}
 

@@ -37,7 +37,7 @@ import com.datastax.driver.core.DataType;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Row;
@@ -150,7 +150,7 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public Query createQuery(QueryCreator qc) {
+	public Statement createQuery(QueryCreator qc) {
 		Assert.notNull(qc);
 		return doCreateQuery(qc);
 	}
@@ -162,7 +162,7 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public ResultSet execute(Query query) {
+	public ResultSet execute(Statement query) {
 		Assert.notNull(query);
 		return doExecute(query);
 	}
@@ -180,7 +180,7 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public ExecuteOperation buildExecuteOperation(Query query) {
+	public ExecuteOperation buildExecuteOperation(Statement query) {
 		Assert.notNull(query);
 		return new DefaultExecuteOperation(this, query);
 	}
@@ -207,7 +207,7 @@ public class CqlTemplate implements CqlOperations {
 		return new DefaultExecuteOperation(this, new QueryCreator() {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				return bs;
 			}
 
@@ -234,20 +234,20 @@ public class CqlTemplate implements CqlOperations {
 	public ExecuteOperation buildExecuteInBatchOperation(final String[] cqls) {
 		Assert.notNull(cqls);
 
-		final Iterator<Statement> statements = Iterators.transform(new ArrayIterator<String>(cqls),
-				new Function<String, Statement>() {
+		final Iterator<RegularStatement> statements = Iterators.transform(new ArrayIterator<String>(cqls),
+				new Function<String, RegularStatement>() {
 
 					@Override
-					public Statement apply(String cql) {
+					public RegularStatement apply(String cql) {
 						return new SimpleStatement(cql);
 					}
 
 				});
 
-		return buildExecuteInBatchOperation(new Iterable<Statement>() {
+		return buildExecuteInBatchOperation(new Iterable<RegularStatement>() {
 
 			@Override
-			public Iterator<Statement> iterator() {
+			public Iterator<RegularStatement> iterator() {
 				return statements;
 			}
 
@@ -255,18 +255,18 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public ResultSet executeInBatch(Iterable<Statement> statements) {
+	public ResultSet executeInBatch(Iterable<RegularStatement> statements) {
 		return buildExecuteInBatchOperation(statements).execute();
 	}
 
 	@Override
-	public ExecuteOperation buildExecuteInBatchOperation(final Iterable<Statement> statements) {
+	public ExecuteOperation buildExecuteInBatchOperation(final Iterable<RegularStatement> statements) {
 		Assert.notNull(statements);
 
 		return new DefaultExecuteOperation(this, new QueryCreator() {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 
 				/*
 				 * Return variable is a Batch statement
@@ -274,7 +274,7 @@ public class CqlTemplate implements CqlOperations {
 				final Batch batch = QueryBuilder.batch();
 
 				boolean emptyBatch = true;
-				for (Statement statement : statements) {
+				for (RegularStatement statement : statements) {
 
 					Assert.notNull(statement);
 
@@ -295,7 +295,7 @@ public class CqlTemplate implements CqlOperations {
 	@Override
 	public SelectOperation buildSelectOperation(String cql) {
 		Assert.notNull(cql);
-		Query query = new SimpleStatement(cql);
+		Statement query = new SimpleStatement(cql);
 		return new DefaultSelectOperation(this, query);
 	}
 
@@ -315,7 +315,7 @@ public class CqlTemplate implements CqlOperations {
 	@Override
 	public SelectOperation buildSelectOperation(QueryCreator qc) {
 		Assert.notNull(qc);
-		Query query = doCreateQuery(qc);
+		Statement query = doCreateQuery(qc);
 		return new DefaultSelectOperation(this, query);
 	}
 
@@ -325,7 +325,7 @@ public class CqlTemplate implements CqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	protected Query doCreateQuery(QueryCreator qc) {
+	protected Statement doCreateQuery(QueryCreator qc) {
 
 		try {
 
@@ -359,7 +359,7 @@ public class CqlTemplate implements CqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	protected ResultSet doExecute(final Query query) {
+	protected ResultSet doExecute(final Statement query) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(query.toString());
@@ -385,7 +385,7 @@ public class CqlTemplate implements CqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	protected ResultSetFuture doExecuteAsync(final Query query) {
+	protected ResultSetFuture doExecuteAsync(final Statement query) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(query.toString());
@@ -813,10 +813,10 @@ public class CqlTemplate implements CqlOperations {
 		Assert.notNull(ps);
 		Assert.notNull(rows);
 
-		Iterator<Query> queryIterator = Iterators.transform(rows.iterator(), new Function<Object[], Query>() {
+		Iterator<Statement> queryIterator = Iterators.transform(rows.iterator(), new Function<Object[], Statement>() {
 
 			@Override
-			public Query apply(final Object[] values) {
+			public Statement apply(final Object[] values) {
 
 				BoundStatement bs = doBind(ps, new PreparedStatementBinder() {
 
@@ -901,7 +901,7 @@ public class CqlTemplate implements CqlOperations {
 		return buildSelectOperation(new QueryCreator() {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				Select select = QueryBuilder.select().countAll().from(tableName);
 				return select;
 			}
@@ -920,7 +920,7 @@ public class CqlTemplate implements CqlOperations {
 		return new DefaultExecuteOperation(this, new QueryCreator() {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				return QueryBuilder.truncate(tableName);
 			}
 

@@ -20,7 +20,7 @@ import java.util.Iterator;
 import org.springdata.cql.core.AbstractExecuteOperation;
 import org.springdata.cql.core.SessionCallback;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.Batch;
@@ -51,7 +51,7 @@ public class DefaultBatchOperation extends AbstractExecuteOperation<BatchOperati
 	}
 
 	@Override
-	public Query createQuery() {
+	public Statement createQuery() {
 
 		/*
 		 * Return variable is a Batch statement
@@ -63,7 +63,7 @@ public class DefaultBatchOperation extends AbstractExecuteOperation<BatchOperati
 		while (iterator.hasNext()) {
 
 			BatchedStatementCreator bsc = iterator.next();
-			Statement statement = doCreateStatement(bsc);
+			RegularStatement statement = doCreateStatement(bsc);
 			batch.add(statement);
 
 			emptyBatch = false;
@@ -76,16 +76,16 @@ public class DefaultBatchOperation extends AbstractExecuteOperation<BatchOperati
 		return batch;
 	}
 
-	private Statement doCreateStatement(final BatchedStatementCreator bsc) {
+	private RegularStatement doCreateStatement(final BatchedStatementCreator bsc) {
 
 		if (tableName != null) {
 			bsc.setTableName(tableName);
 		}
 
-		return cassandraTemplate.cqlTemplate().execute(new SessionCallback<Statement>() {
+		return cassandraTemplate.cqlTemplate().execute(new SessionCallback<RegularStatement>() {
 
 			@Override
-			public Statement doInSession(Session session) {
+			public RegularStatement doInSession(Session session) {
 				return bsc.createStatement();
 			}
 

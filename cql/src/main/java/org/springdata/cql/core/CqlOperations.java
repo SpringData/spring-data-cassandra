@@ -20,7 +20,7 @@ import java.util.Map;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
@@ -40,7 +40,7 @@ public interface CqlOperations {
 	 * @param qc - QueryCreator interface
 	 * @return
 	 */
-	Query createQuery(QueryCreator qc);
+	Statement createQuery(QueryCreator qc);
 
 	/**
 	 * Executes the supplied {@link SessionCallback} in the current Template Session. The implementation of
@@ -58,7 +58,7 @@ public interface CqlOperations {
 	 * @return ResultSet
 	 */
 
-	ResultSet execute(Query query);
+	ResultSet execute(Statement query);
 
 	/**
 	 * Executes the supplied CQL Query and returns ResultSet
@@ -79,7 +79,7 @@ public interface CqlOperations {
 	 * 
 	 * @param cql The CQL String
 	 */
-	ExecuteOperation buildExecuteOperation(Query query);
+	ExecuteOperation buildExecuteOperation(Statement query);
 
 	/**
 	 * Executes the supplied PreparedStatement with custom binder
@@ -144,14 +144,14 @@ public interface CqlOperations {
 	 * 
 	 * @param statements The Statements
 	 */
-	ResultSet executeInBatch(Iterable<Statement> statements);
+	ResultSet executeInBatch(Iterable<RegularStatement> statements);
 
 	/**
 	 * Builds ExecuteOperation for the supplied CQL Query batch
 	 * 
 	 * @param statements The Statements
 	 */
-	ExecuteOperation buildExecuteInBatchOperation(Iterable<Statement> statements);
+	ExecuteOperation buildExecuteInBatchOperation(Iterable<RegularStatement> statements);
 
 	/**
 	 * Builds SelectOperation for the provided CQL Query

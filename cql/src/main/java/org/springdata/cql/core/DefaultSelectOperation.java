@@ -21,8 +21,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Statement;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -37,9 +37,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, SelectOperation> implements
 		SelectOperation {
 
-	private final Query query;
+	private final Statement query;
 
-	protected DefaultSelectOperation(CqlTemplate cqlTemplate, Query query) {
+	protected DefaultSelectOperation(CqlTemplate cqlTemplate, Statement query) {
 		super(cqlTemplate);
 		this.query = query;
 	}
@@ -164,7 +164,7 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 	}
 
 	@Override
-	public Query toQuery() {
+	public Statement toQuery() {
 		return query;
 	}
 
@@ -207,7 +207,7 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 		}
 
 		@Override
-		public Query toQuery() {
+		public Statement toQuery() {
 			return delegate.toQuery();
 		}
 

@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.Batch;
@@ -35,9 +35,9 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
 public class DefaultIngestOperation extends AbstractQueryOperation<List<ResultSet>, IngestOperation> implements
 		IngestOperation {
 
-	private final Iterator<Query> queryIterator;
+	private final Iterator<Statement> queryIterator;
 
-	public DefaultIngestOperation(CqlTemplate cqlTemplate, Iterator<Query> iterator) {
+	public DefaultIngestOperation(CqlTemplate cqlTemplate, Iterator<Statement> iterator) {
 		super(cqlTemplate);
 		this.queryIterator = iterator;
 	}
@@ -63,19 +63,19 @@ public class DefaultIngestOperation extends AbstractQueryOperation<List<ResultSe
 	}
 
 	@Override
-	public Query toQuery() {
+	public Statement toQuery() {
 
 		Batch batch = QueryBuilder.batch();
 
 		while (queryIterator.hasNext()) {
 
-			Query query = queryIterator.next();
+			Statement query = queryIterator.next();
 
-			if (query instanceof Statement) {
-				Statement statement = (Statement) query;
+			if (query instanceof RegularStatement) {
+				RegularStatement statement = (RegularStatement) query;
 				batch.add(statement);
 			} else {
-				throw new IllegalArgumentException("query is not a statement " + query);
+				throw new IllegalArgumentException("query is not a regular statement " + query);
 			}
 
 		}

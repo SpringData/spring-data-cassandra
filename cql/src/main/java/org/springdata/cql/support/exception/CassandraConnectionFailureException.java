@@ -16,7 +16,7 @@
 
 package org.springdata.cql.support.exception;
 
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,19 +27,21 @@ import org.springframework.dao.DataAccessResourceFailureException;
  * Spring data access exception for Cassandra when no host is available.
  * 
  * @author Matthew T. Adams
+ * @author Alex Shvid
  */
 public class CassandraConnectionFailureException extends DataAccessResourceFailureException {
 
 	private static final long serialVersionUID = 6299912054261646552L;
 
-	private final Map<InetAddress, String> messagesByHost = new HashMap<InetAddress, String>();
+	private final Map<InetSocketAddress, Throwable> messagesByHost = new HashMap<InetSocketAddress, Throwable>();
 
-	public CassandraConnectionFailureException(Map<InetAddress, String> messagesByHost, String msg, Throwable cause) {
+	public CassandraConnectionFailureException(Map<InetSocketAddress, Throwable> messagesByHost, String msg,
+			Throwable cause) {
 		super(msg, cause);
 		this.messagesByHost.putAll(messagesByHost);
 	}
 
-	public Map<InetAddress, String> getMessagesByHost() {
+	public Map<InetSocketAddress, Throwable> getMessagesByHost() {
 		return Collections.unmodifiableMap(messagesByHost);
 	}
 }

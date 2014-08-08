@@ -50,8 +50,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 import com.google.common.collect.Lists;
@@ -711,8 +711,8 @@ public class CassandraTemplateTest {
 		cassandraTemplate.buildSaveNewInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
 				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
 
-		cassandraTemplate.buildDeleteByIdInBatchOperation(Book.class, ids(books)).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+		cassandraTemplate.buildDeleteByIdInBatchOperation(Book.class, ids(books))
+				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
 
 	}
 
@@ -754,8 +754,8 @@ public class CassandraTemplateTest {
 		cassandraTemplate.buildSaveNewInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
 				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
 
-		cassandraTemplate.buildDeleteByIdInBatchOperation(Book.class, ids(books)).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+		cassandraTemplate.buildDeleteByIdInBatchOperation(Book.class, ids(books))
+				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
 
 	}
 
@@ -884,8 +884,8 @@ public class CassandraTemplateTest {
 
 		Select select = QueryBuilder.select().all().from("book");
 
-		List<Book> b = Lists
-				.newArrayList(cassandraTemplate.buildFindOperation(Book.class, select.getQueryString()).execute());
+		List<Book> b = Lists.newArrayList(cassandraTemplate.buildFindOperation(Book.class, select.getQueryString())
+				.execute());
 
 		log.info("Book Count -> " + b.size());
 
@@ -953,7 +953,7 @@ public class CassandraTemplateTest {
 		List<Book> books = cassandraTemplate.getCqlOperations().buildSelectOperation(new QueryCreator() {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 
@@ -984,7 +984,7 @@ public class CassandraTemplateTest {
 		List<Book> books = cassandraTemplate.getCqlOperations().buildSelectOperation(new QueryCreator() {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 
@@ -1015,7 +1015,7 @@ public class CassandraTemplateTest {
 		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new QueryCreator() {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 
@@ -1048,7 +1048,7 @@ public class CassandraTemplateTest {
 		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new QueryCreator() {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 
@@ -1091,7 +1091,7 @@ public class CassandraTemplateTest {
 		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new QueryCreator() {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 

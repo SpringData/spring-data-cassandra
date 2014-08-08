@@ -18,7 +18,7 @@ package org.springdata.cql.core;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.Statement;
 
 /**
  * Prepared Statement Query Creator
@@ -70,7 +70,7 @@ public class SimplePreparedStatementQueryCreator implements QueryCreator {
 	}
 
 	@Override
-	public Query createQuery() {
+	public Statement createQuery() {
 
 		BoundStatement bs = null;
 		if (psbOrNull != null) {

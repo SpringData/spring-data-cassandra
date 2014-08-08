@@ -15,7 +15,7 @@
  */
 package org.springdata.cql.support.exception;
 
-import com.datastax.driver.core.Query;
+import com.datastax.driver.core.Statement;
 
 /**
  * This interface is used to setup Query in specific query exceptions.
@@ -25,6 +25,6 @@ import com.datastax.driver.core.Query;
  */
 public interface CassandraQueryAware {
 
-	void setQuery(Query query);
+	void setQuery(Statement query);
 
 }

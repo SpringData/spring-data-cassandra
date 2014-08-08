@@ -38,10 +38,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.google.common.collect.ImmutableList;
 
@@ -194,8 +194,9 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 
 		final Book b1 = getBook(isbn);
 
-		ResultSet rs = cqlTemplate.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn='" + isbn + "'"))
-				.executeAsync().getUninterruptibly();
+		ResultSet rs = cqlTemplate
+				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn='" + isbn + "'")).executeAsync()
+				.getUninterruptibly();
 
 		assertNotNull(rs);
 
@@ -246,8 +247,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		insertBooks();
 
 		ResultSet rs = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('1234','2345','3456')")).executeAsync()
-				.getUninterruptibly();
+				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('1234','2345','3456')"))
+				.executeAsync().getUninterruptibly();
 
 		assertNotNull(rs);
 
@@ -271,8 +272,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 	@Test
 	public void queryForObjectTestCqlStringRowMapper() {
 
-		Book book = cqlTemplate.buildSelectOperation("select * from book where isbn in ('" + ISBN_NINES + "')").singleResult()
-				.map(new RowMapper<Book>() {
+		Book book = cqlTemplate.buildSelectOperation("select * from book where isbn in ('" + ISBN_NINES + "')")
+				.singleResult().map(new RowMapper<Book>() {
 					@Override
 					public Book mapRow(Row row, int rowNum) {
 						Book b = rowToBook(row);
@@ -293,7 +294,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		// Insert our 3 test books.
 		insertBooks();
 
-		Book book = cqlTemplate.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('1234','2345','3456')"))
+		Book book = cqlTemplate
+				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('1234','2345','3456')"))
 				.singleResult().map(new RowMapper<Book>() {
 					@Override
 					public Book mapRow(Row row, int rowNum) {
@@ -310,8 +312,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		insertBooks();
 
 		ResultSet rs = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('" + ISBN_NINES + "')")).executeAsync()
-				.getUninterruptibly();
+				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('" + ISBN_NINES + "')"))
+				.executeAsync().getUninterruptibly();
 
 		assertNotNull(rs);
 
@@ -330,8 +332,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 	@Test
 	public void quertForObjectTestCqlStringRequiredType() {
 
-		String title = cqlTemplate.buildSelectOperation("select title from book where isbn in ('" + ISBN_NINES + "')").singleResult()
-				.firstColumn(String.class).execute();
+		String title = cqlTemplate.buildSelectOperation("select title from book where isbn in ('" + ISBN_NINES + "')")
+				.singleResult().firstColumn(String.class).execute();
 
 		assertEquals(title, TITLE_NINES);
 
@@ -341,8 +343,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 	public void queryForObjectTestCqlStringRequiredTypeInvalid() {
 
 		Float title = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select title from book where isbn in ('" + ISBN_NINES + "')")).singleResult()
-				.firstColumn(Float.class).execute();
+				.buildSelectOperation(new SimpleQueryCreator("select title from book where isbn in ('" + ISBN_NINES + "')"))
+				.singleResult().firstColumn(Float.class).execute();
 
 	}
 
@@ -350,8 +352,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 	public void processOneTestResultSetType() {
 
 		ResultSet rs = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select title from book where isbn in ('" + ISBN_NINES + "')")).executeAsync()
-				.getUninterruptibly();
+				.buildSelectOperation(new SimpleQueryCreator("select title from book where isbn in ('" + ISBN_NINES + "')"))
+				.executeAsync().getUninterruptibly();
 
 		assertNotNull(rs);
 
@@ -364,8 +366,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 	@Test
 	public void queryForMapTestCqlString() {
 
-		Map<String, Object> rsMap = cqlTemplate.buildSelectOperation("select * from book where isbn in ('" + ISBN_NINES + "')")
-				.singleResult().map().execute();
+		Map<String, Object> rsMap = cqlTemplate
+				.buildSelectOperation("select * from book where isbn in ('" + ISBN_NINES + "')").singleResult().map().execute();
 
 		log.debug(rsMap.toString());
 
@@ -381,8 +383,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 	public void processMapTestResultSet() {
 
 		ResultSet rs = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('" + ISBN_NINES + "')")).executeAsync()
-				.getUninterruptibly();
+				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('" + ISBN_NINES + "')"))
+				.executeAsync().getUninterruptibly();
 
 		assertNotNull(rs);
 
@@ -404,8 +406,9 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		// Insert our 3 test books.
 		insertBooks();
 
-		List<String> titles = cqlTemplate.buildSelectOperation("select title from book where isbn in ('1234','2345','3456')")
-				.firstColumn(String.class).execute();
+		List<String> titles = cqlTemplate
+				.buildSelectOperation("select title from book where isbn in ('1234','2345','3456')").firstColumn(String.class)
+				.execute();
 
 		log.debug(titles.toString());
 
@@ -421,8 +424,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		// Insert our 3 test books.
 		insertBooks();
 
-		ResultSet rs = cqlTemplate.buildSelectOperation("select * from book where isbn in ('1234','2345','3456')").executeAsync()
-				.getUninterruptibly();
+		ResultSet rs = cqlTemplate.buildSelectOperation("select * from book where isbn in ('1234','2345','3456')")
+				.executeAsync().getUninterruptibly();
 
 		assertNotNull(rs);
 
@@ -440,8 +443,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		// Insert our 3 test books.
 		insertBooks();
 
-		List<Map<String, Object>> results = cqlTemplate.buildSelectOperation("select * from book where isbn in ('1234','2345','3456')")
-				.map().execute();
+		List<Map<String, Object>> results = cqlTemplate
+				.buildSelectOperation("select * from book where isbn in ('1234','2345','3456')").map().execute();
 
 		log.debug(results.toString());
 
@@ -460,7 +463,7 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		Long count = cqlTemplate.buildSelectOperation(new QueryCreator() {
 
 			@Override
-			public Query createQuery() {
+			public Statement createQuery() {
 				return QueryBuilder.select().countAll().from("book");
 			}
 
@@ -478,8 +481,8 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		// Insert our 3 test books.
 		insertBooks();
 
-		ResultSet rs = cqlTemplate.buildSelectOperation("select * from book where isbn in ('1234','2345','3456')").executeAsync()
-				.getUninterruptibly();
+		ResultSet rs = cqlTemplate.buildSelectOperation("select * from book where isbn in ('1234','2345','3456')")
+				.executeAsync().getUninterruptibly();
 
 		assertNotNull(rs);
 

@@ -16,8 +16,8 @@
 package org.springdata.cql.core;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.SimpleStatement;
+import com.datastax.driver.core.Statement;
 
 /**
  * Simple query creator
@@ -28,13 +28,13 @@ import com.datastax.driver.core.SimpleStatement;
 
 public class SimpleQueryCreator implements QueryCreator {
 
-	private final Query statement;
+	private final Statement statement;
 
 	public SimpleQueryCreator(String cql) {
 		statement = new SimpleStatement(cql);
 	}
 
-	public SimpleQueryCreator(Query query) {
+	public SimpleQueryCreator(Statement query) {
 		statement = query;
 	}
 
@@ -74,7 +74,7 @@ public class SimpleQueryCreator implements QueryCreator {
 	}
 
 	@Override
-	public Query createQuery() {
+	public Statement createQuery() {
 		return statement;
 	}
 

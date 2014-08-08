@@ -17,8 +17,8 @@ package org.springdata.cql.core;
 
 import java.util.concurrent.TimeoutException;
 
-import com.datastax.driver.core.Query;
 import com.datastax.driver.core.ResultSet;
+import com.datastax.driver.core.Statement;
 
 /**
  * 
@@ -35,30 +35,30 @@ public abstract class AbstractExecuteOperation<O extends QueryOperation<ResultSe
 
 	@Override
 	public ResultSet execute() {
-		Query query = doCreateQuery(this);
+		Statement query = doCreateQuery(this);
 		return doExecute(query);
 	}
 
 	@Override
 	public CassandraFuture<ResultSet> executeAsync() {
-		Query query = doCreateQuery(this);
+		Statement query = doCreateQuery(this);
 		return doExecuteAsync(query);
 	}
 
 	@Override
 	public void executeAsync(final CallbackHandler<ResultSet> cb) {
-		Query query = doCreateQuery(this);
+		Statement query = doCreateQuery(this);
 		doExecuteAsync(query, cb);
 	}
 
 	@Override
 	public ResultSet executeNonstop(int timeoutMls) throws TimeoutException {
-		Query query = doCreateQuery(this);
+		Statement query = doCreateQuery(this);
 		return doExecuteNonstop(query, timeoutMls);
 	}
 
 	@Override
-	public Query toQuery() {
+	public Statement toQuery() {
 		return doCreateQuery(this);
 	}
 
