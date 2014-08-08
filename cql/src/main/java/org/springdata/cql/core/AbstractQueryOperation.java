@@ -79,6 +79,7 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 	@SuppressWarnings("unchecked")
 	public O withQueryTracing(Boolean queryTracing) {
 		Assert.notNull(queryTracing);
+		this.queryTracing = queryTracing;
 		return (O) this;
 	}
 
