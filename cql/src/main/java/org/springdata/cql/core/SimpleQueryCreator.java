@@ -18,6 +18,7 @@ package org.springdata.cql.core;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.SimpleStatement;
 import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.policies.RetryPolicy;
 
 /**
  * Simple query creator
@@ -47,7 +48,7 @@ public class SimpleQueryCreator implements QueryCreator {
 
 	public SimpleQueryCreator withRetryPolicy(RetryPolicy retryPolicy) {
 		if (retryPolicy != null) {
-			statement.setRetryPolicy(RetryPolicyResolver.resolve(retryPolicy));
+			statement.setRetryPolicy(retryPolicy);
 		}
 		return this;
 	}

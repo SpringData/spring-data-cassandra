@@ -28,6 +28,7 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.ResultSetFuture;
 import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.policies.RetryPolicy;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.util.concurrent.FutureCallback;
@@ -77,6 +78,14 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 
 	@Override
 	@SuppressWarnings("unchecked")
+	public O withRetryPolicy(RetryPolicyInstance retryPolicy) {
+		Assert.notNull(retryPolicy);
+		this.retryPolicy = retryPolicy.getInstance();
+		return (O) this;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
 	public O withQueryTracing(Boolean queryTracing) {
 		Assert.notNull(queryTracing);
 		this.queryTracing = queryTracing;
@@ -110,7 +119,7 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 		}
 
 		if (retryPolicy != null) {
-			query.setRetryPolicy(RetryPolicyResolver.resolve(retryPolicy));
+			query.setRetryPolicy(retryPolicy);
 		}
 
 		if (queryTracing != null) {

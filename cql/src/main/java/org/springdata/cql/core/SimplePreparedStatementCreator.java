@@ -20,6 +20,7 @@ import org.springframework.util.Assert;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.policies.RetryPolicy;
 
 /**
  * @author David Webb
@@ -82,7 +83,7 @@ public class SimplePreparedStatementCreator implements PreparedStatementCreator 
 			ps.setConsistencyLevel(consistency);
 		}
 		if (retryPolicy != null) {
-			ps.setRetryPolicy(RetryPolicyResolver.resolve(retryPolicy));
+			ps.setRetryPolicy(retryPolicy);
 		}
 		if (queryTracing != null) {
 			if (queryTracing.booleanValue()) {

@@ -23,6 +23,7 @@ import java.util.concurrent.TimeoutException;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.policies.RetryPolicy;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -184,6 +185,12 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 
 		@Override
 		public ProcessOperation<T> withRetryPolicy(RetryPolicy retryPolicy) {
+			delegate.withRetryPolicy(retryPolicy);
+			return this;
+		}
+
+		@Override
+		public ProcessOperation<T> withRetryPolicy(RetryPolicyInstance retryPolicy) {
 			delegate.withRetryPolicy(retryPolicy);
 			return this;
 		}

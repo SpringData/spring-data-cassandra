@@ -18,11 +18,11 @@ package org.springdata.cassandra.repository.query;
 import org.springdata.cassandra.repository.QueryTracing;
 import org.springdata.cassandra.repository.TimeToLiveSeconds;
 import org.springdata.cassandra.repository.TimestampMilliseconds;
-import org.springdata.cql.core.RetryPolicy;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.repository.query.Parameter;
 
 import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.policies.RetryPolicy;
 
 /**
  * Custom {@link Parameter} implementation for Cassandra.

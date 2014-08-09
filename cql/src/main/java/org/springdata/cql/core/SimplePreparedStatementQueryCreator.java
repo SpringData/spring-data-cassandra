@@ -19,6 +19,7 @@ import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.policies.RetryPolicy;
 
 /**
  * Prepared Statement Query Creator
@@ -83,7 +84,7 @@ public class SimplePreparedStatementQueryCreator implements QueryCreator {
 			bs.setConsistencyLevel(consistency);
 		}
 		if (retryPolicy != null) {
-			bs.setRetryPolicy(RetryPolicyResolver.resolve(retryPolicy));
+			bs.setRetryPolicy(retryPolicy);
 		}
 		if (queryTracing != null) {
 			if (queryTracing.booleanValue()) {

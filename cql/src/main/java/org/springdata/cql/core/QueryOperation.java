@@ -20,6 +20,7 @@ import java.util.concurrent.TimeoutException;
 
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.policies.RetryPolicy;
 
 /**
  * Cassandra Query Operation
@@ -44,6 +45,14 @@ public interface QueryOperation<T, O extends QueryOperation<T, O>> {
 	 * @return this
 	 */
 	O withRetryPolicy(RetryPolicy retryPolicy);
+
+	/**
+	 * Adds retry policy to the query operation
+	 * 
+	 * @param retryPolicy RetryPolicy
+	 * @return this
+	 */
+	O withRetryPolicy(RetryPolicyInstance retryPolicy);
 
 	/**
 	 * Adds query tracing option to the query operation

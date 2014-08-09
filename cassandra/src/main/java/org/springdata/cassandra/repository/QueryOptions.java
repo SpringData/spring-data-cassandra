@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springdata.cql.core.RetryPolicy;
+import org.springdata.cql.core.RetryPolicyInstance;
 
 import com.datastax.driver.core.ConsistencyLevel;
 
@@ -38,7 +38,7 @@ public @interface QueryOptions {
 
 	ConsistencyLevel consistencyLevel() default ConsistencyLevel.QUORUM;
 
-	RetryPolicy retryPolicy() default RetryPolicy.DEFAULT;
+	RetryPolicyInstance retryPolicy() default RetryPolicyInstance.DEFAULT;
 
 	int timeToLiveSeconds() default -1;
 

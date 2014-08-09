@@ -43,7 +43,7 @@ import org.springdata.cassandra.test.integration.CassandraTestConstants;
 import org.springdata.cassandra.test.integration.config.JavaConfig;
 import org.springdata.cassandra.test.integration.table.Book;
 import org.springdata.cql.core.QueryCreator;
-import org.springdata.cql.core.RetryPolicy;
+import org.springdata.cql.core.RetryPolicyInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -127,7 +127,7 @@ public class CassandraTemplateTest {
 		b3.setPages(265);
 
 		cassandraTemplate.buildSaveNewOperation(b3).toTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		/*
 		 * Test Single Insert with entity
@@ -139,7 +139,7 @@ public class CassandraTemplateTest {
 		b5.setPages(265);
 
 		cassandraTemplate.buildSaveNewOperation(b5).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 	}
 
@@ -175,7 +175,7 @@ public class CassandraTemplateTest {
 		b3.setPages(265);
 
 		cassandraTemplate.buildSaveNewOperation(b3).toTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 		/*
 		 * Test Single Insert with entity
@@ -187,7 +187,7 @@ public class CassandraTemplateTest {
 		b5.setPages(265);
 
 		cassandraTemplate.buildSaveNewOperation(b5).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 	}
 
@@ -207,12 +207,12 @@ public class CassandraTemplateTest {
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 	}
 
@@ -232,12 +232,12 @@ public class CassandraTemplateTest {
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 	}
 
@@ -295,7 +295,7 @@ public class CassandraTemplateTest {
 		b3.setPages(265);
 
 		cassandraTemplate.buildSaveOperation(b3).toTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		/*
 		 * Test Single Insert with entity
@@ -307,7 +307,7 @@ public class CassandraTemplateTest {
 		b5.setPages(265);
 
 		cassandraTemplate.buildSaveOperation(b5).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 	}
 
@@ -345,7 +345,7 @@ public class CassandraTemplateTest {
 		b3.setPages(265);
 
 		cassandraTemplate.buildSaveOperation(b3).toTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 		/*
 		 * Test Single Insert with entity
@@ -357,7 +357,7 @@ public class CassandraTemplateTest {
 		b5.setPages(265);
 
 		cassandraTemplate.buildSaveOperation(b5).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 		;
 
 	}
@@ -386,22 +386,22 @@ public class CassandraTemplateTest {
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		alterBooks(books);
 
 		cassandraTemplate.buildSaveInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		alterBooks(books);
 
 		cassandraTemplate.buildSaveInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 	}
 
@@ -429,22 +429,22 @@ public class CassandraTemplateTest {
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		alterBooks(books);
 
 		cassandraTemplate.buildSaveInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		alterBooks(books);
 
 		cassandraTemplate.buildSaveInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 	}
 
@@ -485,7 +485,7 @@ public class CassandraTemplateTest {
 		b3.setIsbn("123456-3");
 
 		cassandraTemplate.buildDeleteOperation(b3).fromTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		/*
 		 * Test Single Insert with entity
@@ -494,7 +494,7 @@ public class CassandraTemplateTest {
 		b5.setIsbn("123456-5");
 
 		cassandraTemplate.buildDeleteOperation(b5).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 	}
 
@@ -523,7 +523,7 @@ public class CassandraTemplateTest {
 		b3.setIsbn("123456-3");
 
 		cassandraTemplate.buildDeleteOperation(b3).fromTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 		/*
 		 * Test Single Insert with entity
@@ -532,7 +532,7 @@ public class CassandraTemplateTest {
 		b5.setIsbn("123456-5");
 
 		cassandraTemplate.buildDeleteOperation(b5).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 	}
 
 	@Test
@@ -555,18 +555,18 @@ public class CassandraTemplateTest {
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		cassandraTemplate.buildDeleteInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		cassandraTemplate.buildDeleteInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 	}
 
@@ -590,18 +590,18 @@ public class CassandraTemplateTest {
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		cassandraTemplate.buildDeleteInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		cassandraTemplate.buildDeleteInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 	}
 
@@ -630,7 +630,8 @@ public class CassandraTemplateTest {
 		b3.setIsbn("123456-3");
 
 		cassandraTemplate.buildDeleteByIdOperation(Book.class, b3.getIsbn()).fromTable("book")
-				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY)
+				.execute();
 
 		/*
 		 * Test Single Insert with entity
@@ -639,7 +640,7 @@ public class CassandraTemplateTest {
 		b5.setIsbn("123456-5");
 
 		cassandraTemplate.buildDeleteByIdOperation(Book.class, b5.getIsbn()).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 	}
 
@@ -668,7 +669,8 @@ public class CassandraTemplateTest {
 		b3.setIsbn("123456-3");
 
 		cassandraTemplate.buildDeleteByIdOperation(Book.class, b3.getIsbn()).fromTable("book")
-				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY)
+				.executeAsync();
 
 		/*
 		 * Test Single Insert with entity
@@ -677,7 +679,7 @@ public class CassandraTemplateTest {
 		b5.setIsbn("123456-5");
 
 		cassandraTemplate.buildDeleteByIdOperation(Book.class, b5.getIsbn()).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).executeAsync();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).executeAsync();
 
 	}
 
@@ -701,18 +703,20 @@ public class CassandraTemplateTest {
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		cassandraTemplate.buildDeleteByIdInBatchOperation(Book.class, ids(books)).inTable("book")
-				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY)
+				.execute();
 
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		cassandraTemplate.buildDeleteByIdInBatchOperation(Book.class, ids(books))
-				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY)
+				.execute();
 
 	}
 
@@ -744,18 +748,20 @@ public class CassandraTemplateTest {
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).inTable("book").withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		cassandraTemplate.buildDeleteByIdInBatchOperation(Book.class, ids(books)).inTable("book")
-				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY)
+				.execute();
 
 		books = getBookList(20);
 
 		cassandraTemplate.buildSaveNewInBatchOperation(books).withConsistencyLevel(ConsistencyLevel.ONE)
-				.withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY).execute();
 
 		cassandraTemplate.buildDeleteByIdInBatchOperation(Book.class, ids(books))
-				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicy.DOWNGRADING_CONSISTENCY).execute();
+				.withConsistencyLevel(ConsistencyLevel.ONE).withRetryPolicy(RetryPolicyInstance.DOWNGRADING_CONSISTENCY)
+				.execute();
 
 	}
 
