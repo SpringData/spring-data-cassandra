@@ -106,7 +106,7 @@ public abstract class AbstractGetOperation<T> extends AbstractQueryOperation<T, 
 	}
 
 	@Override
-	public Statement toQuery() {
+	public Statement toStatement() {
 		return doCreateQuery(this);
 	}
 

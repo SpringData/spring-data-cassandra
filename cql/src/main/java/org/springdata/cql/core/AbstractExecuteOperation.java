@@ -58,7 +58,7 @@ public abstract class AbstractExecuteOperation<O extends QueryOperation<ResultSe
 	}
 
 	@Override
-	public Statement toQuery() {
+	public Statement toStatement() {
 		return doCreateQuery(this);
 	}
 

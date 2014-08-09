@@ -112,7 +112,7 @@ public abstract class AbstractMultiGetOperation<T> extends AbstractQueryOperatio
 	}
 
 	@Override
-	public Statement toQuery() {
+	public Statement toStatement() {
 
 		Iterator<Statement> queryIterator = getQueryIterator();
 		Batch batch = QueryBuilder.batch();

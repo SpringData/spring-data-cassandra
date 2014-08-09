@@ -63,7 +63,7 @@ public class DefaultIngestOperation extends AbstractQueryOperation<List<ResultSe
 	}
 
 	@Override
-	public Statement toQuery() {
+	public Statement toStatement() {
 
 		Batch batch = QueryBuilder.batch();
 

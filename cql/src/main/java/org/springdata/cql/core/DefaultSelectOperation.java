@@ -164,7 +164,7 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 	}
 
 	@Override
-	public Statement toQuery() {
+	public Statement toStatement() {
 		return query;
 	}
 
@@ -207,8 +207,8 @@ public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, Se
 		}
 
 		@Override
-		public Statement toQuery() {
-			return delegate.toQuery();
+		public Statement toStatement() {
+			return delegate.toStatement();
 		}
 
 	}

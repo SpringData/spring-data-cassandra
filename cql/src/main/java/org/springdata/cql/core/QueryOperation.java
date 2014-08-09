@@ -108,6 +108,6 @@ public interface QueryOperation<T, O extends QueryOperation<T, O>> {
 	 * @return cql Query
 	 */
 
-	Statement toQuery();
+	Statement toStatement();
 
 }

@@ -88,7 +88,7 @@ public abstract class AbstractSelectOneOperation extends AbstractQueryOperation<
 	}
 
 	@Override
-	public Statement toQuery() {
+	public Statement toStatement() {
 		return query;
 	}
 
