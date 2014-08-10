@@ -17,11 +17,11 @@ package org.springdata.cassandra.core;
 
 import java.util.concurrent.TimeoutException;
 
-import org.springdata.cql.core.AbstractQueryOperation;
+import org.springdata.cql.core.AbstractStatementOperation;
 import org.springdata.cql.core.CallbackHandler;
 import org.springdata.cql.core.CassandraFuture;
 import org.springdata.cql.core.CqlTemplate;
-import org.springdata.cql.core.QueryCreator;
+import org.springdata.cql.core.StatementCreator;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Statement;
@@ -37,8 +37,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @param <T> - return Type
  */
 
-public abstract class AbstractGetOperation<T> extends AbstractQueryOperation<T, GetOperation<T>> implements
-		GetOperation<T>, QueryCreator {
+public abstract class AbstractGetOperation<T> extends AbstractStatementOperation<T, GetOperation<T>> implements
+		GetOperation<T>, StatementCreator {
 
 	private String tableName;
 

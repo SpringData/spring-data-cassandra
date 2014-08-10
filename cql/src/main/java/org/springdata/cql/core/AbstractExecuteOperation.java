@@ -26,8 +26,8 @@ import com.datastax.driver.core.Statement;
  * 
  * @param <O> Operation type
  */
-public abstract class AbstractExecuteOperation<O extends QueryOperation<ResultSet, O>> extends
-		AbstractQueryOperation<ResultSet, O> implements QueryCreator {
+public abstract class AbstractExecuteOperation<O extends StatementOperation<ResultSet, O>> extends
+		AbstractStatementOperation<ResultSet, O> implements StatementCreator {
 
 	protected AbstractExecuteOperation(CqlTemplate cqlTemplate) {
 		super(cqlTemplate);

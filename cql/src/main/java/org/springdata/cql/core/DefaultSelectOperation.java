@@ -35,7 +35,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  */
 
-public class DefaultSelectOperation extends AbstractQueryOperation<ResultSet, SelectOperation> implements
+public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet, SelectOperation> implements
 		SelectOperation {
 
 	private final Statement query;

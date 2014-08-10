@@ -26,13 +26,13 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.springdata.cql.core.HostMapper;
-import org.springdata.cql.core.QueryCreator;
+import org.springdata.cql.core.StatementCreator;
 import org.springdata.cql.core.ResultSetExtractor;
 import org.springdata.cql.core.RingMember;
 import org.springdata.cql.core.RowCallbackHandler;
 import org.springdata.cql.core.RowMapper;
 import org.springdata.cql.core.SessionCallback;
-import org.springdata.cql.core.SimpleQueryCreator;
+import org.springdata.cql.core.SimpleStatementCreator;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.datastax.driver.core.BoundStatement;
@@ -195,7 +195,7 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		final Book b1 = getBook(isbn);
 
 		ResultSet rs = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn='" + isbn + "'")).executeAsync()
+				.buildSelectOperation(new SimpleStatementCreator("select * from book where isbn='" + isbn + "'")).executeAsync()
 				.getUninterruptibly();
 
 		assertNotNull(rs);
@@ -247,7 +247,7 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		insertBooks();
 
 		ResultSet rs = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('1234','2345','3456')"))
+				.buildSelectOperation(new SimpleStatementCreator("select * from book where isbn in ('1234','2345','3456')"))
 				.executeAsync().getUninterruptibly();
 
 		assertNotNull(rs);
@@ -295,7 +295,7 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		insertBooks();
 
 		Book book = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('1234','2345','3456')"))
+				.buildSelectOperation(new SimpleStatementCreator("select * from book where isbn in ('1234','2345','3456')"))
 				.singleResult().map(new RowMapper<Book>() {
 					@Override
 					public Book mapRow(Row row, int rowNum) {
@@ -312,7 +312,7 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		insertBooks();
 
 		ResultSet rs = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('" + ISBN_NINES + "')"))
+				.buildSelectOperation(new SimpleStatementCreator("select * from book where isbn in ('" + ISBN_NINES + "')"))
 				.executeAsync().getUninterruptibly();
 
 		assertNotNull(rs);
@@ -343,7 +343,7 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 	public void queryForObjectTestCqlStringRequiredTypeInvalid() {
 
 		Float title = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select title from book where isbn in ('" + ISBN_NINES + "')"))
+				.buildSelectOperation(new SimpleStatementCreator("select title from book where isbn in ('" + ISBN_NINES + "')"))
 				.singleResult().firstColumn(Float.class).execute();
 
 	}
@@ -352,7 +352,7 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 	public void processOneTestResultSetType() {
 
 		ResultSet rs = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select title from book where isbn in ('" + ISBN_NINES + "')"))
+				.buildSelectOperation(new SimpleStatementCreator("select title from book where isbn in ('" + ISBN_NINES + "')"))
 				.executeAsync().getUninterruptibly();
 
 		assertNotNull(rs);
@@ -383,7 +383,7 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 	public void processMapTestResultSet() {
 
 		ResultSet rs = cqlTemplate
-				.buildSelectOperation(new SimpleQueryCreator("select * from book where isbn in ('" + ISBN_NINES + "')"))
+				.buildSelectOperation(new SimpleStatementCreator("select * from book where isbn in ('" + ISBN_NINES + "')"))
 				.executeAsync().getUninterruptibly();
 
 		assertNotNull(rs);
@@ -460,10 +460,10 @@ public class CqlTemplateTest extends AbstractCassandraOperations {
 		// Insert our 3 test books.
 		insertBooks();
 
-		Long count = cqlTemplate.buildSelectOperation(new QueryCreator() {
+		Long count = cqlTemplate.buildSelectOperation(new StatementCreator() {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				return QueryBuilder.select().countAll().from("book");
 			}
 

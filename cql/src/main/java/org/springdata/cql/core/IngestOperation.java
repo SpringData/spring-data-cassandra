@@ -25,6 +25,6 @@ import com.datastax.driver.core.ResultSet;
  * @author Alex Shvid
  * 
  */
-public interface IngestOperation extends QueryOperation<List<ResultSet>, IngestOperation> {
+public interface IngestOperation extends StatementOperation<List<ResultSet>, IngestOperation> {
 
 }

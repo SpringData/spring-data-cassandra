@@ -58,7 +58,7 @@ public class DefaultCountOperation<T> extends AbstractGetOperation<Long> {
 	}
 
 	@Override
-	public Statement createQuery() {
+	public Statement createStatement() {
 
 		String tableName = getTableName();
 		if (tableName == null) {

@@ -106,7 +106,7 @@ public class CassandraTemplate implements CassandraOperations {
 		return new AbstractFindOperation<T>(this, entityClass) {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				Select select = QueryBuilder.select().all().from(cassandraTemplate.getKeyspace(), getTableName());
 				return select;
 			}
@@ -140,7 +140,7 @@ public class CassandraTemplate implements CassandraOperations {
 		return new AbstractFindOneOperation<T>(this, entityClass) {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				Select select = QueryBuilder.select().all().from(cassandraTemplate.getKeyspace(), getTableName());
 				Select.Where w = select.where();
 
@@ -172,7 +172,7 @@ public class CassandraTemplate implements CassandraOperations {
 		return new AbstractFindOperation<T>(this, entityClass) {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				Select select = QueryBuilder.select().all().from(cassandraTemplate.getKeyspace(), getTableName());
 				Select.Where w = select.where();
 
@@ -204,7 +204,7 @@ public class CassandraTemplate implements CassandraOperations {
 		return new AbstractFindOperation<T>(this, entityClass) {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				return new SimpleStatement(cql);
 			}
 
@@ -225,7 +225,7 @@ public class CassandraTemplate implements CassandraOperations {
 		return new AbstractFindOneOperation<T>(this, entityClass) {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				return new SimpleStatement(cql);
 			}
 

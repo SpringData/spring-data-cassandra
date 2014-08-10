@@ -150,7 +150,7 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public Statement createQuery(QueryCreator qc) {
+	public Statement createStatement(StatementCreator qc) {
 		Assert.notNull(qc);
 		return doCreateQuery(qc);
 	}
@@ -204,10 +204,10 @@ public class CqlTemplate implements CqlOperations {
 	@Override
 	public ExecuteOperation buildExecuteOperation(final BoundStatement bs) {
 		Assert.notNull(bs);
-		return new DefaultExecuteOperation(this, new QueryCreator() {
+		return new DefaultExecuteOperation(this, new StatementCreator() {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				return bs;
 			}
 
@@ -215,12 +215,12 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public ResultSet execute(QueryCreator qc) {
+	public ResultSet execute(StatementCreator qc) {
 		return buildExecuteOperation(qc).execute();
 	}
 
 	@Override
-	public ExecuteOperation buildExecuteOperation(QueryCreator qc) {
+	public ExecuteOperation buildExecuteOperation(StatementCreator qc) {
 		Assert.notNull(qc);
 		return new DefaultExecuteOperation(this, qc);
 	}
@@ -263,10 +263,10 @@ public class CqlTemplate implements CqlOperations {
 	public ExecuteOperation buildExecuteInBatchOperation(final Iterable<RegularStatement> statements) {
 		Assert.notNull(statements);
 
-		return new DefaultExecuteOperation(this, new QueryCreator() {
+		return new DefaultExecuteOperation(this, new StatementCreator() {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 
 				/*
 				 * Return variable is a Batch statement
@@ -313,7 +313,7 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public SelectOperation buildSelectOperation(QueryCreator qc) {
+	public SelectOperation buildSelectOperation(StatementCreator qc) {
 		Assert.notNull(qc);
 		Statement query = doCreateQuery(qc);
 		return new DefaultSelectOperation(this, query);
@@ -325,11 +325,11 @@ public class CqlTemplate implements CqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	protected Statement doCreateQuery(QueryCreator qc) {
+	protected Statement doCreateQuery(StatementCreator qc) {
 
 		try {
 
-			return qc.createQuery();
+			return qc.createStatement();
 
 		} catch (RuntimeException e) {
 			throw translateIfPossible(e);
@@ -898,10 +898,10 @@ public class CqlTemplate implements CqlOperations {
 	public ProcessOperation<Long> buildCountAllOperation(final String tableName) {
 		Assert.notNull(tableName);
 
-		return buildSelectOperation(new QueryCreator() {
+		return buildSelectOperation(new StatementCreator() {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				Select select = QueryBuilder.select().countAll().from(tableName);
 				return select;
 			}
@@ -917,10 +917,10 @@ public class CqlTemplate implements CqlOperations {
 	@Override
 	public ExecuteOperation buildTruncateOperation(final String tableName) {
 		Assert.notNull(tableName);
-		return new DefaultExecuteOperation(this, new QueryCreator() {
+		return new DefaultExecuteOperation(this, new StatementCreator() {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				return QueryBuilder.truncate(tableName);
 			}
 

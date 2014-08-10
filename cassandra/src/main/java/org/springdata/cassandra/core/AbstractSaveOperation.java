@@ -16,7 +16,7 @@
 package org.springdata.cassandra.core;
 
 import org.springdata.cql.core.AbstractExecuteOperation;
-import org.springdata.cql.core.QueryOperation;
+import org.springdata.cql.core.StatementOperation;
 import org.springframework.util.Assert;
 
 import com.datastax.driver.core.ResultSet;
@@ -30,7 +30,7 @@ import com.datastax.driver.core.ResultSet;
  * @param <O> - operation Type
  */
 
-public abstract class AbstractSaveOperation<T, O extends QueryOperation<ResultSet, O>> extends
+public abstract class AbstractSaveOperation<T, O extends StatementOperation<ResultSet, O>> extends
 		AbstractExecuteOperation<O> implements BatchedStatementCreator {
 
 	protected final CassandraTemplate cassandraTemplate;

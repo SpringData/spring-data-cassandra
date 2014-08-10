@@ -23,12 +23,12 @@ import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.policies.RetryPolicy;
 
 /**
- * Cassandra Query Operation
+ * Cassandra @Statement Operation
  * 
  * @author Alex Shvid
  * 
  */
-public interface QueryOperation<T, O extends QueryOperation<T, O>> {
+public interface StatementOperation<T, O extends StatementOperation<T, O>> {
 
 	/**
 	 * Adds consistency level to the query operation

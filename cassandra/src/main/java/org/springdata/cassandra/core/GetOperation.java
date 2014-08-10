@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.core;
 
-import org.springdata.cql.core.QueryOperation;
+import org.springdata.cql.core.StatementOperation;
 
 /**
  * Base interface to get entity (actually select).
@@ -23,7 +23,7 @@ import org.springdata.cql.core.QueryOperation;
  * @author Alex Shvid
  * 
  */
-public interface GetOperation<T> extends QueryOperation<T, GetOperation<T>> {
+public interface GetOperation<T> extends StatementOperation<T, GetOperation<T>> {
 
 	/**
 	 * Specifies table differ from entitie's table

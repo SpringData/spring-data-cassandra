@@ -30,7 +30,7 @@ import org.springdata.cql.core.ResultSetExtractor;
 import org.springdata.cql.core.RowCallbackHandler;
 import org.springdata.cql.core.RowMapper;
 import org.springdata.cql.core.SimplePreparedStatementQueryCreator;
-import org.springdata.cql.core.SimpleQueryCreator;
+import org.springdata.cql.core.SimpleStatementCreator;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
@@ -302,7 +302,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 			}
 		});
 
-		List<Book> books = cqlTemplate.buildSelectOperation(new SimpleQueryCreator(bs)).transform(new ResultSetExtractor<List<Book>>() {
+		List<Book> books = cqlTemplate.buildSelectOperation(new SimpleStatementCreator(bs)).transform(new ResultSetExtractor<List<Book>>() {
 
 			@Override
 			public List<Book> extractData(ResultSet rs) {
@@ -346,7 +346,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 			}
 		});
 
-		cqlTemplate.buildSelectOperation(new SimpleQueryCreator(bs)).forEach(new RowCallbackHandler() {
+		cqlTemplate.buildSelectOperation(new SimpleStatementCreator(bs)).forEach(new RowCallbackHandler() {
 
 			@Override
 			public void processRow(Row row) {
@@ -380,7 +380,7 @@ public class PreparedStatementTest extends AbstractCassandraOperations {
 			}
 		});
 
-		List<Book> books = cqlTemplate.buildSelectOperation(new SimpleQueryCreator(bs)).map(new RowMapper<Book>() {
+		List<Book> books = cqlTemplate.buildSelectOperation(new SimpleStatementCreator(bs)).map(new RowMapper<Book>() {
 
 			@Override
 			public Book mapRow(Row row, int rowNum) {

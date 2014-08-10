@@ -40,7 +40,7 @@ public interface CqlOperations {
 	 * @param qc - QueryCreator interface
 	 * @return
 	 */
-	Statement createQuery(QueryCreator qc);
+	Statement createStatement(StatementCreator qc);
 
 	/**
 	 * Executes the supplied {@link SessionCallback} in the current Template Session. The implementation of
@@ -116,14 +116,14 @@ public interface CqlOperations {
 	 * 
 	 * @param qc The QueryCreator
 	 */
-	ResultSet execute(QueryCreator qc);
+	ResultSet execute(StatementCreator qc);
 
 	/**
 	 * Builds ExecuteOperation for the supplied CQL Query
 	 * 
 	 * @param qc The QueryCreator
 	 */
-	ExecuteOperation buildExecuteOperation(QueryCreator qc);
+	ExecuteOperation buildExecuteOperation(StatementCreator qc);
 
 	/**
 	 * Executes the supplied CQL Query batch and returns ResultSet
@@ -188,7 +188,7 @@ public interface CqlOperations {
 	 * 
 	 * @return SelectOperation
 	 */
-	SelectOperation buildSelectOperation(QueryCreator qc);
+	SelectOperation buildSelectOperation(StatementCreator qc);
 
 	/**
 	 * Processes the ResultSet through the RowCallbackHandler and return nothing. This is used internal to the Template

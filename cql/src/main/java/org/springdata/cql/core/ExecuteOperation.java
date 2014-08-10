@@ -24,6 +24,6 @@ import com.datastax.driver.core.ResultSet;
  * 
  */
 
-public interface ExecuteOperation extends QueryOperation<ResultSet, ExecuteOperation> {
+public interface ExecuteOperation extends StatementOperation<ResultSet, ExecuteOperation> {
 
 }

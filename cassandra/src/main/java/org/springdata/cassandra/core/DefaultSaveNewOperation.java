@@ -34,12 +34,12 @@ public class DefaultSaveNewOperation<T> extends AbstractSaveOperation<T, SaveNew
 	}
 
 	@Override
-	public Statement createQuery() {
-		return createStatement();
+	public Statement createStatement() {
+		return createRegularStatement();
 	}
 
 	@Override
-	public RegularStatement createStatement() {
+	public RegularStatement createRegularStatement() {
 
 		Insert query = QueryBuilder.insertInto(cassandraTemplate.getKeyspace(), getTableName());
 

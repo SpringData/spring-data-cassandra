@@ -24,7 +24,7 @@ import com.datastax.driver.core.Statement;
  * 
  */
 
-public interface QueryCreator {
+public interface StatementCreator {
 
 	/**
 	 * This function returns Query object
@@ -32,6 +32,6 @@ public interface QueryCreator {
 	 * @return
 	 */
 
-	Statement createQuery();
+	Statement createStatement();
 
 }

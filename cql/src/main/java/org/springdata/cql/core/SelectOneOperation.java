@@ -25,7 +25,7 @@ import com.datastax.driver.core.Row;
  * @author Alex Shvid
  * 
  */
-public interface SelectOneOperation extends QueryOperation<Row, SelectOneOperation> {
+public interface SelectOneOperation extends StatementOperation<Row, SelectOneOperation> {
 
 	/**
 	 * Maps first row in ResultSet by RowMapper.

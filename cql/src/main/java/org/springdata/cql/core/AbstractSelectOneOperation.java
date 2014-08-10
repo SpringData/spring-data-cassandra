@@ -33,7 +33,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Alex Shvid
  * 
  */
-public abstract class AbstractSelectOneOperation extends AbstractQueryOperation<Row, SelectOneOperation> implements
+public abstract class AbstractSelectOneOperation extends AbstractStatementOperation<Row, SelectOneOperation> implements
 		SelectOneOperation {
 
 	private final Statement query;

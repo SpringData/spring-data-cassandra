@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-import org.springdata.cql.core.AbstractQueryOperation;
+import org.springdata.cql.core.AbstractStatementOperation;
 import org.springdata.cql.core.CallbackHandler;
 import org.springdata.cql.core.CassandraFuture;
 import org.springdata.cql.core.CqlTemplate;
@@ -41,7 +41,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @param <T> - return Type
  */
 
-public abstract class AbstractMultiGetOperation<T> extends AbstractQueryOperation<T, GetOperation<T>> implements
+public abstract class AbstractMultiGetOperation<T> extends AbstractStatementOperation<T, GetOperation<T>> implements
 		GetOperation<T> {
 
 	private String tableName;

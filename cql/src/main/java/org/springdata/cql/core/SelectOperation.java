@@ -27,7 +27,7 @@ import com.datastax.driver.core.ResultSet;
  * 
  */
 
-public interface SelectOperation extends QueryOperation<ResultSet, SelectOperation> {
+public interface SelectOperation extends StatementOperation<ResultSet, SelectOperation> {
 
 	/**
 	 * Returns single result operation

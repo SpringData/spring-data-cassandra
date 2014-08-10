@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.core;
 
-import org.springdata.cql.core.QueryOperation;
+import org.springdata.cql.core.StatementOperation;
 
 import com.datastax.driver.core.ResultSet;
 
@@ -26,7 +26,7 @@ import com.datastax.driver.core.ResultSet;
  * @author Alex Shvid
  * 
  */
-public interface SaveNewOperation extends QueryOperation<ResultSet, SaveNewOperation> {
+public interface SaveNewOperation extends StatementOperation<ResultSet, SaveNewOperation> {
 
 	/**
 	 * Specifies table differ from entitie's table to save

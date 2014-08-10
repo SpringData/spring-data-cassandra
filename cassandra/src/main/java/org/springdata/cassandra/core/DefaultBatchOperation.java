@@ -51,7 +51,7 @@ public class DefaultBatchOperation extends AbstractExecuteOperation<BatchOperati
 	}
 
 	@Override
-	public Statement createQuery() {
+	public Statement createStatement() {
 
 		/*
 		 * Return variable is a Batch statement
@@ -86,7 +86,7 @@ public class DefaultBatchOperation extends AbstractExecuteOperation<BatchOperati
 
 			@Override
 			public RegularStatement doInSession(Session session) {
-				return bsc.createStatement();
+				return bsc.createRegularStatement();
 			}
 
 		});

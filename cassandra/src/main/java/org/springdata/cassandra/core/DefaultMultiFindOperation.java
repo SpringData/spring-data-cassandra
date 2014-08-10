@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springdata.cassandra.mapping.CassandraPersistentEntity;
-import org.springdata.cql.core.QueryCreator;
+import org.springdata.cql.core.StatementCreator;
 import org.springframework.data.convert.EntityReader;
 
 import com.datastax.driver.core.ResultSet;
@@ -65,10 +65,10 @@ public class DefaultMultiFindOperation<T> extends AbstractMultiGetOperation<List
 
 			@Override
 			public Statement apply(final Object id) {
-				return cassandraTemplate.getCqlOperations().createQuery(new QueryCreator() {
+				return cassandraTemplate.getCqlOperations().createStatement(new StatementCreator() {
 
 					@Override
-					public Statement createQuery() {
+					public Statement createStatement() {
 
 						Select select = QueryBuilder.select().all().from(cassandraTemplate.getKeyspace(), tableName);
 						Select.Where w = select.where();

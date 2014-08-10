@@ -32,7 +32,7 @@ import com.datastax.driver.core.querybuilder.QueryBuilder;
  * 
  */
 
-public class DefaultIngestOperation extends AbstractQueryOperation<List<ResultSet>, IngestOperation> implements
+public class DefaultIngestOperation extends AbstractStatementOperation<List<ResultSet>, IngestOperation> implements
 		IngestOperation {
 
 	private final Iterator<Statement> queryIterator;

@@ -44,7 +44,7 @@ import com.google.common.util.concurrent.MoreExecutors;
  * @param <O>
  */
 
-public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> implements QueryOperation<T, O> {
+public abstract class AbstractStatementOperation<T, O extends StatementOperation<T, O>> implements StatementOperation<T, O> {
 
 	protected final CqlTemplate cqlTemplate;
 
@@ -55,7 +55,7 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 	private FallbackHandler fh;
 	private Executor executor;
 
-	protected AbstractQueryOperation(CqlTemplate cqlTemplate) {
+	protected AbstractStatementOperation(CqlTemplate cqlTemplate) {
 		Assert.notNull(cqlTemplate);
 		this.cqlTemplate = cqlTemplate;
 	}
@@ -131,8 +131,8 @@ public abstract class AbstractQueryOperation<T, O extends QueryOperation<T, O>> 
 		}
 	}
 
-	protected Statement doCreateQuery(QueryCreator qc) {
-		return cqlTemplate.createQuery(qc);
+	protected Statement doCreateQuery(StatementCreator qc) {
+		return cqlTemplate.createStatement(qc);
 	}
 
 	protected ResultSet doExecute(Statement query) {

@@ -30,7 +30,7 @@ public interface BatchedStatementCreator {
 	 * 
 	 * @return
 	 */
-	RegularStatement createStatement();
+	RegularStatement createRegularStatement();
 
 	/**
 	 * Defines specific table name for Statement creator

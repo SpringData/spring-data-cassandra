@@ -27,7 +27,7 @@ import com.datastax.driver.core.policies.RetryPolicy;
  * @author Alex Shvid
  * 
  */
-public class SimplePreparedStatementQueryCreator implements QueryCreator {
+public class SimplePreparedStatementQueryCreator implements StatementCreator {
 
 	private final PreparedStatement ps;
 	private PreparedStatementBinder psbOrNull;
@@ -71,7 +71,7 @@ public class SimplePreparedStatementQueryCreator implements QueryCreator {
 	}
 
 	@Override
-	public Statement createQuery() {
+	public Statement createStatement() {
 
 		BoundStatement bs = null;
 		if (psbOrNull != null) {

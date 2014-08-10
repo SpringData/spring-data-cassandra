@@ -26,24 +26,24 @@ import com.datastax.driver.core.Statement;
 
 public class DefaultExecuteOperation extends AbstractExecuteOperation<ExecuteOperation> implements ExecuteOperation {
 
-	private final QueryCreator qc;
+	private final StatementCreator qc;
 
 	public DefaultExecuteOperation(CqlTemplate cqlTemplate, String cql) {
-		this(cqlTemplate, new SimpleQueryCreator(cql));
+		this(cqlTemplate, new SimpleStatementCreator(cql));
 	}
 
 	public DefaultExecuteOperation(CqlTemplate cqlTemplate, Statement query) {
-		this(cqlTemplate, new SimpleQueryCreator(query));
+		this(cqlTemplate, new SimpleStatementCreator(query));
 	}
 
-	public DefaultExecuteOperation(CqlTemplate cqlTemplate, QueryCreator qc) {
+	public DefaultExecuteOperation(CqlTemplate cqlTemplate, StatementCreator qc) {
 		super(cqlTemplate);
 		this.qc = qc;
 	}
 
 	@Override
-	public Statement createQuery() {
-		return qc.createQuery();
+	public Statement createStatement() {
+		return qc.createStatement();
 	}
 
 }

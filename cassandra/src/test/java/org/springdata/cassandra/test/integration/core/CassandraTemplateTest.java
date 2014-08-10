@@ -42,7 +42,7 @@ import org.springdata.cassandra.core.EntryCallbackHandler;
 import org.springdata.cassandra.test.integration.CassandraTestConstants;
 import org.springdata.cassandra.test.integration.config.JavaConfig;
 import org.springdata.cassandra.test.integration.table.Book;
-import org.springdata.cql.core.QueryCreator;
+import org.springdata.cql.core.StatementCreator;
 import org.springdata.cql.core.RetryPolicyInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -954,10 +954,10 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		List<Book> books = cassandraTemplate.getCqlOperations().buildSelectOperation(new QueryCreator() {
+		List<Book> books = cassandraTemplate.getCqlOperations().buildSelectOperation(new StatementCreator() {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 
@@ -985,10 +985,10 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		List<Book> books = cassandraTemplate.getCqlOperations().buildSelectOperation(new QueryCreator() {
+		List<Book> books = cassandraTemplate.getCqlOperations().buildSelectOperation(new StatementCreator() {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 
@@ -1016,10 +1016,10 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new QueryCreator() {
+		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new StatementCreator() {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 
@@ -1049,10 +1049,10 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new QueryCreator() {
+		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new StatementCreator() {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 
@@ -1092,10 +1092,10 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new QueryCreator() {
+		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new StatementCreator() {
 
 			@Override
-			public Statement createQuery() {
+			public Statement createStatement() {
 				return QueryBuilder.select().all().from("book").where(QueryBuilder.eq("isbn", "123456-1"));
 			}
 

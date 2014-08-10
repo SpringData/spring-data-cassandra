@@ -119,13 +119,13 @@ public class DefaultDeleteOperation<T> extends AbstractExecuteOperation<DeleteOp
 	}
 
 	@Override
-	public Statement createQuery() {
-		return createStatement();
+	public Statement createStatement() {
+		return createRegularStatement();
 	}
 
 	@SuppressWarnings("incomplete-switch")
 	@Override
-	public RegularStatement createStatement() {
+	public RegularStatement createRegularStatement() {
 
 		if (deleteBy == DeleteBy.ALL) {
 			return QueryBuilder.truncate(cassandraTemplate.getKeyspace(), getTableName());

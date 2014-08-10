@@ -15,7 +15,7 @@
  */
 package org.springdata.cassandra.core;
 
-import org.springdata.cql.core.QueryOperation;
+import org.springdata.cql.core.StatementOperation;
 
 import com.datastax.driver.core.ResultSet;
 
@@ -25,7 +25,7 @@ import com.datastax.driver.core.ResultSet;
  * @author Alex Shvid
  * 
  */
-public interface BatchOperation extends QueryOperation<ResultSet, BatchOperation> {
+public interface BatchOperation extends StatementOperation<ResultSet, BatchOperation> {
 
 	/**
 	 * Specifies table differ from entitie's table to make batch operations

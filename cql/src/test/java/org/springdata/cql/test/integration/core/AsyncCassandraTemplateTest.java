@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.UUID;
 
 import org.junit.Test;
-import org.springdata.cql.core.SimpleQueryCreator;
+import org.springdata.cql.core.SimpleStatementCreator;
 
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
@@ -40,7 +40,7 @@ public class AsyncCassandraTemplateTest extends AbstractCassandraOperations {
 		final Integer pages = 1;
 
 		cqlTemplate.buildExecuteOperation(
-				new SimpleQueryCreator("insert into book (isbn, title, author, pages) values ('" + isbn + "', '" + title
+				new SimpleStatementCreator("insert into book (isbn, title, author, pages) values ('" + isbn + "', '" + title
 						+ "', '" + author + "', " + pages + ")")).executeAsync();
 
 		try {

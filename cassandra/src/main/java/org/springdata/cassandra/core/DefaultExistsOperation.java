@@ -76,7 +76,7 @@ public class DefaultExistsOperation<T> extends AbstractGetOperation<Boolean> {
 	}
 
 	@Override
-	public Statement createQuery() {
+	public Statement createStatement() {
 
 		String tableName = getTableName();
 		if (tableName == null) {

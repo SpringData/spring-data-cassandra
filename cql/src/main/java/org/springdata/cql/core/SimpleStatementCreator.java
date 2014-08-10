@@ -27,43 +27,43 @@ import com.datastax.driver.core.policies.RetryPolicy;
  * 
  */
 
-public class SimpleQueryCreator implements QueryCreator {
+public class SimpleStatementCreator implements StatementCreator {
 
 	private final Statement statement;
 
-	public SimpleQueryCreator(String cql) {
+	public SimpleStatementCreator(String cql) {
 		statement = new SimpleStatement(cql);
 	}
 
-	public SimpleQueryCreator(Statement query) {
+	public SimpleStatementCreator(Statement query) {
 		statement = query;
 	}
 
-	public SimpleQueryCreator withConsistencyLevel(ConsistencyLevel consistency) {
+	public SimpleStatementCreator withConsistencyLevel(ConsistencyLevel consistency) {
 		if (consistency != null) {
 			statement.setConsistencyLevel(consistency);
 		}
 		return this;
 	}
 
-	public SimpleQueryCreator withRetryPolicy(RetryPolicy retryPolicy) {
+	public SimpleStatementCreator withRetryPolicy(RetryPolicy retryPolicy) {
 		if (retryPolicy != null) {
 			statement.setRetryPolicy(retryPolicy);
 		}
 		return this;
 	}
 
-	public SimpleQueryCreator enableTracing() {
+	public SimpleStatementCreator enableTracing() {
 		statement.enableTracing();
 		return this;
 	}
 
-	public SimpleQueryCreator disableTracing() {
+	public SimpleStatementCreator disableTracing() {
 		statement.disableTracing();
 		return this;
 	}
 
-	public SimpleQueryCreator withQueryTracing(Boolean queryTracing) {
+	public SimpleStatementCreator withQueryTracing(Boolean queryTracing) {
 		if (queryTracing != null) {
 			if (queryTracing.booleanValue()) {
 				statement.enableTracing();
@@ -75,7 +75,7 @@ public class SimpleQueryCreator implements QueryCreator {
 	}
 
 	@Override
-	public Statement createQuery() {
+	public Statement createStatement() {
 		return statement;
 	}
 

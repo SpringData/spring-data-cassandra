@@ -22,6 +22,6 @@ package org.springdata.cql.core;
  * 
  */
 
-public interface ProcessOperation<T> extends QueryOperation<T, ProcessOperation<T>> {
+public interface ProcessOperation<T> extends StatementOperation<T, ProcessOperation<T>> {
 
 }
