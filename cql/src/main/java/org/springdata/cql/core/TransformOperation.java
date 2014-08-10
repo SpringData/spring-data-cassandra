@@ -16,12 +16,12 @@
 package org.springdata.cql.core;
 
 /**
- * Operation that processes ResultSet after select operation
+ * Operation that transforms ResultSet to expected Type
  * 
  * @author Alex Shvid
  * 
  */
 
-public interface ProcessOperation<T> extends StatementOperation<T, ProcessOperation<T>> {
+public interface TransformOperation<T> extends StatementOperation<T, TransformOperation<T>> {
 
 }

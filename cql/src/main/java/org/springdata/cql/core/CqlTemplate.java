@@ -293,30 +293,30 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public SelectOperation buildSelectOperation(String cql) {
+	public QueryOperation buildQueryOperation(String cql) {
 		Assert.notNull(cql);
 		Statement query = new SimpleStatement(cql);
-		return new DefaultSelectOperation(this, query);
+		return new DefaultQueryOperation(this, query);
 	}
 
 	@Override
-	public SelectOperation buildSelectOperation(PreparedStatement ps, PreparedStatementBinder psb) {
+	public QueryOperation buildQueryOperation(PreparedStatement ps, PreparedStatementBinder psb) {
 		Assert.notNull(ps);
 		BoundStatement bs = doBind(ps, psb);
-		return new DefaultSelectOperation(this, bs);
+		return new DefaultQueryOperation(this, bs);
 	}
 
 	@Override
-	public SelectOperation buildSelectOperation(BoundStatement bs) {
+	public QueryOperation buildQueryOperation(BoundStatement bs) {
 		Assert.notNull(bs);
-		return new DefaultSelectOperation(this, bs);
+		return new DefaultQueryOperation(this, bs);
 	}
 
 	@Override
-	public SelectOperation buildSelectOperation(StatementCreator qc) {
+	public QueryOperation buildQueryOperation(StatementCreator qc) {
 		Assert.notNull(qc);
 		Statement query = doCreateQuery(qc);
-		return new DefaultSelectOperation(this, query);
+		return new DefaultQueryOperation(this, query);
 	}
 
 	/**
@@ -895,10 +895,10 @@ public class CqlTemplate implements CqlOperations {
 	}
 
 	@Override
-	public ProcessOperation<Long> buildCountAllOperation(final String tableName) {
+	public TransformOperation<Long> buildCountAllOperation(final String tableName) {
 		Assert.notNull(tableName);
 
-		return buildSelectOperation(new StatementCreator() {
+		return buildQueryOperation(new StatementCreator() {
 
 			@Override
 			public Statement createStatement() {

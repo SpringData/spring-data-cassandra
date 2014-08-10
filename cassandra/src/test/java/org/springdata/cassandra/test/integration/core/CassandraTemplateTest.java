@@ -954,7 +954,7 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		List<Book> books = cassandraTemplate.getCqlOperations().buildSelectOperation(new StatementCreator() {
+		List<Book> books = cassandraTemplate.getCqlOperations().buildQueryOperation(new StatementCreator() {
 
 			@Override
 			public Statement createStatement() {
@@ -985,7 +985,7 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		List<Book> books = cassandraTemplate.getCqlOperations().buildSelectOperation(new StatementCreator() {
+		List<Book> books = cassandraTemplate.getCqlOperations().buildQueryOperation(new StatementCreator() {
 
 			@Override
 			public Statement createStatement() {
@@ -1016,7 +1016,7 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new StatementCreator() {
+		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildQueryOperation(new StatementCreator() {
 
 			@Override
 			public Statement createStatement() {
@@ -1049,7 +1049,7 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new StatementCreator() {
+		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildQueryOperation(new StatementCreator() {
 
 			@Override
 			public Statement createStatement() {
@@ -1092,7 +1092,7 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildSelectOperation(new StatementCreator() {
+		ResultSet resultSet = cassandraTemplate.getCqlOperations().buildQueryOperation(new StatementCreator() {
 
 			@Override
 			public Statement createStatement() {

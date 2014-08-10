@@ -158,9 +158,9 @@ public interface CqlOperations {
 	 * 
 	 * @param cql The CQL Query String
 	 * 
-	 * @return SelectOperation
+	 * @return QueryOperation
 	 */
-	SelectOperation buildSelectOperation(String cql);
+	QueryOperation buildQueryOperation(String cql);
 
 	/**
 	 * Builds SelectOperation for the provided prepared statement
@@ -168,27 +168,27 @@ public interface CqlOperations {
 	 * @param ps PreparedStatement
 	 * @param psb PreparedStatementBinder if exists
 	 * 
-	 * @return SelectOperation
+	 * @return QueryOperation
 	 */
-	SelectOperation buildSelectOperation(PreparedStatement ps, PreparedStatementBinder psb);
+	QueryOperation buildQueryOperation(PreparedStatement ps, PreparedStatementBinder psb);
 
 	/**
 	 * Builds SelectOperation for the provided BoundStatement
 	 * 
 	 * @param bs BoundStatement
 	 * 
-	 * @return SelectOperation
+	 * @return QueryOperation
 	 */
-	SelectOperation buildSelectOperation(BoundStatement bs);
+	QueryOperation buildQueryOperation(BoundStatement bs);
 
 	/**
 	 * Builds SelectOperation for the provided QueryCreator
 	 * 
 	 * @param qc The QueryCreator
 	 * 
-	 * @return SelectOperation
+	 * @return QueryOperation
 	 */
-	SelectOperation buildSelectOperation(StatementCreator qc);
+	QueryOperation buildQueryOperation(StatementCreator qc);
 
 	/**
 	 * Processes the ResultSet through the RowCallbackHandler and return nothing. This is used internal to the Template
@@ -408,7 +408,7 @@ public interface CqlOperations {
 	 * @param tableName
 	 * @return
 	 */
-	ProcessOperation<Long> buildCountAllOperation(String tableName);
+	TransformOperation<Long> buildCountAllOperation(String tableName);
 
 	/**
 	 * Delete all rows in the table

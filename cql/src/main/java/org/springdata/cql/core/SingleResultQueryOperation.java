@@ -25,7 +25,7 @@ import com.datastax.driver.core.Row;
  * @author Alex Shvid
  * 
  */
-public interface SelectOneOperation extends StatementOperation<Row, SelectOneOperation> {
+public interface SingleResultQueryOperation extends StatementOperation<Row, SingleResultQueryOperation> {
 
 	/**
 	 * Maps first row in ResultSet by RowMapper.
@@ -33,7 +33,7 @@ public interface SelectOneOperation extends StatementOperation<Row, SelectOneOpe
 	 * @param rowMapper
 	 * @return ProcessOperation
 	 */
-	<R> ProcessOperation<R> map(RowMapper<R> rowMapper);
+	<R> TransformOperation<R> map(RowMapper<R> rowMapper);
 
 	/**
 	 * Retrieves first row in the first column, expected type is elementType class.
@@ -41,13 +41,13 @@ public interface SelectOneOperation extends StatementOperation<Row, SelectOneOpe
 	 * @param elementType
 	 * @return ProcessOperation
 	 */
-	<E> ProcessOperation<E> firstColumn(Class<E> elementType);
+	<E> TransformOperation<E> firstColumn(Class<E> elementType);
 
 	/**
 	 * Maps only first row from ResultSet to Map<String, Object>.
 	 * 
 	 * @return ProcessOperation
 	 */
-	ProcessOperation<Map<String, Object>> map();
+	TransformOperation<Map<String, Object>> map();
 
 }

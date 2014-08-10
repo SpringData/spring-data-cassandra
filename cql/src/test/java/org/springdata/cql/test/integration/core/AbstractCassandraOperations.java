@@ -148,7 +148,7 @@ public abstract class AbstractCassandraOperations extends AbstractEmbeddedCassan
 
 		PreparedStatement ps = cqlTemplate.prepareStatement("select * from book where isbn = ?");
 
-		Book b = cqlTemplate.buildSelectOperation(ps, new PreparedStatementBinder() {
+		Book b = cqlTemplate.buildQueryOperation(ps, new PreparedStatementBinder() {
 
 			@Override
 			public BoundStatement bindValues(PreparedStatement ps) {

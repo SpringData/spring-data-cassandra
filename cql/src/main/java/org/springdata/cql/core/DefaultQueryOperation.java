@@ -29,36 +29,36 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Default implementation for SelectOperation
+ * Default implementation for @QueryOperation
  * 
  * @author Alex Shvid
  * 
  */
 
-public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet, SelectOperation> implements
-		SelectOperation {
+public class DefaultQueryOperation extends AbstractStatementOperation<ResultSet, QueryOperation> implements
+		QueryOperation {
 
-	private final Statement query;
+	private final Statement statement;
 
-	protected DefaultSelectOperation(CqlTemplate cqlTemplate, Statement query) {
+	protected DefaultQueryOperation(CqlTemplate cqlTemplate, Statement statement) {
 		super(cqlTemplate);
-		this.query = query;
+		this.statement = statement;
 	}
 
 	@Override
-	public SelectOneOperation firstRow() {
-		return new DefaultSelectOneOperation(this, false);
+	public SingleResultQueryOperation firstRow() {
+		return new DefaultSingleResultQueryOperation(this, false);
 	}
 
 	@Override
-	public SelectOneOperation singleResult() {
-		return new DefaultSelectOneOperation(this, true);
+	public SingleResultQueryOperation singleResult() {
+		return new DefaultSingleResultQueryOperation(this, true);
 	}
 
 	@Override
-	public <R> ProcessOperation<List<R>> map(final RowMapper<R> rowMapper) {
+	public <R> TransformOperation<List<R>> map(final RowMapper<R> rowMapper) {
 
-		return new ProcessingSelectOperation<List<R>>(this, new Processor<List<R>>() {
+		return new ProcessingQueryOperation<List<R>>(this, new Processor<List<R>>() {
 
 			@Override
 			public List<R> process(ResultSet resultSet) {
@@ -69,9 +69,9 @@ public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet
 	}
 
 	@Override
-	public ProcessOperation<Boolean> exists() {
+	public TransformOperation<Boolean> exists() {
 
-		return new ProcessingSelectOperation<Boolean>(this, new Processor<Boolean>() {
+		return new ProcessingQueryOperation<Boolean>(this, new Processor<Boolean>() {
 
 			@Override
 			public Boolean process(ResultSet resultSet) {
@@ -91,9 +91,9 @@ public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet
 	}
 
 	@Override
-	public <E> ProcessOperation<List<E>> firstColumn(final Class<E> elementType) {
+	public <E> TransformOperation<List<E>> firstColumn(final Class<E> elementType) {
 
-		return new ProcessingSelectOperation<List<E>>(this, new Processor<List<E>>() {
+		return new ProcessingQueryOperation<List<E>>(this, new Processor<List<E>>() {
 
 			@Override
 			public List<E> process(ResultSet resultSet) {
@@ -104,9 +104,9 @@ public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet
 	}
 
 	@Override
-	public ProcessOperation<List<Map<String, Object>>> map() {
+	public TransformOperation<List<Map<String, Object>>> map() {
 
-		return new ProcessingSelectOperation<List<Map<String, Object>>>(this, new Processor<List<Map<String, Object>>>() {
+		return new ProcessingQueryOperation<List<Map<String, Object>>>(this, new Processor<List<Map<String, Object>>>() {
 
 			@Override
 			public List<Map<String, Object>> process(ResultSet resultSet) {
@@ -118,9 +118,9 @@ public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet
 	}
 
 	@Override
-	public <O> ProcessOperation<O> transform(final ResultSetExtractor<O> rse) {
+	public <O> TransformOperation<O> transform(final ResultSetExtractor<O> rse) {
 
-		return new ProcessingSelectOperation<O>(this, new Processor<O>() {
+		return new ProcessingQueryOperation<O>(this, new Processor<O>() {
 
 			@Override
 			public O process(ResultSet resultSet) {
@@ -131,9 +131,9 @@ public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet
 	}
 
 	@Override
-	public ProcessOperation<Object> forEach(final RowCallbackHandler rch) {
+	public TransformOperation<Object> forEach(final RowCallbackHandler rch) {
 
-		return new ProcessingSelectOperation<Object>(this, new Processor<Object>() {
+		return new ProcessingQueryOperation<Object>(this, new Processor<Object>() {
 
 			@Override
 			public Object process(ResultSet resultSet) {
@@ -146,69 +146,69 @@ public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet
 
 	@Override
 	public ResultSet execute() {
-		return doExecute(query);
+		return doExecute(statement);
 	}
 
 	@Override
 	public CassandraFuture<ResultSet> executeAsync() {
-		return doExecuteAsync(query);
+		return doExecuteAsync(statement);
 	}
 
 	@Override
 	public void executeAsync(CallbackHandler<ResultSet> cb) {
-		doExecuteAsync(query, cb);
+		doExecuteAsync(statement, cb);
 	}
 
 	@Override
 	public ResultSet executeNonstop(int timeoutMls) throws TimeoutException {
-		return doExecuteNonstop(query, timeoutMls);
+		return doExecuteNonstop(statement, timeoutMls);
 	}
 
 	@Override
 	public Statement toStatement() {
-		return query;
+		return statement;
 	}
 
-	abstract class ForwardingSelectOperation<T> implements ProcessOperation<T> {
+	abstract class ForwardingQueryOperation<T> implements TransformOperation<T> {
 
-		protected final SelectOperation delegate;
+		protected final QueryOperation delegate;
 
-		private ForwardingSelectOperation(SelectOperation delegate) {
+		private ForwardingQueryOperation(QueryOperation delegate) {
 			this.delegate = delegate;
 		}
 
 		@Override
-		public ProcessOperation<T> withConsistencyLevel(ConsistencyLevel consistencyLevel) {
+		public TransformOperation<T> withConsistencyLevel(ConsistencyLevel consistencyLevel) {
 			delegate.withConsistencyLevel(consistencyLevel);
 			return this;
 		}
 
 		@Override
-		public ProcessOperation<T> withRetryPolicy(RetryPolicy retryPolicy) {
+		public TransformOperation<T> withRetryPolicy(RetryPolicy retryPolicy) {
 			delegate.withRetryPolicy(retryPolicy);
 			return this;
 		}
 
 		@Override
-		public ProcessOperation<T> withRetryPolicy(RetryPolicyInstance retryPolicy) {
+		public TransformOperation<T> withRetryPolicy(RetryPolicyInstance retryPolicy) {
 			delegate.withRetryPolicy(retryPolicy);
 			return this;
 		}
 
 		@Override
-		public ProcessOperation<T> withQueryTracing(Boolean queryTracing) {
+		public TransformOperation<T> withQueryTracing(Boolean queryTracing) {
 			delegate.withQueryTracing(queryTracing);
 			return this;
 		}
 
 		@Override
-		public ProcessOperation<T> withFallbackHandler(FallbackHandler fh) {
+		public TransformOperation<T> withFallbackHandler(FallbackHandler fh) {
 			delegate.withFallbackHandler(fh);
 			return this;
 		}
 
 		@Override
-		public ProcessOperation<T> withExecutor(Executor executor) {
+		public TransformOperation<T> withExecutor(Executor executor) {
 			delegate.withExecutor(executor);
 			return this;
 		}
@@ -224,11 +224,11 @@ public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet
 		T process(ResultSet resultSet);
 	}
 
-	final class ProcessingSelectOperation<T> extends ForwardingSelectOperation<T> {
+	final class ProcessingQueryOperation<T> extends ForwardingQueryOperation<T> {
 
 		private final Processor<T> processor;
 
-		ProcessingSelectOperation(SelectOperation delegate, Processor<T> processor) {
+		ProcessingQueryOperation(QueryOperation delegate, Processor<T> processor) {
 			super(delegate);
 			this.processor = processor;
 		}
@@ -287,25 +287,25 @@ public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet
 
 	}
 
-	final class DefaultSelectOneOperation extends AbstractSelectOneOperation {
+	final class DefaultSingleResultQueryOperation extends AbstractSingleResultQueryOperation {
 
-		private final DefaultSelectOperation defaultSelectOperation;
-		private final boolean singleResult;
+		private final DefaultQueryOperation defaultQueryOperation;
+		private final boolean expectedSingleResult;
 
-		DefaultSelectOneOperation(DefaultSelectOperation defaultSelectOperation, boolean singleResult) {
-			super(defaultSelectOperation.cqlTemplate, defaultSelectOperation.query, singleResult);
-			this.defaultSelectOperation = defaultSelectOperation;
-			this.singleResult = singleResult;
+		DefaultSingleResultQueryOperation(DefaultQueryOperation defaultQueryOperation, boolean singleResult) {
+			super(defaultQueryOperation.cqlTemplate, defaultQueryOperation.statement, singleResult);
+			this.defaultQueryOperation = defaultQueryOperation;
+			this.expectedSingleResult = singleResult;
 		}
 
 		@Override
-		public <R> ProcessOperation<R> map(final RowMapper<R> rowMapper) {
+		public <R> TransformOperation<R> map(final RowMapper<R> rowMapper) {
 
-			return new ProcessingSelectOperation<R>(defaultSelectOperation, new Processor<R>() {
+			return new ProcessingQueryOperation<R>(defaultQueryOperation, new Processor<R>() {
 
 				@Override
 				public R process(ResultSet resultSet) {
-					return cqlTemplate.processOne(resultSet, rowMapper, singleResult);
+					return cqlTemplate.processOne(resultSet, rowMapper, expectedSingleResult);
 				}
 
 			});
@@ -313,27 +313,27 @@ public class DefaultSelectOperation extends AbstractStatementOperation<ResultSet
 		}
 
 		@Override
-		public <E> ProcessOperation<E> firstColumn(final Class<E> elementType) {
+		public <E> TransformOperation<E> firstColumn(final Class<E> elementType) {
 
-			return new ProcessingSelectOperation<E>(defaultSelectOperation, new Processor<E>() {
+			return new ProcessingQueryOperation<E>(defaultQueryOperation, new Processor<E>() {
 
 				@Override
 				public E process(ResultSet resultSet) {
-					return cqlTemplate.processOneFirstColumn(resultSet, elementType, singleResult);
+					return cqlTemplate.processOneFirstColumn(resultSet, elementType, expectedSingleResult);
 				}
 
 			});
 		}
 
 		@Override
-		public ProcessOperation<Map<String, Object>> map() {
+		public TransformOperation<Map<String, Object>> map() {
 
-			return new ProcessingSelectOperation<Map<String, Object>>(defaultSelectOperation,
+			return new ProcessingQueryOperation<Map<String, Object>>(defaultQueryOperation,
 					new Processor<Map<String, Object>>() {
 
 						@Override
 						public Map<String, Object> process(ResultSet resultSet) {
-							return cqlTemplate.processOneAsMap(resultSet, singleResult);
+							return cqlTemplate.processOneAsMap(resultSet, expectedSingleResult);
 						}
 
 					});

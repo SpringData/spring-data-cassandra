@@ -27,66 +27,66 @@ import com.datastax.driver.core.ResultSet;
  * 
  */
 
-public interface SelectOperation extends StatementOperation<ResultSet, SelectOperation> {
+public interface QueryOperation extends StatementOperation<ResultSet, QueryOperation> {
 
 	/**
 	 * Returns single result operation
 	 * 
-	 * @return SelectOneOperation
+	 * @return SingleResultQueryOperation
 	 */
-	SelectOneOperation firstRow();
+	SingleResultQueryOperation firstRow();
 
 	/**
 	 * Returns single result operation
 	 * 
-	 * @return SelectOneOperation
+	 * @return SingleResultQueryOperation
 	 */
-	SelectOneOperation singleResult();
+	SingleResultQueryOperation singleResult();
 
 	/**
 	 * Maps each row in ResultSet by RowMapper.
 	 * 
 	 * @param rowMapper
-	 * @return ProcessOperation
+	 * @return TransformOperation
 	 */
-	<R> ProcessOperation<List<R>> map(RowMapper<R> rowMapper);
+	<R> TransformOperation<List<R>> map(RowMapper<R> rowMapper);
 
 	/**
 	 * Returns true if ResultSet is not empty.
 	 * 
-	 * @return ProcessOperation
+	 * @return TransformOperation
 	 */
-	ProcessOperation<Boolean> exists();
+	TransformOperation<Boolean> exists();
 
 	/**
 	 * Retrieves only the first column from ResultSet, expected type is elementType class.
 	 * 
 	 * @param elementType
-	 * @return ProcessOperation
+	 * @return TransformOperation
 	 */
-	<E> ProcessOperation<List<E>> firstColumn(Class<E> elementType);
+	<E> TransformOperation<List<E>> firstColumn(Class<E> elementType);
 
 	/**
 	 * Maps all rows from ResultSet to Map<String, Object>.
 	 * 
-	 * @return ProcessOperation
+	 * @return TransformOperation
 	 */
-	ProcessOperation<List<Map<String, Object>>> map();
+	TransformOperation<List<Map<String, Object>>> map();
 
 	/**
 	 * Uses ResultSetCallback to transform ResultSet to object with type T.
 	 * 
 	 * @param rse ResultSet Extractor to convert ResultSet to type T
-	 * @return ProcessOperation
+	 * @return TransformOperation
 	 */
-	<O> ProcessOperation<O> transform(ResultSetExtractor<O> rse);
+	<O> TransformOperation<O> transform(ResultSetExtractor<O> rse);
 
 	/**
 	 * Calls RowCallbackHandler for each row in ResultSet.
 	 * 
 	 * @param rch
-	 * @return ProcessOperation
+	 * @return TransformOperation
 	 */
-	ProcessOperation<Object> forEach(RowCallbackHandler rch);
+	TransformOperation<Object> forEach(RowCallbackHandler rch);
 
 }

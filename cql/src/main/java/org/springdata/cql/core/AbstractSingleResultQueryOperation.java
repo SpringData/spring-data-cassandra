@@ -28,21 +28,21 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Abstract implementation for SelectOneOperation
+ * Abstract implementation for @SingleResultQueryOperation
  * 
  * @author Alex Shvid
  * 
  */
-public abstract class AbstractSelectOneOperation extends AbstractStatementOperation<Row, SelectOneOperation> implements
-		SelectOneOperation {
+public abstract class AbstractSingleResultQueryOperation extends
+		AbstractStatementOperation<Row, SingleResultQueryOperation> implements SingleResultQueryOperation {
 
 	private final Statement query;
-	private final boolean singleResult;
+	private final boolean expectedSingleResult;
 
-	protected AbstractSelectOneOperation(CqlTemplate cqlTemplate, Statement query, boolean singleResult) {
+	protected AbstractSingleResultQueryOperation(CqlTemplate cqlTemplate, Statement query, boolean singleResult) {
 		super(cqlTemplate);
 		this.query = query;
-		this.singleResult = singleResult;
+		this.expectedSingleResult = singleResult;
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public abstract class AbstractSelectOneOperation extends AbstractStatementOperat
 
 		Row firstRow = iterator.next();
 
-		if (singleResult && iterator.hasNext()) {
+		if (expectedSingleResult && iterator.hasNext()) {
 			throw new CassandraNotSingleResultException(resultSet);
 		}
 

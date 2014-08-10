@@ -60,7 +60,7 @@ public class AsyncCassandraTemplateTest extends AbstractCassandraOperations {
 
 		final String isbn = "999999999";
 
-		ResultSet frs = cqlTemplate.buildSelectOperation("select * from book where isbn='" + isbn + "'").executeAsync()
+		ResultSet frs = cqlTemplate.buildQueryOperation("select * from book where isbn='" + isbn + "'").executeAsync()
 				.getUninterruptibly();
 
 		Row r = frs.one();
