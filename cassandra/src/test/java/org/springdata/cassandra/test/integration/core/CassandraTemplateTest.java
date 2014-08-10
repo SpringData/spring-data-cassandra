@@ -793,10 +793,8 @@ public class CassandraTemplateTest {
 
 		cassandraTemplate.buildSaveNewOperation(b1).execute();
 
-		Select select = QueryBuilder.select().all().from("book");
-		select.where(QueryBuilder.eq("isbn", "123456-1"));
-
-		Book b = cassandraTemplate.buildFindOneOperation(Book.class, select.getQueryString()).execute();
+		String cql = "SELECT * FROM book WHERE isbn='123456-1'";
+		Book b = cassandraTemplate.buildFindOneOperation(Book.class, cql).execute();
 
 		log.info("SingleSelect Book Title -> " + b.getTitle());
 		log.info("SingleSelect Book Author -> " + b.getAuthor());

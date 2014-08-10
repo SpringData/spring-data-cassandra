@@ -46,6 +46,8 @@
 	<properties>
 		<project.type>multi</project.type>
 		<dist.id>spring-data-cassandra</dist.id>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
 		<springdata.commons>1.6.2.RELEASE</springdata.commons>
 		<cassandra-unit.version>2.0.2.1</cassandra-unit.version>
 		<cassandra-driver-core.version>2.0.4</cassandra-driver-core.version>
@@ -318,6 +320,13 @@
 			</dependency>
 
 			<dependency>
+				<groupId>org.apache.cassandra</groupId>
+				<artifactId>cassandra-all</artifactId>
+				<version>2.1.0-rc4</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
 				<groupId>javax.el</groupId>
 				<artifactId>el-api</artifactId>
 				<version>${cdi}</version>
@@ -418,6 +427,8 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+					<testSource>1.7</testSource>
+					<testTarget>1.7</testTarget>
 				</configuration>
 			</plugin>
 			<plugin>
