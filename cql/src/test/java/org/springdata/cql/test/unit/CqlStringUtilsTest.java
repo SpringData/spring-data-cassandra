@@ -15,7 +15,8 @@
  */
 package org.springdata.cql.test.unit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springdata.cql.util.CqlStringUtils.isQuotedIdentifier;
 import static org.springdata.cql.util.CqlStringUtils.isUnquotedIdentifier;
 
@@ -30,4 +31,5 @@ public class CqlStringUtilsTest {
 		assertFalse(isUnquotedIdentifier("my\"id"));
 		assertTrue(isUnquotedIdentifier("myid"));
 	}
+
 }
