@@ -26,7 +26,7 @@ import com.datastax.driver.core.Statement;
  * @author Matthew T. Adams
  * @author Alex Shvid
  */
-public class CassandraInvalidQueryException extends InvalidDataAccessApiUsageException implements CassandraQueryAware {
+public class CassandraInvalidQueryException extends InvalidDataAccessApiUsageException implements CassandraStatementAware {
 
 	private static final long serialVersionUID = 4594321191806182918L;
 
@@ -41,7 +41,7 @@ public class CassandraInvalidQueryException extends InvalidDataAccessApiUsageExc
 	}
 
 	@Override
-	public void setQuery(Statement query) {
+	public void setStatement(Statement query) {
 		this.query = query;
 	}
 

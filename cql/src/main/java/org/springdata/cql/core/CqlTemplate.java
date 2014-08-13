@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdata.cql.support.CassandraExceptionTranslator;
 import org.springdata.cql.support.exception.CassandraNotSingleResultException;
-import org.springdata.cql.support.exception.CassandraQueryAware;
+import org.springdata.cql.support.exception.CassandraStatementAware;
 import org.springframework.util.Assert;
 
 import com.datastax.driver.core.BoundStatement;
@@ -359,20 +359,20 @@ public class CqlTemplate implements CqlOperations {
 	 * @param callback
 	 * @return
 	 */
-	protected ResultSet doExecute(final Statement query) {
+	protected ResultSet doExecute(final Statement stmt) {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug(query.toString());
+			logger.debug(stmt.toString());
 		}
 
 		try {
 
-			return getSession().execute(query);
+			return getSession().execute(stmt);
 
 		} catch (RuntimeException e) {
 			e = translateIfPossible(e);
-			if (e instanceof CassandraQueryAware) {
-				((CassandraQueryAware) e).setQuery(query);
+			if (e instanceof CassandraStatementAware) {
+				((CassandraStatementAware) e).setStatement(stmt);
 			}
 			throw e;
 		}
@@ -397,8 +397,8 @@ public class CqlTemplate implements CqlOperations {
 
 		} catch (RuntimeException e) {
 			e = translateIfPossible(e);
-			if (e instanceof CassandraQueryAware) {
-				((CassandraQueryAware) e).setQuery(query);
+			if (e instanceof CassandraStatementAware) {
+				((CassandraStatementAware) e).setStatement(query);
 			}
 			throw e;
 		}
