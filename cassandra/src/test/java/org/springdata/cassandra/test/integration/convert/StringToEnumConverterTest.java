@@ -3,7 +3,7 @@ package org.springdata.cassandra.test.integration.convert;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CassandraValueConverterTest {
+public class StringToEnumConverterTest {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test

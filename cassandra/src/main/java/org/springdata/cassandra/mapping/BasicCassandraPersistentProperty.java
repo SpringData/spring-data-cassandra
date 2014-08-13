@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.springdata.cassandra.convert.DateToTimeUUIDConverter;
-import org.springdata.cassandra.convert.EnumToStringConverter;
-import org.springdata.cassandra.convert.StringToEnumConverter;
-import org.springdata.cassandra.convert.TimeUUIDToDateConverter;
+import org.springdata.cassandra.mapping.support.CamelCaseToUnderscoreConverter;
+import org.springdata.cassandra.mapping.support.DateToTimeUUIDConverter;
+import org.springdata.cassandra.mapping.support.EnumToStringConverter;
+import org.springdata.cassandra.mapping.support.StringToEnumConverter;
+import org.springdata.cassandra.mapping.support.TimeUUIDToDateConverter;
 import org.springdata.cql.core.KeyPart;
 import org.springdata.cql.core.Ordering;
 import org.springframework.core.convert.converter.Converter;
@@ -45,6 +46,8 @@ import com.datastax.driver.core.DataType;
 public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentProperty<CassandraPersistentProperty>
 		implements CassandraPersistentProperty {
 
+	private final Converter<String, String> fieldNameToColumnNameConverter;
+
 	/**
 	 * Creates a new {@link BasicCassandraPersistentProperty}.
 	 * 
@@ -56,6 +59,7 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 	public BasicCassandraPersistentProperty(Field field, PropertyDescriptor propertyDescriptor,
 			CassandraPersistentEntity<?> owner, SimpleTypeHolder simpleTypeHolder) {
 		super(field, propertyDescriptor, owner, simpleTypeHolder);
+		fieldNameToColumnNameConverter = CamelCaseToUnderscoreConverter.INSTANCE;
 	}
 
 	/**
@@ -91,11 +95,11 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 	public String getColumnName() {
 
 		Column column = findAnnotation(Column.class);
-		if (column != null) {
-			return StringUtils.hasText(column.value()) ? column.value() : field.getName();
+		if (column != null && StringUtils.hasText(column.value())) {
+			return column.value();
 		}
 
-		return field.getName();
+		return fieldNameToColumnNameConverter.convert(field.getName());
 	}
 
 	/**

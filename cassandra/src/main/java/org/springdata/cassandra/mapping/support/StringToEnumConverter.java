@@ -13,29 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cassandra.convert;
+package org.springdata.cassandra.mapping.support;
 
-import java.util.Date;
-import java.util.UUID;
-
-import org.springdata.cql.util.TimeUUIDUtil;
 import org.springframework.core.convert.converter.Converter;
 
 /**
- * Simple Date to TimeUUID Converter
+ * String to Enum Converter
  * 
  * @author Alex Shvid
  * 
  */
 
-public enum DateToTimeUUIDConverter implements Converter<Date, UUID> {
+public class StringToEnumConverter implements Converter<String, Object> {
 
-	INSTANCE;
+	private final Class<? extends Enum> enumClass;
+
+	public StringToEnumConverter(Class<?> enumClass) {
+		this.enumClass = (Class<? extends Enum>) enumClass;
+	}
 
 	@Override
-	public UUID convert(Date source) {
-		long milliseconds = source.getTime();
-		return TimeUUIDUtil.createTimeUUID(milliseconds);
+	public Object convert(String source) {
+		return Enum.valueOf(enumClass, source);
 	}
 
 }

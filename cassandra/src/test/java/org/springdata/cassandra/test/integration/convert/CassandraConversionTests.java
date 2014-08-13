@@ -330,9 +330,10 @@ public class CassandraConversionTests {
 	@Test
 	public void embeddedIdReadTest() {
 
-		cqlOperations.buildExecuteOperation(
-				"insert into test.embedded_id_table (partitionkey, clusteringkey, proptext) " + " values (1, 'first', 'one')")
-				.execute();
+		cqlOperations
+				.buildExecuteOperation(
+						"insert into test.embedded_id_table (partition_key, clustering_key, proptext) "
+								+ " values (1, 'first', 'one')").execute();
 
 		EmbeddedIdEntity.PK pk = new EmbeddedIdEntity.PK(1, "first");
 		EmbeddedIdEntity entity = cassandraOperations.buildFindByIdOperation(EmbeddedIdEntity.class, pk).execute();
@@ -368,8 +369,8 @@ public class CassandraConversionTests {
 		EmbeddedIdEntity.PK pk = new EmbeddedIdEntity.PK(2, "second");
 
 		cqlOperations.buildExecuteOperation(
-				"insert into test.embedded_id_table (partitionkey, clusteringkey, proptext) " + " values (2, 'second', 'two')")
-				.execute();
+				"insert into test.embedded_id_table (partition_key, clustering_key, proptext) "
+						+ " values (2, 'second', 'two')").execute();
 
 		EmbeddedIdEntity entity = cassandraOperations.buildFindByIdOperation(EmbeddedIdEntity.class, pk).execute();
 		assertThat(entity, is(not(nullValue(EmbeddedIdEntity.class))));
@@ -391,8 +392,8 @@ public class CassandraConversionTests {
 		EmbeddedIdEntity.PK pk = new EmbeddedIdEntity.PK(2, "second");
 
 		cqlOperations.buildExecuteOperation(
-				"insert into test.embedded_id_table (partitionkey, clusteringkey, proptext) " + " values (2, 'second', 'two')")
-				.execute();
+				"insert into test.embedded_id_table (partition_key, clustering_key, proptext) "
+						+ " values (2, 'second', 'two')").execute();
 
 		EmbeddedIdEntity entity = cassandraOperations.buildFindByIdOperation(EmbeddedIdEntity.class, pk).execute();
 		assertThat(entity, is(not(nullValue(EmbeddedIdEntity.class))));

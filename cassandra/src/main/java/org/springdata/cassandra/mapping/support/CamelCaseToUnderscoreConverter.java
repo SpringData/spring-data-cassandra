@@ -13,28 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cassandra.convert;
+package org.springdata.cassandra.mapping.support;
 
 import org.springframework.core.convert.converter.Converter;
 
+import com.google.common.base.CaseFormat;
+
 /**
- * String to Enum Converter
+ * CamelCase to Underscore Converter
  * 
  * @author Alex Shvid
  * 
  */
 
-public class StringToEnumConverter implements Converter<String, Object> {
+public enum CamelCaseToUnderscoreConverter implements Converter<String, String> {
 
-	private final Class<? extends Enum> enumClass;
-
-	public StringToEnumConverter(Class<?> enumClass) {
-		this.enumClass = (Class<? extends Enum>) enumClass;
-	}
+	INSTANCE;
 
 	@Override
-	public Object convert(String source) {
-		return Enum.valueOf(enumClass, source);
+	public String convert(String source) {
+		return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, source);
 	}
 
 }

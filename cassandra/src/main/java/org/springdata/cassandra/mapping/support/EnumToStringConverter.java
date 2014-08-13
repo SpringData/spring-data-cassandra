@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cassandra.util;
+package org.springdata.cassandra.mapping.support;
+
+import org.springframework.core.convert.converter.Converter;
 
 /**
- * Helper class featuring helper methods for working with Cassandra tables. Mainly intended for internal use within the
- * framework.
+ * Enum to String Converter
  * 
  * @author Alex Shvid
+ * 
  */
-public abstract class CassandraNamingUtils {
 
-	/**
-	 * Obtains the table name to use for the provided class
-	 * 
-	 * @param entityClass The class to determine the preferred table name for
-	 * @return The preferred collection name
-	 */
-	public static String getPreferredTableName(Class<?> entityClass) {
-		return entityClass.getSimpleName().toLowerCase();
+public enum EnumToStringConverter implements Converter<Enum, String> {
+
+	INSTANCE;
+
+	@Override
+	public String convert(Enum source) {
+		return source.name();
 	}
 
 }

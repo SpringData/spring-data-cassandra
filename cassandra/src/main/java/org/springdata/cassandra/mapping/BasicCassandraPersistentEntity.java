@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 the original author or authors.
+ * Copyright 2013-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,13 @@ package org.springdata.cassandra.mapping;
 
 import java.util.Comparator;
 
-import org.springdata.cassandra.util.CassandraNamingUtils;
+import org.springdata.cassandra.mapping.support.CamelCaseToUnderscoreConverter;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.expression.BeanFactoryAccessor;
 import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mapping.model.BasicPersistentEntity;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.expression.Expression;
@@ -40,6 +41,7 @@ import org.springframework.util.StringUtils;
 public class BasicCassandraPersistentEntity<T> extends BasicPersistentEntity<T, CassandraPersistentProperty> implements
 		CassandraPersistentEntity<T>, ApplicationContextAware {
 
+	private final Converter<String, String> classNameToTableNameConverter;
 	private final String table;
 	private final SpelExpressionParser parser;
 	private final StandardEvaluationContext context;
@@ -54,17 +56,16 @@ public class BasicCassandraPersistentEntity<T> extends BasicPersistentEntity<T, 
 
 		super(typeInformation, CassandraPersistentPropertyComparator.INSTANCE);
 
+		this.classNameToTableNameConverter = CamelCaseToUnderscoreConverter.INSTANCE;
 		this.parser = new SpelExpressionParser();
 		this.context = new StandardEvaluationContext();
 
 		Class<?> rawType = typeInformation.getType();
-		String fallback = CassandraNamingUtils.getPreferredTableName(rawType);
-
 		if (rawType.isAnnotationPresent(Table.class)) {
 			Table d = rawType.getAnnotation(Table.class);
-			this.table = StringUtils.hasText(d.name()) ? d.name() : fallback;
+			this.table = StringUtils.hasText(d.name()) ? d.name() : getDefaultTableName(rawType);
 		} else {
-			this.table = fallback;
+			this.table = getDefaultTableName(rawType);
 		}
 	}
 
@@ -107,6 +108,10 @@ public class BasicCassandraPersistentEntity<T> extends BasicPersistentEntity<T, 
 			return o1.getColumnName().compareTo(o2.getColumnName());
 
 		}
+	}
+
+	private String getDefaultTableName(Class<?> entityClass) {
+		return classNameToTableNameConverter.convert(entityClass.getSimpleName());
 	}
 
 }
