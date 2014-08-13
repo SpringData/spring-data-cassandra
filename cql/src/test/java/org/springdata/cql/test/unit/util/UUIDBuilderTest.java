@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cql.test.unit.support;
+package org.springdata.cql.test.unit.util;
 
 import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.springdata.cql.support.UUIDBuilder;
+import org.springdata.cql.util.UUIDBuilder;
 
 /**
  * UUID Builder jUnit Test

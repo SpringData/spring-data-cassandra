@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.springdata.cassandra.mapping.CassandraPersistentProperty;
-import org.springdata.cql.support.UUIDBuilder;
+import org.springdata.cql.util.UUIDBuilder;
 
 import com.datastax.driver.core.DataType;
 

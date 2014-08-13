@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springdata.cql.support;
+package org.springdata.cql.util;
 
 import java.util.UUID;
 
