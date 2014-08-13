@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 
 import org.springdata.cql.core.KeyPart;
 import org.springdata.cql.core.Ordering;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mapping.model.SimpleTypeHolder;
 
 import com.datastax.driver.core.DataType;
@@ -34,12 +35,14 @@ public class CachingCassandraPersistentProperty extends BasicCassandraPersistent
 	private Boolean isIdProperty;
 	private Boolean hasEmbeddableType;
 	private String columnName;
-	private Caching<Ordering> ordering = new Caching<Ordering>();
+	private OptionalValue<Ordering> ordering = new OptionalValue<Ordering>();
 	private DataType dataType;
 	private Boolean isIndexed;
-	private Caching<String> indexName = new Caching<String>();
-	private Caching<KeyPart> keyPart = new Caching<KeyPart>();
-	private Caching<Integer> ordinal = new Caching<Integer>();
+	private OptionalValue<String> indexName = new OptionalValue<String>();
+	private OptionalValue<KeyPart> keyPart = new OptionalValue<KeyPart>();
+	private OptionalValue<Integer> ordinal = new OptionalValue<Integer>();
+	private OptionalValue<Converter<?, ?>> readConverter = new OptionalValue<Converter<?, ?>>();
+	private OptionalValue<Converter<?, ?>> writeConverter = new OptionalValue<Converter<?, ?>>();
 
 	/**
 	 * Creates a new {@link CachingCassandraPersistentProperty}.
@@ -103,7 +106,7 @@ public class CachingCassandraPersistentProperty extends BasicCassandraPersistent
 	@Override
 	public Ordering getOrdering() {
 
-		if (this.ordering.isNotCached()) {
+		if (this.ordering.isEmpty()) {
 			this.ordering.set(super.getOrdering());
 		}
 
@@ -145,7 +148,7 @@ public class CachingCassandraPersistentProperty extends BasicCassandraPersistent
 	 */
 	public String getIndexName() {
 
-		if (this.indexName.isNotCached()) {
+		if (this.indexName.isEmpty()) {
 			this.indexName.set(super.getIndexName());
 		}
 
@@ -160,7 +163,7 @@ public class CachingCassandraPersistentProperty extends BasicCassandraPersistent
 	@Override
 	public KeyPart getKeyPart() {
 
-		if (this.keyPart.isNotCached()) {
+		if (this.keyPart.isEmpty()) {
 			this.keyPart.set(super.getKeyPart());
 		}
 
@@ -174,19 +177,48 @@ public class CachingCassandraPersistentProperty extends BasicCassandraPersistent
 	@Override
 	public Integer getOrdinal() {
 
-		if (this.ordinal.isNotCached()) {
+		if (this.ordinal.isEmpty()) {
 			this.ordinal.set(super.getOrdinal());
 		}
 
 		return this.ordinal.get();
 	}
 
-	static class Caching<T> {
-		private T value;
-		private boolean cached = false;
+	@Override
+	public Converter<?, ?> getReadConverter() {
 
-		boolean isNotCached() {
-			return !cached;
+		if (this.readConverter.isEmpty()) {
+			this.readConverter.set(super.getReadConverter());
+		}
+
+		return this.readConverter.get();
+	}
+
+	@Override
+	public Converter<?, ?> getWriteConverter() {
+
+		if (this.writeConverter.isEmpty()) {
+			this.writeConverter.set(super.getWriteConverter());
+		}
+
+		return this.writeConverter.get();
+	}
+
+	/**
+	 * Optional Value class
+	 * 
+	 * @author Alex Shvid
+	 * 
+	 * @param <T>
+	 */
+
+	static class OptionalValue<T> {
+
+		private T value;
+		private boolean hasValue = false;
+
+		boolean isEmpty() {
+			return !hasValue;
 		}
 
 		T get() {
@@ -195,7 +227,7 @@ public class CachingCassandraPersistentProperty extends BasicCassandraPersistent
 
 		void set(T v) {
 			value = v;
-			cached = true;
+			hasValue = true;
 		}
 	}
 }

@@ -44,14 +44,6 @@ public interface CassandraPersistentProperty extends PersistentProperty<Cassandr
 	String getColumnName();
 
 	/**
-	 * Returns true for enum types
-	 * 
-	 * @return
-	 */
-
-	boolean isEnum();
-
-	/**
 	 * Returns ordering for the column. Valid only for clustered columns.
 	 * 
 	 * @return
@@ -92,6 +84,22 @@ public interface CassandraPersistentProperty extends PersistentProperty<Cassandr
 	 * @return
 	 */
 	Integer getOrdinal();
+
+	/**
+	 * Gets converter that converts value from Cassandra ResultSet to the Entity property type
+	 * 
+	 * @return converter or null
+	 */
+
+	Converter<?, ?> getReadConverter();
+
+	/**
+	 * Gets converter that converts value from Entity property type to Cassandra value type
+	 * 
+	 * @return converter or null
+	 */
+
+	Converter<?, ?> getWriteConverter();
 
 	/**
 	 * Simple {@link Converter} implementation to transform a {@link CassandraPersistentProperty} into its column name.

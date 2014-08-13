@@ -17,11 +17,17 @@ package org.springdata.cassandra.mapping;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.springdata.cassandra.convert.DateToTimeUUIDConverter;
+import org.springdata.cassandra.convert.EnumToStringConverter;
+import org.springdata.cassandra.convert.StringToEnumConverter;
+import org.springdata.cassandra.convert.TimeUUIDToDateConverter;
 import org.springdata.cql.core.KeyPart;
 import org.springdata.cql.core.Ordering;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.Association;
 import org.springframework.data.mapping.model.AnnotationBasedPersistentProperty;
@@ -108,34 +114,48 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 	 * @return
 	 */
 	public DataType getDataType() {
+
+		Class<?> propertyType = getType();
+
 		Qualify annotation = findAnnotation(Qualify.class);
 		if (annotation != null && annotation.type() != null) {
 			return qualifyAnnotatedType(annotation);
 		}
-		if (isEnum()) {
+
+		if (Enum.class.isAssignableFrom(propertyType)) {
 			return DataType.text();
 		}
+
 		if (isMap()) {
 			List<TypeInformation<?>> args = getTypeInformation().getTypeArguments();
 			ensureTypeArguments(args.size(), 2);
+
 			return DataType.map(autodetectPrimitiveType(args.get(0).getType()),
 					autodetectPrimitiveType(args.get(1).getType()));
 		}
+
 		if (isCollectionLike()) {
 			List<TypeInformation<?>> args = getTypeInformation().getTypeArguments();
 			ensureTypeArguments(args.size(), 1);
-			if (Set.class.isAssignableFrom(getType())) {
+
+			if (Set.class.isAssignableFrom(propertyType)) {
+
 				return DataType.set(autodetectPrimitiveType(args.get(0).getType()));
-			} else if (List.class.isAssignableFrom(getType())) {
+
+			} else if (List.class.isAssignableFrom(propertyType)) {
+
 				return DataType.list(autodetectPrimitiveType(args.get(0).getType()));
+
 			}
 		}
-		DataType dataType = CassandraSimpleTypeHolder.getDataTypeByJavaClass(this.getType());
+
+		DataType dataType = CassandraSimpleTypeHolder.getDataTypeByJavaClass(propertyType);
 		if (dataType == null) {
 			throw new InvalidDataAccessApiUsageException(
 					"only primitive types and Set,List,Map collections are allowed, unknown type for property '" + this.getName()
-							+ "' type is '" + this.getType() + "' in the entity " + this.getOwner().getName());
+							+ "' type is '" + propertyType + "' in the entity " + this.getOwner().getName());
 		}
+
 		return dataType;
 	}
 
@@ -160,16 +180,6 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 		} else {
 			return CassandraSimpleTypeHolder.getDataTypeByName(type);
 		}
-	}
-
-	/**
-	 * Returns true if the property is Enum
-	 * 
-	 * @return
-	 */
-
-	public boolean isEnum() {
-		return Enum.class.isAssignableFrom(getType());
 	}
 
 	/**
@@ -254,6 +264,41 @@ public class BasicCassandraPersistentProperty extends AnnotationBasedPersistentP
 			throw new InvalidDataAccessApiUsageException("expected " + expected + " of typed arguments for the property  '"
 					+ this.getName() + "' type is '" + this.getType() + "' in the entity " + this.getOwner().getName());
 		}
+	}
+
+	@Override
+	public Converter<?, ?> getReadConverter() {
+
+		Class<?> propertyType = getType();
+
+		if (Enum.class.isAssignableFrom(propertyType)) {
+			return new StringToEnumConverter(propertyType);
+		}
+
+		DataType dataType = getDataType();
+
+		if (dataType.getName() == DataType.Name.TIMEUUID && propertyType == Date.class) {
+			return TimeUUIDToDateConverter.INSTANCE;
+		}
+
+		return null;
+	}
+
+	@Override
+	public Converter<?, ?> getWriteConverter() {
+
+		Class<?> propertyType = getType();
+
+		if (Enum.class.isAssignableFrom(propertyType)) {
+			return EnumToStringConverter.INSTANCE;
+		}
+
+		DataType dataType = getDataType();
+
+		if (dataType.getName() == DataType.Name.TIMEUUID && propertyType == Date.class) {
+			return DateToTimeUUIDConverter.INSTANCE;
+		}
+		return null;
 	}
 
 }

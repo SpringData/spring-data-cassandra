@@ -21,6 +21,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdata.cassandra.mapping.CassandraPersistentProperty;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mapping.model.DefaultSpELExpressionEvaluator;
 import org.springframework.data.mapping.model.PropertyValueProvider;
 import org.springframework.data.mapping.model.SpELExpressionEvaluator;
@@ -94,7 +95,27 @@ public class CassandraPropertyValueProvider implements PropertyValueProvider<Cas
 		ByteBuffer bytes = source.getBytesUnsafe(columnIndex);
 		Object value = columnType.deserialize(bytes);
 
-		return (T) CassandraValueConverter.afterRead(property, value);
+		if (value != null) {
+
+		}
+
+		return (T) readValue(property, value);
 
 	}
+
+	private Object readValue(CassandraPersistentProperty property, Object value) {
+
+		if (value == null) {
+			return null;
+		}
+
+		Converter converter = property.getReadConverter();
+
+		if (converter != null) {
+			return converter.convert(value);
+		}
+
+		return value;
+	}
+
 }
