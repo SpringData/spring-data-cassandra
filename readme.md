@@ -3,6 +3,8 @@ Spring Data Cassandra
 
 ### Deprecated.
 
+Please, use another Cassandra client [Casser](https://github.com/noorq/casser).
+
 This is a SpringFramework Data project for Cassandra that uses the binary CQL3 protocol via
 the official DataStax 2.x Java [driver](https://github.com/datastax/java-driver) for Cassandra 2.0.
 
